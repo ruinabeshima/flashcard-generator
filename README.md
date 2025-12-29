@@ -2,7 +2,9 @@
 
 ## Authentication 
 Used Supabase Auth to manage login and register. 
-Google OAuth + Email accounts
-Added loading states and error message handling for all buttons / form submits
+Google OAuth + Email accounts.
+Added loading states and error message handling for all buttons / form submits.
+Handled redirects when the user is logged in or logged out. 
+Added logout button to clear session.
 
 TODO: Client side validation 
