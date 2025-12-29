@@ -29,15 +29,26 @@ export default function EmailSignUpForm() {
       return;
     }
 
+    // No need to do anything with data
     const { data, error } = await supabase.auth.signUp({
       email: email,
       password: password,
 
-      // Possibly add an email confirmation redirect in the future
+      // Email confirmation redirect
+      options: {
+        emailRedirectTo: `${location.origin}/auth/callback?next=/confirm-email`,
+      },
     });
 
     if (error) {
       setError(error.message);
+      setLoading(false);
+      return;
+    }
+
+    // Redirect to confirm email page 
+    if (!data.session) {
+      router.push("/confirm-email");
       setLoading(false);
       return;
     }
