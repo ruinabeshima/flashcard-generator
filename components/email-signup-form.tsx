@@ -18,43 +18,50 @@ export default function EmailSignUpForm() {
     event: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault();
-    setError(null);
-    setLoading(true);
-    const supabase = createClient();
+    try {
+      setError(null);
+      setLoading(true);
+      const supabase = createClient();
 
-    // Passwords not matching
-    if (password !== passwordConfirm) {
-      setError("Passwords do not match");
+      // Passwords not matching
+      if (password !== passwordConfirm) {
+        setError("Passwords do not match");
+        return;
+      }
+
+      // No need to do anything with data
+      const { data, error } = await supabase.auth.signUp({
+        // Use trim to avoid whitespace issues
+        email: email.trim(),
+        password: password.trim(),
+
+        // Email confirmation redirect
+        options: {
+          emailRedirectTo: `${location.origin}/auth/callback?next=/confirm-email`,
+        },
+      });
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
+
+      // Redirect to confirm email page
+      if (!data.session) {
+        router.push("/confirm-email");
+        return;
+      }
+
+      router.push("/dashboard");
+    } catch (error) {
+      // Unexpected errors
+      setError(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
+    } finally {
+      // Runs everytime
       setLoading(false);
-      return;
     }
-
-    // No need to do anything with data
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-
-      // Email confirmation redirect
-      options: {
-        emailRedirectTo: `${location.origin}/auth/callback?next=/confirm-email`,
-      },
-    });
-
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-      return;
-    }
-
-    // Redirect to confirm email page 
-    if (!data.session) {
-      router.push("/confirm-email");
-      setLoading(false);
-      return;
-    }
-
-    setLoading(false);
-    router.push("/dashboard");
   };
 
   return (

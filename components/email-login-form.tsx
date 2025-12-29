@@ -16,23 +16,31 @@ export default function EmailLoginForm() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(null);
-    setLoading(true);
-    const supabase = createClient();
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
+    try {
+      setError(null);
+      setLoading(true);
+      const supabase = createClient();
 
-    if (error) {
-      setError(error.message);
-      setLoading(false);
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password.trim(),
+      });
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
+
+      router.push("/dashboard");
       return;
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
-    router.push("/dashboard");
   };
 
   return (
