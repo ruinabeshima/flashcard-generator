@@ -1,3 +1,9 @@
+import GoogleOAuthButton from "@/components/google-oauth-button";
+
 export default function Login() {
-  return <h1>Login</h1>;
+  return (
+    <div>
+      <GoogleOAuthButton purpose="in" />
+    </div>
+  );
 }
