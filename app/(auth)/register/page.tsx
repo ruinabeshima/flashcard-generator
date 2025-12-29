@@ -1,3 +1,4 @@
+import EmailSignUpForm from "@/components/email-signup-form";
 import GoogleOAuthButton from "@/components/google-oauth-button";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -33,6 +34,7 @@ export default function Register() {
               </span>
               <Separator className="flex-1" />
             </div>
+            <EmailSignUpForm />
           </div>
         </div>
       </div>

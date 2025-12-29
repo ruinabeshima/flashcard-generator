@@ -2,6 +2,7 @@ import GoogleOAuthButton from "@/components/google-oauth-button";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { MdOutlineFilePresent } from "react-icons/md";
+import EmailLoginForm from "@/components/email-login-form";
 
 export default function Login() {
   return (
@@ -36,6 +37,7 @@ export default function Login() {
                 </span>
                 <Separator className="flex-1" />
               </div>
+              <EmailLoginForm />
             </div>
           </div>
         </div>

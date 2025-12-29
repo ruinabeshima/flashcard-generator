@@ -19,7 +19,7 @@ export default function GoogleOAuthButton({
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${location.origin}/auth/callback?next=/feed`,
+        redirectTo: `${location.origin}/auth/callback?next=/dashboard`,
       },
     });
   };
