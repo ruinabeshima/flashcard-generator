@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-// The client you created from the Server-Side Auth instructions
 import { createClient } from "@/lib/supabase/server";
+import { prisma } from "@/prisma/prisma";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
@@ -14,6 +14,21 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // Optional: create the user record in your DB on first login
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        const user = userData?.user;
+        if (user) {
+          await prisma.user.upsert({
+            where: { providerId: user.id },
+            update: {},
+            create: { providerId: user.id },
+          });
+        }
+      } catch (e) {
+        // Log but don't block redirect
+        console.error("User upsert in callback failed", e);
+      }
       const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === "development";
       if (isLocalEnv) {
