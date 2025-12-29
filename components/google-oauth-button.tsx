@@ -28,7 +28,7 @@ export default function GoogleOAuthButton({
     // Google Login
     <Button
       type="button"
-      variant="default"
+      variant="outline"
       size="lg"
       className={`flex items-center gap-2 w-full ${className}`}
       onClick={handleClick}
