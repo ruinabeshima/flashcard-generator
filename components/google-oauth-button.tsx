@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 
 interface GoogleOAuthButtonProps {
   className?: string;
-  // Purpose: Sign in or sign up? 
+  // Purpose: Sign in or sign up?
   purpose: string;
 }
 
