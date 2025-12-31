@@ -17,6 +17,36 @@ model User {
   id String @id @default(cuid())
   providerId String @unique // Supabase user ID 
   createdAt DateTime @default(now())
+
+  // Relationship 
+  Documents Document[]
+}
+
+model Document {
+  id String @id @default(cuid())
+
+  // Basic file info 
+  filename String 
+  filePath String 
+  fileSize Int 
+
+  // Metadata 
+  status DocumentStatus @default(UPLOADED)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship
+  userId String 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+enum DocumentStatus {
+  UPLOADED
+  PROCESSING 
+  READY 
+  ERROR
 }
 
 
