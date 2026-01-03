@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "./ui/button";
 import { FormEvent, useState } from "react";
 
 export default function FileUpload() {
@@ -56,5 +57,19 @@ export default function FileUpload() {
     }
   };
 
-  return <h1>File Upload</h1>;
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="file"
+        onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+        disabled={loading}
+      />
+
+      <Button type="submit" disabled={loading || !file}>
+        {loading ? "Uploading..." : "Upload"}
+      </Button>
+
+      {error && <p>{error}</p>}
+    </form>
+  );
 }
