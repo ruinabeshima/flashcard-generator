@@ -10,6 +10,8 @@ Added logout button to clear session.
 
 TODO: Client side validation 
 
-
 ## File Upload 
+Created a supabase Documents bucket to handle storage of file uploads 
+Working file upload function in dashboard page 
+Files are stored in codes to prevent duplicates 
 
