@@ -71,7 +71,7 @@ export default function FileUpload() {
   };
 
   return (
-    <Card className="max-w-xl">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Upload a PDF</CardTitle>
         <CardDescription>
