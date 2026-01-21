@@ -15,7 +15,7 @@ export default function Home() {
       ></Image>
       <nav className="flex justify-between px-5 py-3 w-full">
         <div>
-          <h1 className="text-2xl font-bold">AIFlashcards</h1>
+          <h1 className="text-3xl font-bold tracking-tight">AIFlashcards</h1>
         </div>
         <div className="flex gap-3">
           <Link href="/login">
