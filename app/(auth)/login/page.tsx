@@ -3,10 +3,19 @@ import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { MdOutlineFilePresent } from "react-icons/md";
 import EmailLoginForm from "@/components/email-login-form";
+import Image from "next/image";
+import background from "@/public/background.jpg";
 
 export default function Login() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <Image
+        src={background}
+        alt="Background Image"
+        fill
+        className="object-cover -z-10 opacity-30"
+        priority
+      ></Image>
       <div className="w-full max-w-sm">
         <div className="space-y-10 text-center">
           <div className="space-y-4">
