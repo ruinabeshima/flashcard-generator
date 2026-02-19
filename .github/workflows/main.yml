@@ -51,6 +51,9 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
 
+    env:
+      CLIENT_URL: ${{ secrets.CLIENT_URL }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
