@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 jobs:
   lint:
-    name: Lint frontend and backend
+    name: Lint and Format
     runs-on: ubuntu-latest
 
     steps:
@@ -41,3 +41,21 @@ jobs:
       - name: Run backend formatter 
         working-directory: ./server 
         run: pnpm run format
+
+  build: 
+    name: Build 
+    needs: lint 
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx 
+        uses: docker/setup-buildx-action@v3.0.0
+
+      - name: Build frontend Docker image
+        working-directory: ./client
+        run: docker build -t client:latest .
+
+      
