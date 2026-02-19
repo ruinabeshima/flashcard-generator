@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon server.js",
     "lint": "eslint .",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
