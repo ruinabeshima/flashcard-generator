@@ -33,3 +33,11 @@ jobs:
       - name: Run backend linter
         working-directory: ./server
         run: pnpm run lint
+
+      - name: Run frontend formatter 
+        working-directory: ./client
+        run: pnpm run format 
+
+      - name: Run backend formatter 
+        working-directory: ./server 
+        run: pnpm run format
