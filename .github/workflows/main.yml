@@ -34,28 +34,63 @@ jobs:
         working-directory: ./server
         run: pnpm run lint
 
-      - name: Run frontend formatter 
+      - name: Run frontend formatter
         working-directory: ./client
-        run: pnpm run format 
-
-      - name: Run backend formatter 
-        working-directory: ./server 
         run: pnpm run format
 
-  build: 
-    name: Build 
-    needs: lint 
+      - name: Run backend formatter
+        working-directory: ./server
+        run: pnpm run format
+
+  build:
+    name: Build
+    needs: lint
     runs-on: ubuntu-latest
 
-    steps: 
+    steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx 
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.0.0
 
-      - name: Build frontend Docker image
-        working-directory: ./client
-        run: docker build -t client:latest .
+      - name: Authenticate Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{vars.GCP_SERVICE_ACCOUNT }}
 
-      
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev
+
+      - name: Build and push Docker image
+        working-directory: ./client
+        run: |
+          docker build -t ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-generator/flashcard-generator:${{ github.sha }} .
+          docker push ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-generator/flashcard-generator:${{ github.sha }}
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{vars.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy to Cloud Run
+        uses: "google-github-actions/deploy-cloudrun@v2"
+        with:
+          service: ai-flashcards
+          region: ${{ vars.GCP_REGION }}
+          image: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-generator/flashcard-generator:${{ github.sha }}
+          flags: "--allow-unauthenticated"
