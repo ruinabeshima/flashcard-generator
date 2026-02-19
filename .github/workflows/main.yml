@@ -70,8 +70,8 @@ jobs:
       - name: Build and push Docker image
         working-directory: ./client
         run: |
-          docker build -t ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-generator/flashcard-generator:${{ github.sha }} .
-          docker push ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-generator/flashcard-generator:${{ github.sha }}
+          docker build -t ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-repo/flashcard-generator:${{ github.sha }} .
+          docker push ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-repo/flashcard-generator:${{ github.sha }}
 
   deploy:
     name: Deploy
@@ -96,5 +96,5 @@ jobs:
         with:
           service: ai-flashcards
           region: ${{ vars.GCP_REGION }}
-          image: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-generator/flashcard-generator:${{ github.sha }}
+          image: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-repo/flashcard-generator:${{ github.sha }}
           flags: "--allow-unauthenticated"
