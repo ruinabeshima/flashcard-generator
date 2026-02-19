@@ -1,0 +1,34 @@
+name: CI Build and Test 
+on: [push, pull_request]
+
+jobs: 
+  lint: 
+    name: Lint frontend and backend 
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4 
+        with: 
+          node-version: '20'
+
+      - name: Install frontend dependencies 
+        working-directory: ./client 
+        run: pnpm install 
+
+      - name: Install backend dependencies 
+        working-directory: ./server
+        run: pnpm install 
+
+      - name: Run frontend linter 
+        working-directory: ./client 
+        run: pnpm run lint 
+
+      - name: Run backend linter 
+        working-directory: ./server
+        run: pnpm run lint 
+
+    
