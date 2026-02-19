@@ -53,7 +53,7 @@ jobs:
 
     env:
       CLIENT_URL: ${{ secrets.CLIENT_URL }}
-      SERVER_URL: ${{ secrets.SERVER_URL }}
+      SERVER_URL: ${{ secrets.VITE_SERVER_URL }}
 
     steps:
       - name: Checkout code
