@@ -1,10 +1,28 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [apiValue, setApiValue] = useState("");
+
+  useEffect(() => {
+    const getAPIData = async () => {
+      const url = import.meta.env.VITE_SERVER_URL || "http://localhost:3000/";
+      console.log(url);
+
+      const response = await fetch(url, {
+        method: "GET",
+      });
+
+      const data = await response.json();
+
+      setApiValue(data.message);
+    };
+
+    getAPIData();
+  }, []);
 
   return (
     <>
@@ -17,6 +35,7 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
+      <h2>API Value: {apiValue}</h2>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
@@ -29,7 +48,7 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
