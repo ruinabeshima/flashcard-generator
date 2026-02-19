@@ -1,6 +1,10 @@
 name: CI Build and Test
 on: [push, pull_request]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   lint:
     name: Lint and Format
