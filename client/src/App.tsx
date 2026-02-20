@@ -9,10 +9,10 @@ function App() {
 
   useEffect(() => {
     const getAPIData = async () => {
-      const url = import.meta.env.VITE_SERVER_URL || "http://localhost:3000/";
+      const url = import.meta.env.VITE_SERVER_URL || "http://localhost:3000";
       console.log(url);
 
-      const response = await fetch(url, {
+      const response = await fetch(`${url}/`, {
         method: "GET",
       });
 
