@@ -10,6 +10,10 @@ COPY package.json pnpm-lock.yaml ./
 RUN pnpm install 
 
 COPY . .
+
+ARG VITE_SERVER_URL
+RUN echo "VITE_SERVER_URL=$VITE_SERVER_URL" > .env
+
 RUN pnpm run build 
 
 # Production Stage

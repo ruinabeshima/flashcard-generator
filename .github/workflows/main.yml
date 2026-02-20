@@ -74,7 +74,9 @@ jobs:
       - name: Build and push Docker image
         working-directory: ./client
         run: |
-          docker build -t ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-repo/flashcard-generator:${{ github.sha }} .
+          docker build \
+            --build-arg VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }} \
+            -t ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-repo/flashcard-generator:${{ github.sha }} .
           docker push ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-repo/flashcard-generator:${{ github.sha }}
 
   deploy:
