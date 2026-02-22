@@ -127,5 +127,5 @@ jobs:
           image: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/flashcard-repo/flashcard-generator:${{ github.sha }}
           flags: "--allow-unauthenticated"
           env_vars: |
-            VITE_SERVER_URL: ${{ secrets.VITE_SERVER_URL }}
-            VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+            VITE_SERVER_URL = ${{ secrets.VITE_SERVER_URL }}
+            VITE_CLERK_PUBLISHABLE_KEY = ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
