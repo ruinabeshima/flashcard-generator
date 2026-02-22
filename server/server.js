@@ -33,7 +33,7 @@ app.post(
         "svix-signature": req.headers["svix-signature"],
       });
     } catch (error) {
-      return res.status(400).json({ error: "Invalid signature" });
+      return res.status(400).json({ error: `Invalid signature: ${error}` });
     }
 
     // New user created or updated
