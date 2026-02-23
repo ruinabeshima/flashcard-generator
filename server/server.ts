@@ -1,11 +1,12 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
-const { clerkMiddleware } = require("@clerk/express");
-const { prisma } = require("./lib/prisma");
-const { Webhook } = require("svix");
+import express, { Request, Response } from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import { clerkMiddleware } from "@clerk/express";
+import { prisma } from "./lib/prisma";
+import { Webhook } from "svix";
 
-require("dotenv").config();
+dotenv.config();
+const app = express();
 
 app.use(
   cors({
@@ -14,30 +15,34 @@ app.use(
 );
 app.use(clerkMiddleware());
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Hello World" });
 });
 
 app.post(
   "/webhooks/clerk",
   express.raw({ type: "application/json" }),
-  async (req, res) => {
-    const wh = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
+  async (req: Request, res: Response) => {
+    const secret = process.env.CLERK_WEBHOOK_SECRET;
+    if (!secret) throw new Error("Missing CLERK_WEBHOOK_SECRET");
+
+    const wh = new Webhook(secret);
 
     // Verify the webhook
-    let evt;
+    let evt: any;
     try {
       evt = wh.verify(req.body, {
-        "svix-id": req.headers["svix-id"],
-        "svix-timestamp": req.headers["svix-timestamp"],
-        "svix-signature": req.headers["svix-signature"],
+        "svix-id": req.headers["svix-id"] as string,
+        "svix-timestamp": req.headers["svix-timestamp"] as string,
+        "svix-signature": req.headers["svix-signature"] as string,
       });
     } catch (error) {
-      return res.status(400).json({ error: `Invalid signature: ${error}` });
+      res.status(400).json({ error: `Invalid signature: ${error}` });
+      return;
     }
 
     // New user created or updated
-    if (evt.type == "user.created") {
+    if (evt.type === "user.created") {
       await prisma.user.upsert({
         where: { clerkId: evt.data.id },
         create: {

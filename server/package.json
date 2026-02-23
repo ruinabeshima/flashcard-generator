@@ -2,12 +2,13 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "nodemon --exec tsx server.ts server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
     "lint": "eslint .",
-    "format": "prettier . --write",
-    "start": "node server.js"
+    "format": "prettier . --write"
   },
   "keywords": [],
   "author": "",
@@ -24,10 +25,18 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.56.0",
+    "@typescript-eslint/parser": "^8.56.0",
     "eslint": "^10.0.0",
     "globals": "^17.3.0",
     "nodemon": "^3.1.11",
     "prettier": "^3.8.1",
-    "prisma": "^7.4.1"
+    "prisma": "^7.4.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }
