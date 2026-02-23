@@ -30,6 +30,14 @@ jobs:
         working-directory: ./server
         run: pnpm install
 
+      - name: Type-check frontend
+        working-directory: ./client
+        run: pnpm run typecheck
+
+      - name: Type-check backend
+        working-directory: ./server
+        run: pnpm run typecheck
+
       - name: Run frontend linter
         working-directory: ./client
         run: pnpm run lint

@@ -4,6 +4,7 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
+    "typecheck": "tsc --noEmit",
     "dev": "nodemon --exec tsx server.ts server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
