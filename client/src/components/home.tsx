@@ -19,7 +19,7 @@ export default function Home() {
     <div className="flex min-h-screen flex-col gap-5">
       <div
         style={{ backgroundImage: `url(${background})` }}
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat brightness-80 -z-10"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat brightness-80 -z-10"
       />
 
       <NavBar />
