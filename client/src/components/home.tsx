@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import NavBar from "./navbar";
 
 export default function Home() {
   const { isSignedIn } = useAuth();
@@ -15,20 +16,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col gap-5">
-      <nav className="flex justify-between px-5 py-3 w-full">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">AIFlashcards</h1>
-        </div>
-        <div className="flex gap-3">
-          <Link to="/login">
-            <button>Login</button>
-          </Link>
-
-          <Link to="/register">
-            <button>Get Started</button>
-          </Link>
-        </div>
-      </nav>
+      <NavBar />
       <main>
         <section className="flex flex-col items-center justify-center text-center mt-20 px-15 gap-10">
           <h2 className="text-7xl font-bold">
