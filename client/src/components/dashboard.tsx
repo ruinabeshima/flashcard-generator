@@ -1,10 +1,9 @@
-import { UserButton } from "@clerk/clerk-react";
+import NavBar from "./navbar";
 
 export default function Dashboard() {
   return (
-    <>
-      <h1 className="text-5xl">Dashboard</h1>
-      <UserButton />
-    </>
+    <div className="flex min-h-screen flex-col gap-5 w-full">
+      <NavBar />
+    </div>
   );
 }
