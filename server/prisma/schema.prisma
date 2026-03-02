@@ -42,7 +42,7 @@ model Application {
   jobUrl String? 
 
   userId String 
-  user User @relation(fields: [userId], references:[id])
+  user User @relation(fields: [userId], references:[clerkId])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
