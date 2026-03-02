@@ -17,17 +17,11 @@ interface ClerkWebhookEvent {
   };
 }
 
-app.use(express.json());
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
   }),
 );
-app.use(clerkMiddleware());
-
-app.get("/", (req: Request, res: Response) => {
-  res.json({ message: "Hello World" });
-});
 
 app.post(
   "/webhooks/clerk",
@@ -84,6 +78,13 @@ app.post(
     res.json({ received: true });
   },
 );
+
+app.use(express.json());
+app.use(clerkMiddleware());
+
+app.get("/", (req: Request, res: Response) => {
+  res.json({ message: "Hello World" });
+});
 
 const port = process.env.PORT || 8080;
 
