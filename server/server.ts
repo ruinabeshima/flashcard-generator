@@ -51,7 +51,7 @@ app.post(
     }
 
     // New user created or updated
-    if (evt.type === "user.created") {
+    if (evt.type === "user.created" || evt.type === "user.updated") {
       await prisma.user.upsert({
         where: { clerkId: evt.data.id },
         create: {
@@ -68,6 +68,10 @@ app.post(
 
     // User deleted
     if (evt.type == "user.deleted") {
+      if (!evt.data.id) {
+        res.status(400).json({ error: "Missing user ID" });
+      }
+
       await prisma.user.delete({
         where: {
           clerkId: evt.data.id,
