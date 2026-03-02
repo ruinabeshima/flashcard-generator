@@ -17,6 +17,7 @@ interface ClerkWebhookEvent {
   };
 }
 
+app.use(express.json());
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
@@ -51,7 +52,7 @@ app.post(
     }
 
     // New user created or updated
-    if (evt.type === "user.created") {
+    if (evt.type === "user.created" || evt.type === "user.updated") {
       await prisma.user.upsert({
         where: { clerkId: evt.data.id },
         create: {
@@ -68,6 +69,11 @@ app.post(
 
     // User deleted
     if (evt.type == "user.deleted") {
+      if (!evt.data.id) {
+        res.status(400).json({ error: "Missing user ID" });
+        return;
+      }
+
       await prisma.user.delete({
         where: {
           clerkId: evt.data.id,
@@ -79,7 +85,6 @@ app.post(
   },
 );
 
-app.use(express.json());
 const port = process.env.PORT || 8080;
 
 app.listen(port, () => {
