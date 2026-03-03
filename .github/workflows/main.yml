@@ -89,7 +89,7 @@ jobs:
 
       - name: Run Prisma migrations
         working-directory: ./server
-        run: pnpm exec prisma migrate resolve --rolled-back 20260302074502_application_table_init
+        run: pnpm exec prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
