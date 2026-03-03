@@ -41,9 +41,12 @@ export default function Dashboard() {
         const data: Application[] = await response.json();
         console.log(data);
         setApplications(data);
-      } catch (error: any) {
-        console.error(error.message);
-        setError(error.message);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError("An unknown error occured");
+        }
       }
     };
 

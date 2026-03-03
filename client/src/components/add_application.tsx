@@ -43,8 +43,12 @@ export default function AddApplication() {
       }
 
       navigate("/dashboard");
-    } catch (error: any) {
-      setError(`Error: ${error.message}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(`Error: ${error.message}`);
+      } else {
+        setError("An unknown error occured");
+      }
     }
   };
 
