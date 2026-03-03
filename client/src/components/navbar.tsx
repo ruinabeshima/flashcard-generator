@@ -8,7 +8,9 @@ export default function NavBar() {
   return (
     <nav className="w-full flex justify-between py-5 px-7">
       <section className="flex justify-center items-center">
-        <h1 className="text-4xl font-bold">AIFlashcards</h1>
+        <Link to="/dashboard">
+          <h1 className="text-4xl font-bold">AIFlashcards</h1>
+        </Link>
       </section>
 
       {isSignedIn ? (
