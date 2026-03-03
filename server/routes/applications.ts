@@ -20,7 +20,7 @@ applicationRouter.get(
       const applications = await prisma.application.findMany({
         where: { userId: userId },
         select: {
-          id: true, 
+          id: true,
           role: true,
           company: true,
           status: true,
@@ -34,7 +34,7 @@ applicationRouter.get(
       });
 
       res.json(applications);
-    } catch (error) {
+    } catch {
       res.status(500).json({ error: "Internal server error" });
     }
   },
@@ -66,7 +66,7 @@ applicationRouter.post(
       });
 
       res.status(201).json(application);
-    } catch (error) {
+    } catch {
       res.status(500).json({ error: "Internal server error" });
     }
   },

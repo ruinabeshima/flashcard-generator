@@ -1,5 +1,3 @@
-import { AuthObject } from "@clerk/express";
-
 declare global {
   namespace Express {
     interface Request {
@@ -7,7 +5,7 @@ declare global {
         userId?: string;
         sessionId?: string;
         orgId?: string;
-        [key: string]: any;
+        [key: string]: unknown;
       };
     }
   }
