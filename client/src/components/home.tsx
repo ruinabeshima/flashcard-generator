@@ -13,7 +13,7 @@ export default function Home() {
     if (isSignedIn) {
       navigate("/dashboard");
     }
-  }, [isSignedIn]);
+  }, [isSignedIn, navigate]);
 
   return (
     <div className="flex min-h-screen flex-col gap-5">

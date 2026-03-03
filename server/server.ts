@@ -1,21 +1,12 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { clerkMiddleware } from "@clerk/express";
-import { prisma } from "./lib/prisma";
-import { Webhook } from "svix";
+import { webhookRouter } from "./routes/webhooks";
+import { applicationRouter } from "./routes/applications";
 
 dotenv.config();
 const app = express();
-
-interface ClerkWebhookEvent {
-  type: string;
-  data: {
-    id: string;
-    email_addresses: { email_address: string }[];
-    image_url: string;
-  };
-}
 
 app.use(
   cors({
@@ -23,71 +14,12 @@ app.use(
   }),
 );
 
-app.post(
-  "/webhooks/clerk",
-  express.raw({ type: "application/json" }),
-  async (req: Request, res: Response) => {
-    const secret = process.env.CLERK_WEBHOOK_SECRET;
-    if (!secret) throw new Error("Missing CLERK_WEBHOOK_SECRET");
-
-    const wh = new Webhook(secret);
-
-    // Verify the webhook
-    let evt: ClerkWebhookEvent;
-    try {
-      evt = wh.verify(req.body, {
-        "svix-id": req.headers["svix-id"] as string,
-        "svix-timestamp": req.headers["svix-timestamp"] as string,
-        "svix-signature": req.headers["svix-signature"] as string,
-      }) as ClerkWebhookEvent;
-    } catch (error) {
-      res.status(400).json({ error: `Invalid signature: ${error}` });
-      return;
-    }
-
-    // New user created or updated
-    if (evt.type === "user.created" || evt.type === "user.updated") {
-      await prisma.user.upsert({
-        where: { clerkId: evt.data.id },
-        create: {
-          clerkId: evt.data.id,
-          email: evt.data.email_addresses[0].email_address,
-          imageUrl: evt.data.image_url,
-        },
-        update: {
-          email: evt.data.email_addresses[0].email_address,
-          imageUrl: evt.data.image_url,
-        },
-      });
-    }
-
-    // User deleted
-    if (evt.type == "user.deleted") {
-      if (!evt.data.id) {
-        res.status(400).json({ error: "Missing user ID" });
-        return;
-      }
-
-      await prisma.user.delete({
-        where: {
-          clerkId: evt.data.id,
-        },
-      });
-    }
-
-    res.json({ received: true });
-  },
-);
-
+app.use("/webhooks", webhookRouter);
 app.use(express.json());
 app.use(clerkMiddleware());
-
-app.get("/", (req: Request, res: Response) => {
-  res.json({ message: "Hello World" });
-});
+app.use("/applications", applicationRouter);
 
 const port = process.env.PORT || 8080;
-
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

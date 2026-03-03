@@ -4,6 +4,7 @@ import Home from "./components/home";
 import Login from "./components/login";
 import Register from "./components/register";
 import ProtectedRoute from "./protected_routes";
+import AddApplication from "./components/add_application";
 
 const routes = (
   <Routes>
@@ -15,6 +16,14 @@ const routes = (
       element={
         <ProtectedRoute>
           <Dashboard />
+        </ProtectedRoute>
+      }
+    ></Route>
+    <Route
+      path="/applications/add"
+      element={
+        <ProtectedRoute>
+          <AddApplication />
         </ProtectedRoute>
       }
     ></Route>

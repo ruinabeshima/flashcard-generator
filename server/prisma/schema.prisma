@@ -20,4 +20,32 @@ model User {
   imageUrl String? 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+
+  applications Application[]
+}
+
+enum Status {
+  APPLIED
+  INTERVIEWING
+  OFFER
+  REJECTED
+}
+
+model Application {
+  id String @id @default(uuid())
+  role String 
+  company String 
+  status Status @default(APPLIED)
+  appliedDate DateTime @default(now())
+
+  notes String?
+  jobUrl String? 
+
+  userId String 
+  user User @relation(fields: [userId], references:[clerkId])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
