@@ -1,5 +1,5 @@
 import { SignIn } from "@clerk/clerk-react";
-import background from "../background.png";
+import background from "../background.jpg";
 import FormNavBar from "./form_navbar";
 
 export default function Login() {
