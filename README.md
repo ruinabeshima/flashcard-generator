@@ -28,6 +28,7 @@ Taken from: https://www.freepik.com/free-vector/abstract-elegant-geometric-shape
 | GET    | `/applications`     | Paginated list of all job applications made by the user                           |
 | POST   | `/applications/add` | Create a new job application                                                      |
 | POST   | `webhooks/clerk`    | Receive Clerk webhook to update User table in database with corresponding ClerkId |
+| GET    | `auth/status`       | Receive Boolean value if the user has onboarding complete or not                  |
 
 ## Database Models
 
