@@ -11,7 +11,7 @@ export default function Login() {
       />
 
       <FormNavBar />
-      <SignIn signUpUrl="/register" forceRedirectUrl="/dashboard" />
+      <SignIn signUpUrl="/register" forceRedirectUrl="/onboarding" />
     </div>
   );
 }

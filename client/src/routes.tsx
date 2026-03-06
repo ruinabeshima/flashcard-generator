@@ -5,12 +5,14 @@ import Login from "./components/login";
 import Register from "./components/register";
 import ProtectedRoute from "./protected_routes";
 import AddApplication from "./components/add_application";
+import Onboarding from "./components/onboarding";
 
 const routes = (
   <Routes>
     <Route path="/" element={<Home />}></Route>
     <Route path="/register" element={<Register />}></Route>
     <Route path="/login" element={<Login />}></Route>
+    <Route path="/onboarding" element={<Onboarding />}></Route>
     <Route
       path="/dashboard"
       element={
