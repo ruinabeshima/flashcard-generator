@@ -49,3 +49,8 @@ export type User = Prisma.UserModel
  * 
  */
 export type Application = Prisma.ApplicationModel
+/**
+ * Model Resume
+ * 
+ */
+export type Resume = Prisma.ResumeModel

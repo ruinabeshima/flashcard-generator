@@ -22,6 +22,7 @@ model User {
   updatedAt DateTime @default(now())
 
   applications Application[]
+  resume Resume?
 }
 
 enum Status {
@@ -48,4 +49,17 @@ model Application {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+model Resume {
+  id String @id @default(uuid())
+  key String 
+  
+  userId String 
+  user User @relation(fields: [userId], references:[clerkId])
+
+  uploadedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId])
 }
