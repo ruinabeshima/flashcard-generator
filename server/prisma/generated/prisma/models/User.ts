@@ -31,6 +31,7 @@ export type UserMinAggregateOutputType = {
   imageUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  onboarding_complete: boolean | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -40,6 +41,7 @@ export type UserMaxAggregateOutputType = {
   imageUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  onboarding_complete: boolean | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -49,6 +51,7 @@ export type UserCountAggregateOutputType = {
   imageUrl: number
   createdAt: number
   updatedAt: number
+  onboarding_complete: number
   _all: number
 }
 
@@ -60,6 +63,7 @@ export type UserMinAggregateInputType = {
   imageUrl?: true
   createdAt?: true
   updatedAt?: true
+  onboarding_complete?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -69,6 +73,7 @@ export type UserMaxAggregateInputType = {
   imageUrl?: true
   createdAt?: true
   updatedAt?: true
+  onboarding_complete?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -78,6 +83,7 @@ export type UserCountAggregateInputType = {
   imageUrl?: true
   createdAt?: true
   updatedAt?: true
+  onboarding_complete?: true
   _all?: true
 }
 
@@ -160,6 +166,7 @@ export type UserGroupByOutputType = {
   imageUrl: string | null
   createdAt: Date
   updatedAt: Date
+  onboarding_complete: boolean
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -190,6 +197,7 @@ export type UserWhereInput = {
   imageUrl?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  onboarding_complete?: Prisma.BoolFilter<"User"> | boolean
   applications?: Prisma.ApplicationListRelationFilter
   resume?: Prisma.XOR<Prisma.ResumeNullableScalarRelationFilter, Prisma.ResumeWhereInput> | null
 }
@@ -201,6 +209,7 @@ export type UserOrderByWithRelationInput = {
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  onboarding_complete?: Prisma.SortOrder
   applications?: Prisma.ApplicationOrderByRelationAggregateInput
   resume?: Prisma.ResumeOrderByWithRelationInput
 }
@@ -215,6 +224,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   imageUrl?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  onboarding_complete?: Prisma.BoolFilter<"User"> | boolean
   applications?: Prisma.ApplicationListRelationFilter
   resume?: Prisma.XOR<Prisma.ResumeNullableScalarRelationFilter, Prisma.ResumeWhereInput> | null
 }, "id" | "clerkId" | "email">
@@ -226,6 +236,7 @@ export type UserOrderByWithAggregationInput = {
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  onboarding_complete?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -241,6 +252,7 @@ export type UserScalarWhereWithAggregatesInput = {
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  onboarding_complete?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
 }
 
 export type UserCreateInput = {
@@ -250,6 +262,7 @@ export type UserCreateInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  onboarding_complete?: boolean
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
   resume?: Prisma.ResumeCreateNestedOneWithoutUserInput
 }
@@ -261,6 +274,7 @@ export type UserUncheckedCreateInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  onboarding_complete?: boolean
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
   resume?: Prisma.ResumeUncheckedCreateNestedOneWithoutUserInput
 }
@@ -272,6 +286,7 @@ export type UserUpdateInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  onboarding_complete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
   resume?: Prisma.ResumeUpdateOneWithoutUserNestedInput
 }
@@ -283,6 +298,7 @@ export type UserUncheckedUpdateInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  onboarding_complete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
   resume?: Prisma.ResumeUncheckedUpdateOneWithoutUserNestedInput
 }
@@ -294,6 +310,7 @@ export type UserCreateManyInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  onboarding_complete?: boolean
 }
 
 export type UserUpdateManyMutationInput = {
@@ -303,6 +320,7 @@ export type UserUpdateManyMutationInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  onboarding_complete?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -312,6 +330,7 @@ export type UserUncheckedUpdateManyInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  onboarding_complete?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -321,6 +340,7 @@ export type UserCountOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  onboarding_complete?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -330,6 +350,7 @@ export type UserMaxOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  onboarding_complete?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -339,6 +360,7 @@ export type UserMinOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  onboarding_complete?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -356,6 +378,10 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type UserCreateNestedOneWithoutApplicationsInput = {
@@ -393,6 +419,7 @@ export type UserCreateWithoutApplicationsInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  onboarding_complete?: boolean
   resume?: Prisma.ResumeCreateNestedOneWithoutUserInput
 }
 
@@ -403,6 +430,7 @@ export type UserUncheckedCreateWithoutApplicationsInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  onboarding_complete?: boolean
   resume?: Prisma.ResumeUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -429,6 +457,7 @@ export type UserUpdateWithoutApplicationsInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  onboarding_complete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   resume?: Prisma.ResumeUpdateOneWithoutUserNestedInput
 }
 
@@ -439,6 +468,7 @@ export type UserUncheckedUpdateWithoutApplicationsInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  onboarding_complete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   resume?: Prisma.ResumeUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -449,6 +479,7 @@ export type UserCreateWithoutResumeInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  onboarding_complete?: boolean
   applications?: Prisma.ApplicationCreateNestedManyWithoutUserInput
 }
 
@@ -459,6 +490,7 @@ export type UserUncheckedCreateWithoutResumeInput = {
   imageUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  onboarding_complete?: boolean
   applications?: Prisma.ApplicationUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -485,6 +517,7 @@ export type UserUpdateWithoutResumeInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  onboarding_complete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   applications?: Prisma.ApplicationUpdateManyWithoutUserNestedInput
 }
 
@@ -495,6 +528,7 @@ export type UserUncheckedUpdateWithoutResumeInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  onboarding_complete?: Prisma.BoolFieldUpdateOperationsInput | boolean
   applications?: Prisma.ApplicationUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -536,6 +570,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   imageUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  onboarding_complete?: boolean
   applications?: boolean | Prisma.User$applicationsArgs<ExtArgs>
   resume?: boolean | Prisma.User$resumeArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -548,6 +583,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   imageUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  onboarding_complete?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -557,6 +593,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   imageUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  onboarding_complete?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -566,9 +603,10 @@ export type UserSelectScalar = {
   imageUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  onboarding_complete?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkId" | "email" | "imageUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "clerkId" | "email" | "imageUrl" | "createdAt" | "updatedAt" | "onboarding_complete", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   applications?: boolean | Prisma.User$applicationsArgs<ExtArgs>
   resume?: boolean | Prisma.User$resumeArgs<ExtArgs>
@@ -590,6 +628,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     imageUrl: string | null
     createdAt: Date
     updatedAt: Date
+    onboarding_complete: boolean
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1021,6 +1060,7 @@ export interface UserFieldRefs {
   readonly imageUrl: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly onboarding_complete: Prisma.FieldRef<"User", 'Boolean'>
 }
     
 
