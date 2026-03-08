@@ -58,7 +58,7 @@ applicationRouter.post(
           role: role,
           company: company,
           status: status,
-          appliedDate: new Date(appliedDate),
+          appliedDate: appliedDate ? new Date(appliedDate) : undefined,
           notes: notes ?? null,
           jobUrl: jobUrl ?? null,
           userId: userId,
