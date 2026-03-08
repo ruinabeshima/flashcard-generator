@@ -73,7 +73,7 @@ export default function UserResume() {
       ) : (
         <>
           <iframe src={url} className="w-4/5 h-screen" />
-          <ResumeUpload />
+          <ResumeUpload isUpdate={true} />
         </>
       )}
     </div>

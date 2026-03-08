@@ -3,6 +3,7 @@ import { useAuth } from "@clerk/clerk-react";
 
 type ResumeUploadProps = {
   isOnboarding?: boolean;
+  isUpdate?: boolean;
   onSuccess?: () => void;
 };
 
@@ -67,6 +68,8 @@ export default function ResumeUpload(props: ResumeUploadProps) {
         <div className="flex flex-col items-center gap-2 text-center">
           {props.isOnboarding ? (
             <h2 className="text-2xl font-bold">1. Upload Your Resume</h2>
+          ) : props.isUpdate ? (
+            <h2 className="text-2xl font-bold">Update Your Resume</h2>
           ) : (
             <h2 className="text-2xl font-bold">Upload Your Resume</h2>
           )}
