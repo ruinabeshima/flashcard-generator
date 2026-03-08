@@ -34,7 +34,16 @@ resumeRouter.post(
         }),
       );
 
-      res.status(201).json({ message: "File sent successfully" });
+      const resume = await prisma.resume.create({
+        data: {
+          key: key!,
+          userId: userId!,
+        },
+      });
+
+      res
+        .status(201)
+        .json({ id: resume.id, message: "File sent successfully" });
     } catch {
       res.status(500).json({ error: "Failed to upload file" });
     }
