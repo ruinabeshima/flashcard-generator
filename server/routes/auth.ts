@@ -13,7 +13,7 @@ authRouter.get(
     try {
       const data = await prisma.user.findFirst({
         where: {
-          id: userId,
+          clerkId: userId,
         },
         select: {
           onboarding_complete: true,
