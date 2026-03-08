@@ -3,6 +3,7 @@ import { useAuth } from "@clerk/clerk-react";
 
 type ResumeUploadProps = {
   isOnboarding?: boolean;
+  onSuccess?: () => void;
 };
 
 export default function ResumeUpload(props: ResumeUploadProps) {
@@ -31,6 +32,8 @@ export default function ResumeUpload(props: ResumeUploadProps) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to upload file");
       }
+
+      props.onSuccess?.();
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
