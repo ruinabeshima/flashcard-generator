@@ -4,6 +4,7 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { r2 } from "../lib/r2";
 import { upload } from "../lib/multer";
 import { requireAuth } from "@clerk/express";
+import { v4 as uuidv4 } from "uuid";
 
 const resumeRouter = express.Router();
 
@@ -20,11 +21,14 @@ resumeRouter.post(
       return;
     }
 
+    const ext = file.originalname.split(".").pop();
+    const key = `uploads/${uuidv4()}.${ext}`;
+
     try {
       await r2.send(
         new PutObjectCommand({
-          Bucket: process.env.R2_BUCKET_NAME,
-          Key: file.originalname,
+          Bucket: process.env.R2_BUCKET_NAME!,
+          Key: key,
           Body: file.buffer,
           ContentType: file.mimetype,
         }),
