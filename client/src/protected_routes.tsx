@@ -11,4 +11,13 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return children;
 };
 
-export default ProtectedRoute;
+const AlreadySignedIn = ({ children }: { children: React.ReactNode }) => {
+  const { isSignedIn, isLoaded } = useAuth();
+
+  if (!isLoaded) return null;
+  if (isSignedIn) return <Navigate to="/dashboard" />;
+
+  return children;
+};
+
+export { ProtectedRoute, AlreadySignedIn };

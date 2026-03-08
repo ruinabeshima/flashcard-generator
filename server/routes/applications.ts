@@ -13,7 +13,7 @@ applicationRouter.get(
     const pageSize = parseInt(req.query.pageSize as string) || 10;
 
     if (!userId) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     try {
@@ -35,7 +35,7 @@ applicationRouter.get(
 
       res.json(applications);
     } catch {
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ message: "Internal server error" });
     }
   },
 );
@@ -47,7 +47,7 @@ applicationRouter.post(
     const { userId } = req.auth;
 
     if (!userId) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     const { role, company, status, appliedDate, notes, jobUrl } = req.body;
@@ -58,7 +58,7 @@ applicationRouter.post(
           role: role,
           company: company,
           status: status,
-          appliedDate: new Date(appliedDate),
+          appliedDate: appliedDate ? new Date(appliedDate) : undefined,
           notes: notes ?? null,
           jobUrl: jobUrl ?? null,
           userId: userId,
@@ -67,7 +67,7 @@ applicationRouter.post(
 
       res.status(201).json(application);
     } catch {
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ message: "Internal server error" });
     }
   },
 );

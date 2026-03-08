@@ -14,13 +14,20 @@ export default function Navbar() {
       </section>
 
       {isSignedIn ? (
-        <UserButton
-          appearance={{
-            elements: {
-              avatarBox: "!w-12 !h-12",
-            },
-          }}
-        />
+        <div className="flex gap-7">
+          <Link to="/your-resume" className="flex justify-center items-center">
+            <button className="btn btn-active btn-secondary">
+              Your Resume
+            </button>
+          </Link>
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: "!w-12 !h-12",
+              },
+            }}
+          />
+        </div>
       ) : (
         <div className="flex gap-5">
           <Link to="/register" className="flex justify-center items-center">

@@ -11,7 +11,7 @@ export default function Register() {
       />
 
       <AuthNavbar />
-      <SignUp signInUrl="/login" forceRedirectUrl="/onboarding" />
+      <SignUp signInUrl="/login" fallbackRedirectUrl="/onboarding" />
     </div>
   );
 }

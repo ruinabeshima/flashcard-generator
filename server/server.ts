@@ -5,6 +5,7 @@ import { clerkMiddleware } from "@clerk/express";
 import { webhookRouter } from "./routes/webhooks";
 import { applicationRouter } from "./routes/applications";
 import { authRouter } from "./routes/auth";
+import { resumeRouter } from "./routes/resumes";
 
 dotenv.config();
 const app = express();
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(clerkMiddleware());
 app.use("/applications", applicationRouter);
 app.use("/auth", authRouter);
+app.use("/resumes", resumeRouter);
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {

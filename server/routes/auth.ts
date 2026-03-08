@@ -24,7 +24,7 @@ authRouter.get(
         .status(200)
         .json({ onboardingComplete: data?.onboarding_complete });
     } catch {
-      return res.status(500).json({ error: "Failed to fetch status" });
+      return res.status(500).json({ message: "Failed to fetch status" });
     }
   },
 );

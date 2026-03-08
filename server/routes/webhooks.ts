@@ -30,7 +30,7 @@ webhookRouter.post(
         "svix-signature": req.headers["svix-signature"] as string,
       }) as ClerkWebhookEvent;
     } catch (error) {
-      res.status(400).json({ error: `Invalid signature: ${error}` });
+      res.status(400).json({ message: `Invalid signature: ${error}` });
       return;
     }
 
@@ -53,7 +53,7 @@ webhookRouter.post(
     // User deleted
     if (evt.type == "user.deleted") {
       if (!evt.data.id) {
-        res.status(400).json({ error: "Missing user ID" });
+        res.status(400).json({ message: "Missing user ID" });
         return;
       }
 

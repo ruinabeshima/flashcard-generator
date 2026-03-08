@@ -4,6 +4,7 @@ import { useAuth } from "@clerk/clerk-react";
 
 type ApplicationFormProps = {
   isOnboarding?: boolean;
+  onSkip?: () => void;
 };
 
 export default function ApplicationForm(props: ApplicationFormProps) {
@@ -17,11 +18,14 @@ export default function ApplicationForm(props: ApplicationFormProps) {
   const [notes, setNotes] = useState("");
   const [link, setLink] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     const token = await getToken();
     const appUrl = import.meta.env.VITE_SERVER_URL;
+
+    setLoading(true);
 
     try {
       const response = await fetch(`${appUrl}/applications/add`, {
@@ -52,6 +56,8 @@ export default function ApplicationForm(props: ApplicationFormProps) {
       } else {
         setError("An unknown error occured");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,6 +74,7 @@ export default function ApplicationForm(props: ApplicationFormProps) {
           <fieldset className="fieldset">
             <legend className="fieldset-legend">Role</legend>
             <input
+              required
               type="text"
               className="input w-full"
               placeholder="e.g. Sales Assistant"
@@ -76,11 +83,13 @@ export default function ApplicationForm(props: ApplicationFormProps) {
                 setRole(event.target.value);
               }}
             />
+            <p className="label">Required</p>
           </fieldset>
 
           <fieldset className="fieldset">
             <legend className="fieldset-legend">Company</legend>
             <input
+              required
               type="text"
               className="input w-full"
               placeholder="e.g. Acme Company Inc"
@@ -89,6 +98,7 @@ export default function ApplicationForm(props: ApplicationFormProps) {
                 setCompany(event.target.value);
               }}
             />
+            <p className="label">Required</p>
           </fieldset>
 
           <fieldset className="fieldset">
@@ -103,6 +113,7 @@ export default function ApplicationForm(props: ApplicationFormProps) {
               <option>Offer</option>
               <option>Rejected</option>
             </select>
+            <p className="label">Required</p>
           </fieldset>
 
           <fieldset className="fieldset">
@@ -167,14 +178,19 @@ export default function ApplicationForm(props: ApplicationFormProps) {
 
           {props.isOnboarding ? (
             <section className="flex gap-2">
-              <button className="btn btn-neutral">Skip</button>
+              <button className="btn btn-neutral" onClick={props.onSkip}>
+                Skip
+              </button>
               <button className="btn btn-primary" type="submit">
                 Save
               </button>
             </section>
           ) : (
-            <button className="btn btn-primary w-full" type="submit">
-              Save Application
+            <button
+              className={`btn ${loading ? "btn-disabled" : "btn-primary"} w-full`}
+              type="submit"
+            >
+              {loading ? "Loading..." : "Save Application"}
             </button>
           )}
 

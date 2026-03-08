@@ -1,11 +1,51 @@
 import { useState } from "react";
+import { useAuth } from "@clerk/clerk-react";
 
 type ResumeUploadProps = {
   isOnboarding?: boolean;
+  isUpdate?: boolean;
+  onSuccess?: () => void;
 };
 
 export default function ResumeUpload(props: ResumeUploadProps) {
   const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState<null | string>();
+  const [loading, setLoading] = useState(false);
+  const { getToken } = useAuth();
+
+  const uploadFile = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const appUrl = import.meta.env.VITE_SERVER_URL;
+
+    try {
+      const token = await getToken();
+      const formData = new FormData();
+      formData.append("file", file!);
+
+      const response = await fetch(`${appUrl}/resumes/upload`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to upload file");
+      }
+
+      props.onSuccess?.();
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unknown error occured");
+      }
+    } finally {
+      setLoading(true);
+    }
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] ?? null;
@@ -21,11 +61,16 @@ export default function ResumeUpload(props: ResumeUploadProps) {
 
   return (
     <section className="w-full p-5 flex flex-col justify-center items-center">
-      <div className="w-2/5 flex flex-col gap-5 border border-dashed p-5 rounded-xl">
+      <form
+        className="w-2/5 flex flex-col gap-5 border border-dashed p-5 rounded-xl"
+        onSubmit={uploadFile}
+      >
         <div className="flex flex-col items-center gap-2 text-center">
           {props.isOnboarding ? (
             <h2 className="text-2xl font-bold">1. Upload Your Resume</h2>
-          ): (
+          ) : props.isUpdate ? (
+            <h2 className="text-2xl font-bold">Update Your Resume</h2>
+          ) : (
             <h2 className="text-2xl font-bold">Upload Your Resume</h2>
           )}
           <p className="text-sm text-gray-500">Supported formats: PDF Only</p>
@@ -92,17 +137,15 @@ export default function ResumeUpload(props: ResumeUploadProps) {
         )}
 
         <button
-          className="btn btn-primary"
+          className={`btn ${loading ? "btn-disabled" : "btn-primary"}`}
           disabled={!file}
-          onClick={() => {
-            if (!file) return;
-            const formData = new FormData();
-            formData.append("resume", file);
-          }}
+          type="submit"
         >
-          Upload Resume
+          {loading ? "Loading..." : "Upload Resume"}
         </button>
-      </div>
+
+        {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+      </form>
     </section>
   );
 }
