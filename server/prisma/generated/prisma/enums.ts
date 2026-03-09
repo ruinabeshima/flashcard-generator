@@ -11,7 +11,7 @@
 
 export const Status = {
   APPLIED: 'APPLIED',
-  INTERVIEWING: 'INTERVIEWING',
+  INTERVIEW: 'INTERVIEW',
   OFFER: 'OFFER',
   REJECTED: 'REJECTED'
 } as const
