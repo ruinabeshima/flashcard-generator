@@ -1,15 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 
 type ApplicationFormProps = {
   isOnboarding?: boolean;
+  isEdit?: boolean;
+  id?: string;
+  role?: string;
+  company?: string;
+  status?: string;
+  appliedDate?: string;
+  notes?: string | null;
+  jobUrl?: string | null;
   onSkip?: () => void;
 };
 
 export default function ApplicationForm(props: ApplicationFormProps) {
   const { getToken } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleEditApplication = () => {
+      if (!props.isEdit) return;
+
+      setRole(props.role ?? "");
+      setCompany(props.company ?? "");
+      setStatus(props.status ?? "APPLIED");
+      setAppliedDate(props.appliedDate ?? "");
+      setNotes(props.notes ?? "");
+      setLink(props.jobUrl ?? "");
+    };
+
+    handleEditApplication();
+  }, [
+    props.isEdit,
+    props.role,
+    props.company,
+    props.status,
+    props.appliedDate,
+    props.notes,
+    props.jobUrl,
+  ]);
 
   const [role, setRole] = useState("");
   const [company, setCompany] = useState("");
@@ -50,7 +81,7 @@ export default function ApplicationForm(props: ApplicationFormProps) {
 
       navigate("/dashboard");
     } catch (error: unknown) {
-        setError("Error: Could not create application");
+      setError("Error: Could not create application");
     } finally {
       setLoading(false);
     }
@@ -61,6 +92,8 @@ export default function ApplicationForm(props: ApplicationFormProps) {
       <div className="card-body">
         {props.isOnboarding ? (
           <h2 className="card-title">2. Add an Application (Optional)</h2>
+        ) : props.isEdit ? (
+          <h2 className="card-title">Update Application</h2>
         ) : (
           <h2 className="card-title">Add an Application</h2>
         )}

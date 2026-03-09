@@ -1,21 +1,114 @@
 import Navbar from "../components/Navbar";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
+import { useEffect, useState } from "react";
 import ApplicationForm from "../components/ApplicationForm";
+
+interface Application {
+  id: string;
+  role: string;
+  company: string;
+  status: string;
+  appliedDate: string;
+  notes: string | null;
+  jobUrl: string | null;
+}
 
 export default function EditApplication() {
   const { id } = useParams<{ id: string }>();
+  const appUrl = import.meta.env.VITE_SERVER_URL;
+  const [application, setApplication] = useState<Application | null>(null);
+  const [error, setError] = useState<null | string>(null);
+  const [loading, setLoading] = useState(true);
+  const { getToken } = useAuth();
+
+  useEffect(() => {
+    const getIndividualApplication = async () => {
+      try {
+        const token = await getToken();
+        const response = await fetch(`${appUrl}/applications/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to retrieve application");
+        }
+
+        const data = await response.json();
+        setApplication(data);
+      } catch (error: unknown) {
+        setError("Failed to retrieve applications");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getIndividualApplication();
+  }, [getToken, id]);
 
   return (
     <div className="flex flex-col gap-5 min-h-screen w-full items-center">
       <Navbar />
 
-      <section className="relative flex justify-center w-full px-8 py-4">
-        <Link to={`/applications/${id}`} className="absolute left-8 top-0">
-          <button className="btn">← Back</button>
-        </Link>
-        <ApplicationForm />
-      </section>
+      {loading ? (
+        <button className="btn btn-square">
+          <span className="loading loading-spinner"></span>
+        </button>
+      ) : error ? (
+        <div role="alert" className="alert alert-error mb-10 w-4/5">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>{error}</span>
+        </div>
+      ) : !application ? (
+        <div role="alert" className="alert alert-error mb-10 w-4/5">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>Application does not exist</span>
+        </div>
+      ) : (
+        <section className="relative flex justify-center w-full px-8 py-4">
+          <Link to={`/applications/${id}`} className="absolute left-8 top-0">
+            <button className="btn">← Back</button>
+          </Link>
+          <ApplicationForm
+            isEdit={true}
+            id={id}
+            role={application.role}
+            company={application.company}
+            status={application.status}
+            appliedDate={application.appliedDate}
+            notes={application.notes}
+            jobUrl={application.jobUrl}
+          />
+        </section>
+      )}
     </div>
   );
 }

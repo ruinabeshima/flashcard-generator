@@ -22,7 +22,6 @@ export default function ApplicationDetail() {
   const [application, setApplication] = useState<Application | null>(null);
   const [error, setError] = useState<null | string>(null);
   const [loading, setLoading] = useState(true);
-  const [edit, setEdit] = useState(false);
 
   useEffect(() => {
     const getIndividualApplication = async () => {
