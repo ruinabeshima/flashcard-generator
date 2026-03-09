@@ -68,7 +68,7 @@ export default function ApplicationForm(props: ApplicationFormProps) {
     setLoading(true);
 
     try {
-      const response = await fetch(`${appUrl}/applications/add`, {
+      const addResponse = await fetch(`${appUrl}/applications/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,9 +84,37 @@ export default function ApplicationForm(props: ApplicationFormProps) {
         }),
       });
 
-      if (!response.ok) {
+      if (!addResponse.ok) {
         setError("Failed to create item");
         return;
+      }
+
+      const statusResponse = await fetch(`${appUrl}/auth/status`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!statusResponse.ok) {
+        setError("Failed to retreive onboarding data");
+        return;
+      }
+
+      const { onboardingComplete } = await statusResponse.json();
+      if (onboardingComplete) {
+        navigate("/dashboard");
+      } else {
+        const updateStatusResponse = await fetch(`${appUrl}/auth/status`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!updateStatusResponse.ok) {
+          setError("Failed to update onboarding status");
+        }
       }
 
       navigate("/dashboard");
