@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import ResumeUpload from "../components/ResumeUpload";
 
@@ -8,11 +9,12 @@ export default function UserResume() {
   const [loading, setLoading] = useState(true);
   const [url, setUrl] = useState("");
   const { getToken } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const getResumeLink = async () => {
-      const appUrl = import.meta.env.VITE_SERVER_URL;
+    const appUrl = import.meta.env.VITE_SERVER_URL;
 
+    const getResumeLink = async () => {
       try {
         const token = await getToken();
         const response = await fetch(`${appUrl}/resumes`, {
@@ -37,6 +39,33 @@ export default function UserResume() {
       }
     };
 
+    const checkOnboardingStatus = async () => {
+      try {
+        const token = await getToken();
+        const response = await fetch(`${appUrl}/auth/status`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          setError("Failed to get onboarding status");
+          return;
+        }
+
+        const data = await response.json();
+        if (data.onboardingComplete != true) {
+          navigate("/onboarding");
+        }
+      } catch {
+        setError("Failed to get onboarding status");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkOnboardingStatus();
     getResumeLink();
   }, [getToken]);
 

@@ -48,6 +48,33 @@ export default function ApplicationDetail() {
       }
     };
 
+    const checkOnboardingStatus = async () => {
+      try {
+        const token = await getToken();
+        const response = await fetch(`${appUrl}/auth/status`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          setError("Failed to get onboarding status");
+          return;
+        }
+
+        const data = await response.json();
+        if (data.onboardingComplete != true) {
+          navigate("/onboarding");
+        }
+      } catch {
+        setError("Failed to get onboarding status");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkOnboardingStatus();
     getIndividualApplication();
   }, [getToken, id]);
 

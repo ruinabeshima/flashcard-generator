@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ApplicationForm from "../components/ApplicationForm";
 
 interface Application {
@@ -21,6 +22,7 @@ export default function EditApplication() {
   const [application, setApplication] = useState<Application | null>(null);
   const [error, setError] = useState<null | string>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate()
   const { getToken } = useAuth();
 
   useEffect(() => {
@@ -48,6 +50,33 @@ export default function EditApplication() {
       }
     };
 
+    const checkOnboardingStatus = async () => {
+      try {
+        const token = await getToken();
+        const response = await fetch(`${appUrl}/auth/status`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          setError("Failed to get onboarding status");
+          return;
+        }
+
+        const data = await response.json();
+        if (data.onboardingComplete != true) {
+          navigate("/onboarding");
+        }
+      } catch {
+        setError("Failed to get onboarding status");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkOnboardingStatus();
     getIndividualApplication();
   }, [getToken, id]);
 
