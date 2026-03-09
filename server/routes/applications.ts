@@ -75,6 +75,33 @@ applicationRouter.get(
   },
 );
 
+applicationRouter.delete(
+  "/:id",
+  requireAuth(),
+  async (req: Request<{ id: string }>, res: Response) => {
+    try {
+      const { userId } = req.auth;
+      const { id } = req.params;
+
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      await prisma.application.delete({
+        where: {
+          id: id,
+        },
+      });
+
+      return res
+        .status(204)
+        .json({ message: "Application successfully deleted" });
+    } catch {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+);
+
 applicationRouter.post(
   "/add",
   requireAuth(),

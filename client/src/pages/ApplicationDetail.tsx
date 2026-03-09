@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 interface Application {
@@ -15,6 +16,7 @@ interface Application {
 
 export default function ApplicationDetail() {
   const appUrl = import.meta.env.VITE_SERVER_URL;
+  const navigate = useNavigate();
   const { getToken } = useAuth();
   const { id } = useParams<{ id: string }>();
   const [application, setApplication] = useState<Application | null>(null);
@@ -47,6 +49,31 @@ export default function ApplicationDetail() {
 
     getIndividualApplication();
   }, [getToken, id]);
+
+  const handleApplicationDelete = async () => {
+    setLoading(true);
+
+    try {
+      const token = await getToken();
+      const response = await fetch(`${appUrl}/applications/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        setError("Failed to delete application");
+        return;
+      }
+
+      navigate("/dashboard");
+    } catch {
+      setError("Failed to delete application");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-5 min-h-screen w-full items-center">
@@ -103,7 +130,9 @@ export default function ApplicationDetail() {
             <div className="card-body gap-3">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <h2 className="card-title text-lg wrap-break-word">{application.role}</h2>
+                  <h2 className="card-title text-lg wrap-break-word">
+                    {application.role}
+                  </h2>
                   <p className="text-base-content/70 font-medium truncate">
                     {application.company}
                   </p>
@@ -156,6 +185,16 @@ export default function ApplicationDetail() {
                   </a>
                 </div>
               )}
+
+              <div className="flex gap-2 justify-end">
+                <button className="btn btn-xs btn-accent">Edit</button>
+                <button
+                  className="btn btn-xs btn-error"
+                  onClick={handleApplicationDelete}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         </>
