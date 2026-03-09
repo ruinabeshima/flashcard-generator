@@ -25,22 +25,16 @@ export default function Onboarding() {
         });
 
         if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(
-            errorData.message || "Failed to retrieve onboarding data",
-          );
+          setError("Failed to retreive onboarding data");
+          return;
         }
 
         const { onboardingComplete } = await response.json();
         if (onboardingComplete) {
           navigate("/dashboard");
         }
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError("An unknown error occured");
-        }
+      } catch {
+        setError("Failed to retreive onboarding data");
       }
     };
 

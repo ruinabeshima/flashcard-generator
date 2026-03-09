@@ -35,12 +35,13 @@ export default function ApplicationDetail() {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to retrieve application");
+          setError("Failed to retrieve application");
+          return; 
         }
 
         const data = await response.json();
         setApplication(data);
-      } catch (error: unknown) {
+      } catch {
         setError("Failed to retrieve applications");
       } finally {
         setLoading(false);

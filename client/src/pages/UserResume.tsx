@@ -23,13 +23,14 @@ export default function UserResume() {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to retrieve resume");
+          setError("Failed to retrieve resume");
+          return;
         }
 
         const { url } = await response.json();
         setUrl(url);
         console.log(url);
-      } catch (error: unknown) {
+      } catch {
         setError("Failed to retreive resume");
       } finally {
         setLoading(false);

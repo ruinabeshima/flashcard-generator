@@ -33,13 +33,14 @@ export default function ApplicationList() {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to retrieve applications");
+          setError("Failed to retrieve applications");
+          return;
         }
 
         const data: Application[] = await response.json();
         console.log(data);
         setApplications(data);
-      } catch (error: unknown) {
+      } catch {
         setError("Failed to retrieve applications");
       }
     };

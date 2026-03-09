@@ -35,8 +35,8 @@ export default function ResumeUpload(props: ResumeUploadProps) {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to upload file");
+        setError("Failed to upload file");
+        return;
       }
 
       props.onSuccess?.();
@@ -44,12 +44,8 @@ export default function ResumeUpload(props: ResumeUploadProps) {
       if (props.isUpdate) {
         navigate("/dashboard");
       }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("An unknown error occured");
-      }
+    } catch {
+      setError("Failed to upload file");
     } finally {
       setLoading(false);
     }

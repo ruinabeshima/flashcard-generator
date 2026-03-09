@@ -85,11 +85,12 @@ export default function ApplicationForm(props: ApplicationFormProps) {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create item");
+        setError("Failed to create item");
+        return;
       }
 
       navigate("/dashboard");
-    } catch (error: unknown) {
+    } catch {
       setError("Error: Could not create application");
     } finally {
       setLoading(false);
@@ -120,7 +121,8 @@ export default function ApplicationForm(props: ApplicationFormProps) {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to edit application");
+        setError("Failed to edit application");
+        return;
       }
 
       navigate(`/applications/${props.id}`);
