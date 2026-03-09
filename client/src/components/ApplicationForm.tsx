@@ -104,7 +104,7 @@ export default function ApplicationForm(props: ApplicationFormProps) {
               onChange={(event) => setStatus(event.target.value)}
             >
               <option>Applied</option>
-              <option>Interviewing</option>
+              <option>Interview</option>
               <option>Offer</option>
               <option>Rejected</option>
             </select>

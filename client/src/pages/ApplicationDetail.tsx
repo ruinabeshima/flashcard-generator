@@ -98,21 +98,21 @@ export default function ApplicationDetail() {
 
           <div
             key={application.id}
-            className="card bg-base-100 shadow-md border border-base-200 hover:shadow-lg transition-shadow"
+            className="card bg-base-100 shadow-md border border-base-200 w-full max-w-2xl"
           >
             <div className="card-body gap-3">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h2 className="card-title text-lg">{application.role}</h2>
-                  <p className="text-base-content/70 font-medium">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <h2 className="card-title text-lg wrap-break-word">{application.role}</h2>
+                  <p className="text-base-content/70 font-medium truncate">
                     {application.company}
                   </p>
                 </div>
                 <div
-                  className={`badge badge-soft ${
+                  className={`badge badge-soft shrink-0 ${
                     application.status === "APPLIED"
                       ? "badge-info"
-                      : application.status === "INTERVIEWING"
+                      : application.status === "INTERVIEW"
                         ? "badge-warning"
                         : application.status === "OFFER"
                           ? "badge-success"

@@ -93,18 +93,18 @@ export default function ApplicationList() {
                 onClick={() => navigate(`/applications/${application.id}`)}
               >
                 <div className="card-body gap-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h2 className="card-title text-lg">{application.role}</h2>
-                      <p className="text-base-content/70 font-medium">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <h2 className="card-title text-lg wrap-break-word">{application.role}</h2>
+                      <p className="text-base-content/70 font-medium truncate">
                         {application.company}
                       </p>
                     </div>
                     <div
-                      className={`badge badge-soft ${
+                      className={`badge badge-soft shrink-0 ${
                         application.status === "APPLIED"
                           ? "badge-info"
-                          : application.status === "INTERVIEWING"
+                          : application.status === "INTERVIEW"
                             ? "badge-warning"
                             : application.status === "OFFER"
                               ? "badge-success"
