@@ -89,7 +89,7 @@ export default function ApplicationList() {
             {applications.map((application) => (
               <div
                 key={application.id}
-                className="card bg-base-100 shadow-md border border-base-200 hover:shadow-lg transition-shadow"
+                className="card bg-base-100 shadow-md border border-base-200 hover:shadow-lg hover:cursor-pointer transition-shadow"
                 onClick={() => navigate(`/applications/${application.id}`)}
               >
                 <div className="card-body gap-3">
