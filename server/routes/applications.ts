@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "@clerk/express";
+import logAudit from "../lib/audit";
 
 const applicationRouter = express.Router();
 
@@ -104,6 +105,14 @@ applicationRouter.patch(
         },
       });
 
+      await logAudit(
+        userId,
+        "APPLICATION_UPDATED",
+        undefined,
+        "Application",
+        id,
+      );
+
       res.status(201).json(application);
     } catch {
       res.status(500).json({ message: "Internal server error" });
@@ -128,6 +137,14 @@ applicationRouter.delete(
           id: id,
         },
       });
+
+      await logAudit(
+        userId,
+        "APPLICATION_DELETED",
+        undefined,
+        "Application",
+        id,
+      );
 
       return res
         .status(204)
@@ -162,6 +179,14 @@ applicationRouter.post(
           userId: userId,
         },
       });
+
+      await logAudit(
+        userId,
+        "APPLICATION_CREATED",
+        undefined,
+        "Application",
+        application.id,
+      );
 
       res.status(201).json(application);
     } catch {
