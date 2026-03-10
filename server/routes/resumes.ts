@@ -10,6 +10,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { upload } from "../lib/multer";
 import { requireAuth } from "@clerk/express";
 import { v4 as uuidv4 } from "uuid";
+import logAudit from "../lib/audit";
 
 const resumeRouter = express.Router();
 
@@ -102,6 +103,14 @@ resumeRouter.post(
           userId: userId!,
         },
       });
+
+      await logAudit(
+        userId!,
+        "RESUME_UPLOADED",
+        undefined,
+        "Resume",
+        resume.id,
+      );
 
       res
         .status(201)

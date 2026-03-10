@@ -46,7 +46,7 @@ authRouter.patch(
         },
       });
 
-      logAudit(
+      await logAudit(
         userId!,
         "ONBOARDING_COMPLETED",
         undefined,
