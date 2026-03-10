@@ -28,12 +28,31 @@ A full-stack application where users can sign in, view their job applications an
 - Secure resume viewing via pre-signed URLs
 - Protected routes: unauthorised users are redirected to `/login`, and un-onboarded users are redirected to `/onboarding`
 
+### Audit Logging
+
+- All user-triggered events are logged to the database for compliance and debugging.
+- Events consist of:
+  - User account creation, updates, and deletion
+  - Onboarding completion
+  - Job application CREATE, UPDATE and DELETE operations
+  - Resume uploads and replacements
+- Each audit entry consists of the userId, event name (enumerated values), optional description, entity type (User, Application, Resume) and timestamp.
+- Audit logs can be queried to track user actions or to investigate issues.
+
+### Structured Logging
+
+- All server errors and warnings are logged using Winston for easy debugging during production.
+- Implementation of:
+  - **Errors**: Database failures, file upload errors, webhook verification failures
+  - **Warnings**: Unauthorised access attempts, missing resources, validation errors
+- Logs are output to stdout in JSON format, making them queryable in production environments (Google Cloud Run Logs, Render Logs, etc.)
+
 ## Server API Routes
 
 | Method | Endpoint            | Description                                                                    |
 | ------ | ------------------- | ------------------------------------------------------------------------------ |
 | GET    | `/applications`     | Paginated list of user's job application (query params: `pageNum`, `pageSize`) |
-| POST   | `/applications/add` | Create a new ob application                                                    |
+| POST   | `/applications/add` | Create a new job application                                                    |
 | GET    | `/applications/:id` | Retrieve a specific application by ID                                          |
 | PATCH  | `/applications/:id` | Update application details                                                     |
 | DELETE | `/applications/:id` | Delete an application                                                          |
