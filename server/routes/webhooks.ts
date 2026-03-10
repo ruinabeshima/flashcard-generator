@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { Webhook } from "svix";
+import logAudit from "../lib/audit";
+
 const webhookRouter = express.Router();
 
 interface ClerkWebhookEvent {
@@ -48,6 +50,14 @@ webhookRouter.post(
           imageUrl: evt.data.image_url,
         },
       });
+
+      await logAudit(
+        evt.data.id,
+        "USER_CREATED",
+        undefined,
+        undefined,
+        undefined,
+      );
     }
 
     // User deleted
@@ -62,6 +72,14 @@ webhookRouter.post(
           clerkId: evt.data.id,
         },
       });
+
+      await logAudit(
+        evt.data.id,
+        "USER_DELETED",
+        undefined,
+        undefined,
+        undefined,
+      );
     }
 
     res.json({ received: true });
