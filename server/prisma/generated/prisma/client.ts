@@ -54,3 +54,8 @@ export type Application = Prisma.ApplicationModel
  * 
  */
 export type Resume = Prisma.ResumeModel
+/**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = Prisma.AuditLogModel
