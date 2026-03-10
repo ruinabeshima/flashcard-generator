@@ -50,8 +50,8 @@ authRouter.patch(
         userId!,
         "ONBOARDING_COMPLETED",
         undefined,
-        undefined,
-        undefined,
+        "User",
+        userId,
       );
 
       return res

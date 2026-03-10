@@ -55,8 +55,8 @@ webhookRouter.post(
         evt.data.id,
         "USER_CREATED",
         undefined,
-        undefined,
-        undefined,
+        "User",
+        evt.data.id,
       );
     }
 
@@ -77,8 +77,8 @@ webhookRouter.post(
         evt.data.id,
         "USER_DELETED",
         undefined,
-        undefined,
-        undefined,
+        "User",
+        evt.data.id,
       );
     }
 
