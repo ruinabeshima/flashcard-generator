@@ -10,11 +10,18 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { upload } from "../lib/multer";
 import { requireAuth } from "@clerk/express";
 import { v4 as uuidv4 } from "uuid";
+import { logger } from "../lib/logger";
+import logAudit from "../lib/audit";
 
 const resumeRouter = express.Router();
 
 resumeRouter.get("/", requireAuth(), async (req: Request, res: Response) => {
   const { userId } = req.auth;
+
+  if (!userId) {
+    logger.warn("Unauthorised access attempt", { route: "/your-resume" });
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
   try {
     const resume = await prisma.resume.findUnique({
@@ -27,8 +34,8 @@ resumeRouter.get("/", requireAuth(), async (req: Request, res: Response) => {
     });
 
     if (!resume) {
-      res.status(404).json({ message: "Resume not found" });
-      return;
+      logger.warn("Resume not found", { userId });
+      return res.status(404).json({ message: "Resume not found" });
     }
 
     const url = await getSignedUrl(
@@ -41,7 +48,8 @@ resumeRouter.get("/", requireAuth(), async (req: Request, res: Response) => {
     );
 
     res.json({ url });
-  } catch {
+  } catch (error) {
+    logger.error("Failed to retrieve resume", { userId, error });
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -54,9 +62,14 @@ resumeRouter.post(
     const { userId } = req.auth;
     const { file } = req;
 
+    if (!userId) {
+      logger.warn("Unauthorised access attempt", { route: "/your-resume" });
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     if (!file) {
-      res.status(400).json({ message: "No file uploaded" });
-      return;
+      logger.warn("No file uploaded", { userId, route: "your-resume" });
+      return res.status(400).json({ message: "No file uploaded" });
     }
 
     const ext = file.originalname.split(".").pop();
@@ -103,11 +116,20 @@ resumeRouter.post(
         },
       });
 
+      await logAudit(
+        userId!,
+        "RESUME_UPLOADED",
+        existing ? "Resume replaced" : "Initial upload",
+        "Resume",
+        resume.id,
+      );
+
       res
         .status(201)
         .json({ id: resume.id, message: "File sent successfully" });
-    } catch {
-      res.status(500).json({ message: "Failed to upload file" });
+    } catch (error) {
+      logger.error("Failed to upload file", { userId, error });
+      res.status(500).json({ message: "Internal server error" });
     }
   },
 );

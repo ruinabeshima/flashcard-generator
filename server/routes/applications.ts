@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "@clerk/express";
+import { logger } from "../lib/logger";
+import logAudit from "../lib/audit";
 
 const applicationRouter = express.Router();
 
@@ -13,6 +15,7 @@ applicationRouter.get(
     const pageSize = parseInt(req.query.pageSize as string) || 10;
 
     if (!userId) {
+      logger.warn("Unauthorised access attempt", { endpoint: "/applications" });
       return res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -34,7 +37,8 @@ applicationRouter.get(
       });
 
       res.json(applications);
-    } catch {
+    } catch (error) {
+      logger.error("Failed to fetch applications", { userId, error });
       res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -48,6 +52,9 @@ applicationRouter.get(
     const { id } = req.params;
 
     if (!userId) {
+      logger.warn("Unauthorised access attempt", {
+        endpoint: "/applications/:id",
+      });
       return res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -68,8 +75,14 @@ applicationRouter.get(
         },
       });
 
+      if (!application) {
+        logger.warn("Application not found", { userId, applicationId: id });
+        return res.status(404).json({ message: "Application not found" });
+      }
+
       res.json(application);
-    } catch {
+    } catch (error) {
+      logger.error("Failed to fetch application", { userId, error });
       res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -79,16 +92,19 @@ applicationRouter.patch(
   "/:id",
   requireAuth(),
   async (req: Request<{ id: string }>, res: Response) => {
+    const { userId } = req.auth;
+    const { id } = req.params;
+
+    if (!userId) {
+      logger.warn("Unauthorised access attempt", {
+        endpoint: "/applications/:id",
+      });
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { role, company, status, appliedDate, notes, jobUrl } = req.body;
+
     try {
-      const { userId } = req.auth;
-      const { id } = req.params;
-
-      if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-
-      const { role, company, status, appliedDate, notes, jobUrl } = req.body;
-
       const application = await prisma.application.update({
         where: {
           id: id,
@@ -104,8 +120,17 @@ applicationRouter.patch(
         },
       });
 
+      await logAudit(
+        userId,
+        "APPLICATION_UPDATED",
+        undefined,
+        "Application",
+        id,
+      );
+
       res.status(201).json(application);
-    } catch {
+    } catch (error) {
+      logger.error("Failed to update application", { userId, error });
       res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -115,24 +140,36 @@ applicationRouter.delete(
   "/:id",
   requireAuth(),
   async (req: Request<{ id: string }>, res: Response) => {
+    const { userId } = req.auth;
+    const { id } = req.params;
+
+    if (!userId) {
+      logger.warn("Unauthorised access attempt", {
+        endpoint: "/applications/:id",
+      });
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
     try {
-      const { userId } = req.auth;
-      const { id } = req.params;
-
-      if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-
       await prisma.application.delete({
         where: {
           id: id,
         },
       });
 
+      await logAudit(
+        userId,
+        "APPLICATION_DELETED",
+        undefined,
+        "Application",
+        id,
+      );
+
       return res
         .status(204)
         .json({ message: "Application successfully deleted" });
-    } catch {
+    } catch (error) {
+      logger.error("Failed to delete application", { userId, error });
       res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -145,6 +182,9 @@ applicationRouter.post(
     const { userId } = req.auth;
 
     if (!userId) {
+      logger.warn("Unauthorised access attempt", {
+        endpoint: "/applications/add",
+      });
       return res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -163,8 +203,17 @@ applicationRouter.post(
         },
       });
 
+      await logAudit(
+        userId,
+        "APPLICATION_CREATED",
+        undefined,
+        "Application",
+        application.id,
+      );
+
       res.status(201).json(application);
-    } catch {
+    } catch (error) {
+      logger.error("Failed to add application", { userId, error });
       res.status(500).json({ message: "Internal server error" });
     }
   },

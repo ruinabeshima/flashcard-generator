@@ -28,14 +28,39 @@ A full-stack application where users can sign in, view their job applications an
 - Secure resume viewing via pre-signed URLs
 - Protected routes: unauthorised users are redirected to `/login`, and un-onboarded users are redirected to `/onboarding`
 
+### Audit Logging
+
+- All user-triggered events are logged to the database for compliance and debugging.
+- Events consist of:
+  - User account creation, updates, and deletion
+  - Onboarding completion
+  - Job application CREATE, UPDATE and DELETE operations
+  - Resume uploads and replacements
+- Each audit entry consists of the userId, event name (enumerated values), optional description, entity type (User, Application, Resume) and timestamp.
+- Audit logs can be queried to track user actions or to investigate issues.
+
+### Structured Logging
+
+- All server errors and warnings are logged using Winston for easy debugging during production.
+- Implementation of:
+  - **Errors**: Database failures, file upload errors, webhook verification failures
+  - **Warnings**: Unauthorised access attempts, missing resources, validation errors
+- Logs are output to stdout in JSON format, making them queryable in production environments (Google Cloud Run Logs, Render Logs, etc.)
+
 ## Server API Routes
 
-| Method | Endpoint            | Description                                                                       |
-| ------ | ------------------- | --------------------------------------------------------------------------------- |
-| GET    | `/applications`     | Paginated list of all job applications made by the user                           |
-| POST   | `/applications/add` | Create a new job application                                                      |
-| POST   | `webhooks/clerk`    | Receive Clerk webhook to update User table in database with corresponding ClerkId |
-| GET    | `auth/status`       | Receive Boolean value if the user has onboarding complete or not                  |
+| Method | Endpoint            | Description                                                                    |
+| ------ | ------------------- | ------------------------------------------------------------------------------ |
+| GET    | `/applications`     | Paginated list of user's job application (query params: `pageNum`, `pageSize`) |
+| POST   | `/applications/add` | Create a new job application                                                    |
+| GET    | `/applications/:id` | Retrieve a specific application by ID                                          |
+| PATCH  | `/applications/:id` | Update application details                                                     |
+| DELETE | `/applications/:id` | Delete an application                                                          |
+| GET    | `/auth/status`      | Get user's onboarding status                                                   |
+| PATCH  | `/auth/status`      | Mark onboarding as complete                                                    |
+| GET    | `/resumes`          | Get pre-signed URL to view resume (expires in 1 hour)                          |
+| POST   | `/resumes/upload`   | Upload or replace user's resume (PDF only, max 10MB)                           |
+| POST   | `/webhooks/clerk`   | Receive Clerk webhook to sync user data with database                          |
 
 ## Database Models
 

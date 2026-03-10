@@ -23,6 +23,7 @@ model User {
   onboarding_complete Boolean @default(false)
 
   applications Application[]
+  auditLogs AuditLog[]
   resume Resume?
 }
 
@@ -31,6 +32,17 @@ enum Status {
   INTERVIEW
   OFFER
   REJECTED
+}
+
+enum AuditEvent {
+  USER_CREATED
+  USER_UPDATED
+  USER_DELETED
+  ONBOARDING_COMPLETED
+  APPLICATION_CREATED
+  APPLICATION_UPDATED
+  APPLICATION_DELETED
+  RESUME_UPLOADED
 }
 
 model Application {
@@ -63,4 +75,21 @@ model Resume {
   updatedAt DateTime @updatedAt
 
   @@unique([userId])
+}
+
+model AuditLog{
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId], references:[clerkId])
+
+  event AuditEvent
+  description String? 
+  entityType String?
+  entityId String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([entityType])
+  @@index([event])
 }

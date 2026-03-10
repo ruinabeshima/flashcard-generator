@@ -17,3 +17,17 @@ export const Status = {
 } as const
 
 export type Status = (typeof Status)[keyof typeof Status]
+
+
+export const AuditEvent = {
+  USER_CREATED: 'USER_CREATED',
+  USER_UPDATED: 'USER_UPDATED',
+  USER_DELETED: 'USER_DELETED',
+  ONBOARDING_COMPLETED: 'ONBOARDING_COMPLETED',
+  APPLICATION_CREATED: 'APPLICATION_CREATED',
+  APPLICATION_UPDATED: 'APPLICATION_UPDATED',
+  APPLICATION_DELETED: 'APPLICATION_DELETED',
+  RESUME_UPLOADED: 'RESUME_UPLOADED'
+} as const
+
+export type AuditEvent = (typeof AuditEvent)[keyof typeof AuditEvent]
