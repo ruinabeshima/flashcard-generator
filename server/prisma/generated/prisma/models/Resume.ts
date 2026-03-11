@@ -28,6 +28,7 @@ export type ResumeMinAggregateOutputType = {
   id: string | null
   key: string | null
   userId: string | null
+  text: string | null
   uploadedAt: Date | null
   updatedAt: Date | null
 }
@@ -36,6 +37,7 @@ export type ResumeMaxAggregateOutputType = {
   id: string | null
   key: string | null
   userId: string | null
+  text: string | null
   uploadedAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +46,7 @@ export type ResumeCountAggregateOutputType = {
   id: number
   key: number
   userId: number
+  text: number
   uploadedAt: number
   updatedAt: number
   _all: number
@@ -54,6 +57,7 @@ export type ResumeMinAggregateInputType = {
   id?: true
   key?: true
   userId?: true
+  text?: true
   uploadedAt?: true
   updatedAt?: true
 }
@@ -62,6 +66,7 @@ export type ResumeMaxAggregateInputType = {
   id?: true
   key?: true
   userId?: true
+  text?: true
   uploadedAt?: true
   updatedAt?: true
 }
@@ -70,6 +75,7 @@ export type ResumeCountAggregateInputType = {
   id?: true
   key?: true
   userId?: true
+  text?: true
   uploadedAt?: true
   updatedAt?: true
   _all?: true
@@ -151,6 +157,7 @@ export type ResumeGroupByOutputType = {
   id: string
   key: string
   userId: string
+  text: string
   uploadedAt: Date
   updatedAt: Date
   _count: ResumeCountAggregateOutputType | null
@@ -180,6 +187,7 @@ export type ResumeWhereInput = {
   id?: Prisma.StringFilter<"Resume"> | string
   key?: Prisma.StringFilter<"Resume"> | string
   userId?: Prisma.StringFilter<"Resume"> | string
+  text?: Prisma.StringFilter<"Resume"> | string
   uploadedAt?: Prisma.DateTimeFilter<"Resume"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Resume"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -189,6 +197,7 @@ export type ResumeOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   key?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  text?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -201,6 +210,7 @@ export type ResumeWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ResumeWhereInput[]
   NOT?: Prisma.ResumeWhereInput | Prisma.ResumeWhereInput[]
   key?: Prisma.StringFilter<"Resume"> | string
+  text?: Prisma.StringFilter<"Resume"> | string
   uploadedAt?: Prisma.DateTimeFilter<"Resume"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Resume"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -210,6 +220,7 @@ export type ResumeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   key?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  text?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ResumeCountOrderByAggregateInput
@@ -224,6 +235,7 @@ export type ResumeScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Resume"> | string
   key?: Prisma.StringWithAggregatesFilter<"Resume"> | string
   userId?: Prisma.StringWithAggregatesFilter<"Resume"> | string
+  text?: Prisma.StringWithAggregatesFilter<"Resume"> | string
   uploadedAt?: Prisma.DateTimeWithAggregatesFilter<"Resume"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Resume"> | Date | string
 }
@@ -231,6 +243,7 @@ export type ResumeScalarWhereWithAggregatesInput = {
 export type ResumeCreateInput = {
   id?: string
   key: string
+  text: string
   uploadedAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutResumeInput
@@ -240,6 +253,7 @@ export type ResumeUncheckedCreateInput = {
   id?: string
   key: string
   userId: string
+  text: string
   uploadedAt?: Date | string
   updatedAt?: Date | string
 }
@@ -247,6 +261,7 @@ export type ResumeUncheckedCreateInput = {
 export type ResumeUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
+  text?: Prisma.StringFieldUpdateOperationsInput | string
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutResumeNestedInput
@@ -256,6 +271,7 @@ export type ResumeUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  text?: Prisma.StringFieldUpdateOperationsInput | string
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -264,6 +280,7 @@ export type ResumeCreateManyInput = {
   id?: string
   key: string
   userId: string
+  text: string
   uploadedAt?: Date | string
   updatedAt?: Date | string
 }
@@ -271,6 +288,7 @@ export type ResumeCreateManyInput = {
 export type ResumeUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
+  text?: Prisma.StringFieldUpdateOperationsInput | string
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -279,6 +297,7 @@ export type ResumeUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  text?: Prisma.StringFieldUpdateOperationsInput | string
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -292,6 +311,7 @@ export type ResumeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   key?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  text?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -300,6 +320,7 @@ export type ResumeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   key?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  text?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -308,6 +329,7 @@ export type ResumeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   key?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  text?: Prisma.SortOrder
   uploadedAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -347,6 +369,7 @@ export type ResumeUncheckedUpdateOneWithoutUserNestedInput = {
 export type ResumeCreateWithoutUserInput = {
   id?: string
   key: string
+  text: string
   uploadedAt?: Date | string
   updatedAt?: Date | string
 }
@@ -354,6 +377,7 @@ export type ResumeCreateWithoutUserInput = {
 export type ResumeUncheckedCreateWithoutUserInput = {
   id?: string
   key: string
+  text: string
   uploadedAt?: Date | string
   updatedAt?: Date | string
 }
@@ -377,6 +401,7 @@ export type ResumeUpdateToOneWithWhereWithoutUserInput = {
 export type ResumeUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
+  text?: Prisma.StringFieldUpdateOperationsInput | string
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -384,6 +409,7 @@ export type ResumeUpdateWithoutUserInput = {
 export type ResumeUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   key?: Prisma.StringFieldUpdateOperationsInput | string
+  text?: Prisma.StringFieldUpdateOperationsInput | string
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -394,6 +420,7 @@ export type ResumeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   id?: boolean
   key?: boolean
   userId?: boolean
+  text?: boolean
   uploadedAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -403,6 +430,7 @@ export type ResumeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   key?: boolean
   userId?: boolean
+  text?: boolean
   uploadedAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -412,6 +440,7 @@ export type ResumeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   id?: boolean
   key?: boolean
   userId?: boolean
+  text?: boolean
   uploadedAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -421,11 +450,12 @@ export type ResumeSelectScalar = {
   id?: boolean
   key?: boolean
   userId?: boolean
+  text?: boolean
   uploadedAt?: boolean
   updatedAt?: boolean
 }
 
-export type ResumeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "key" | "userId" | "uploadedAt" | "updatedAt", ExtArgs["result"]["resume"]>
+export type ResumeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "key" | "userId" | "text" | "uploadedAt" | "updatedAt", ExtArgs["result"]["resume"]>
 export type ResumeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -445,6 +475,7 @@ export type $ResumePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     id: string
     key: string
     userId: string
+    text: string
     uploadedAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["resume"]>
@@ -874,6 +905,7 @@ export interface ResumeFieldRefs {
   readonly id: Prisma.FieldRef<"Resume", 'String'>
   readonly key: Prisma.FieldRef<"Resume", 'String'>
   readonly userId: Prisma.FieldRef<"Resume", 'String'>
+  readonly text: Prisma.FieldRef<"Resume", 'String'>
   readonly uploadedAt: Prisma.FieldRef<"Resume", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Resume", 'DateTime'>
 }

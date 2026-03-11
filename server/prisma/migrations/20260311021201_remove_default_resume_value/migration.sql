@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Resume" ALTER COLUMN "text" DROP DEFAULT;

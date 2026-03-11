@@ -106,6 +106,7 @@ export const ResumeScalarFieldEnum = {
   id: 'id',
   key: 'key',
   userId: 'userId',
+  text: 'text',
   uploadedAt: 'uploadedAt',
   updatedAt: 'updatedAt'
 } as const
