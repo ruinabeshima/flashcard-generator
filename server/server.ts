@@ -6,6 +6,7 @@ import { webhookRouter } from "./routes/webhooks";
 import { applicationRouter } from "./routes/applications";
 import { authRouter } from "./routes/auth";
 import { resumeRouter } from "./routes/resumes";
+import { feedbackRouter } from "./routes/feedback";
 
 dotenv.config();
 const app = express();
@@ -22,6 +23,7 @@ app.use(clerkMiddleware());
 app.use("/applications", applicationRouter);
 app.use("/auth", authRouter);
 app.use("/resumes", resumeRouter);
+app.use("/feedback", feedbackRouter);
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
