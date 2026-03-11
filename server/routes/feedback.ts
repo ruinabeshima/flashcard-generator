@@ -38,6 +38,11 @@ feedbackRouter.post("/", requireAuth(), async (req: Request, res: Response) => {
     }
 
     const feedback = await getTailoring(application, resumeText);
+    if (!feedback) {
+      logger.warn("Feedback was not received", { userId });
+      return res.status(404).json({ message: "Failed to retreive feedback" });
+    }
+
     return res.status(200).json({ feedback });
   } catch (error) {
     logger.error("Failed to carry out OpenAPI request", { userId, error });

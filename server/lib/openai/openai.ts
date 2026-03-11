@@ -72,9 +72,49 @@ export async function getResumeText(userId: string): Promise<string | null> {
   }
 }
 
-export async function getTailoring(application: string[], resumeText: string) {
-  const response = await openai.responses.create({
-    model: "gpt-4.1-nano",
-    input: "",
-  });
+export async function getTailoring(
+  application: string[],
+  resumeText: string,
+): Promise<null | JSON> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4.1-nano",
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: `
+Resume reviewer.
+
+Compare resume to job requirements.
+
+Return JSON:
+{
+  "miss": [],
+  "improve": [],
+  "add": [],
+  "weak": []
+}
+
+Rules:
+- Max 5 items each
+- Concise
+- JSON only
+`,
+        },
+        {
+          role: "user",
+          content: `resume:\n${resumeText}\n\nrequirements:\n${application.join("\n")}`,
+        },
+      ],
+    });
+
+    const jsonText = response.choices[0]?.message?.content;
+    if (!jsonText) return null;
+
+    return JSON.parse(jsonText);
+  } catch (error) {
+    logger.error("Failed to generate tailoring feedback", { error });
+    return null;
+  }
 }
