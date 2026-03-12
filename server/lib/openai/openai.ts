@@ -61,7 +61,7 @@ export async function getResumeText(userId: string): Promise<string | null> {
     });
 
     if (!resume) {
-      logger.error("Could not retreive resume text", { userId });
+      logger.error("Could not retrieve resume text", { userId });
       return null;
     }
 
@@ -72,13 +72,10 @@ export async function getResumeText(userId: string): Promise<string | null> {
   }
 }
 
-export async function getTailoring(
-  application: string[],
-  resumeText: string,
-): Promise<null | JSON> {
+export async function getTailoring(application: string[], resumeText: string) {
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4.1-nano",
+      model: "gpt-4o",
       response_format: { type: "json_object" },
       messages: [
         {
@@ -110,11 +107,25 @@ Rules:
     });
 
     const jsonText = response.choices[0]?.message?.content;
-    if (!jsonText) return null;
+    if (!jsonText) {
+      logger.error("No content in OpenAI response", { response });
+      return null;
+    }
 
-    return JSON.parse(jsonText);
+    try {
+      return JSON.parse(jsonText);
+    } catch (parseError) {
+      logger.error("Failed to parse OpenAI JSON response", {
+        jsonText,
+        parseError,
+      });
+      return null;
+    }
   } catch (error) {
-    logger.error("Failed to generate tailoring feedback", { error });
+    logger.error("Failed to generate tailoring feedback", {
+      error: error instanceof Error ? error.message : String(error),
+      errorStack: error instanceof Error ? error.stack : undefined,
+    });
     return null;
   }
 }

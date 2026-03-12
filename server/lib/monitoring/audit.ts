@@ -1,5 +1,5 @@
-import { prisma } from "../lib/prisma";
-import { AuditEvent } from "../prisma/generated/prisma/enums";
+import { prisma } from "../prisma";
+import { AuditEvent } from "../../prisma/generated/prisma/enums";
 
 export default async function logAudit(
   userId: string,
