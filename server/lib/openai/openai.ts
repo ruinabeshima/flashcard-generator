@@ -3,6 +3,13 @@ import { logger } from "../monitoring/logger";
 import { prisma } from "../prisma";
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+export type ResumeSuggestions = {
+  miss: string[];
+  improve: string[];
+  add: string[];
+  weak: string[];
+};
+
 export async function getApplicationInfo(
   applicationId: string,
   userId: string,
@@ -76,12 +83,7 @@ export async function getResumeSuggestions(
   applicationInfo: string[],
   resumeText: string,
   userId: string,
-): Promise<{
-  miss: string[];
-  improve: string[];
-  add: string[];
-  weak: string[];
-} | null> {
+): Promise<ResumeSuggestions | null> {
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -144,6 +146,41 @@ Return ONLY this JSON structure:
     }
   } catch (error) {
     logger.error("Could not get resume suggestions", { userId, error });
+    return null;
+  }
+}
+
+export default async function generateTailoredResume(
+  resumeText: string,
+  resumeSuggestions: ResumeSuggestions,
+  userId: string,
+): Promise<null | string> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      max_tokens: 2500,
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are an expert resume writer. Rewrite the resume incorporating the provided suggestions. Keep the original structure and tone.",
+        },
+        {
+          role: "user",
+          content: `Resume:\n${resumeText}\n\nImprovements to make:\n- Skills to add: ${resumeSuggestions.miss.join(", ")}\n- Bullets to strengthen: ${resumeSuggestions.improve.join(", ")}\n- Experience to highlight: ${resumeSuggestions.add.join(", ")}\n- Content to remove or reframe: ${resumeSuggestions.weak.join(", ")}`,
+        },
+      ],
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      logger.error("Empty response from OpenAI", { userId });
+      return null;
+    }
+
+    return content;
+  } catch (error) {
+    logger.error("Could not generated tailored resume", { error, userId });
     return null;
   }
 }
