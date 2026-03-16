@@ -8,9 +8,6 @@ import {
   getResumeSuggestions,
 } from "../lib/openai/openai";
 
-// TODO: Implement audit log
-import logAudit from "../lib/monitoring/audit";
-
 interface TailoringFeedback {
   miss: string[];
   improve: string[];
