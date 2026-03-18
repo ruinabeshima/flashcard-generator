@@ -1,4 +1,3 @@
-import { Resume } from "../../prisma/generated/prisma/client";
 import { ResumeSuggestions } from "../openai/openai";
 
 /* 
@@ -10,7 +9,7 @@ Example structure:
 */
 
 export function parseAcceptedSuggestions(
-  acceptedIndicies: string[],
+  acceptedIndices: string[],
   fullSuggestions: ResumeSuggestions,
 ): ResumeSuggestions {
   const result: ResumeSuggestions = {
@@ -20,7 +19,7 @@ export function parseAcceptedSuggestions(
     weak: [],
   };
 
-  for (const item of acceptedIndicies) {
+  for (const item of acceptedIndices) {
     const [category, strIndex] = item.split("-");
     const intIndex = parseInt(strIndex);
 

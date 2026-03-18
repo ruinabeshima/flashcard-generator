@@ -160,6 +160,7 @@ feedbackRouter.post(
         },
         select: {
           userId: true,
+          suggestions: true,
           acceptedSuggestions: true,
         },
       });
@@ -179,6 +180,7 @@ feedbackRouter.post(
       // Retrieve tailored resume
       const resumeSuggestions = parseAcceptedSuggestions(
         session?.acceptedSuggestions ?? [],
+        session?.suggestions as ResumeSuggestions,
       );
       const resume = await generateTailoredResume(
         resumeText,
