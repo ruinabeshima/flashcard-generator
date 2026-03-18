@@ -180,8 +180,8 @@ feedbackRouter.post(
 
       // Retrieve tailored resume
       const resumeSuggestions = parseAcceptedSuggestions(
-        session?.acceptedSuggestions ?? [],
-        session?.suggestions as ResumeSuggestions,
+        session.acceptedSuggestions,
+        session.suggestions as ResumeSuggestions,
       );
       const tailoredContent = await generateTailoredResume(
         resumeText,
@@ -198,8 +198,8 @@ feedbackRouter.post(
       // Create tailored resume
       const newResume = await prisma.tailoredResume.create({
         data: {
-          tailoringSessionId: session?.id,
-          applicationId: session?.applicationId,
+          tailoringSessionId: session.id,
+          applicationId: session.applicationId,
           userId,
           name: `New resume - ${userId}`,
           content: tailoredContent,
@@ -224,7 +224,7 @@ feedbackRouter.post(
       });
     } catch (error) {
       logger.warn("Unable to generate tailored resume", { userId, error });
-      res.status(500).json({ message: "Unable to generate tailored resume" });
+      return res.status(500).json({ message: "Unable to generate tailored resume" });
     }
   },
 );
