@@ -149,6 +149,7 @@ feedbackRouter.post(
   async (req: Request<{ sessionId: string }>, res: Response) => {
     const { userId } = req.auth;
     const { sessionId } = req.params;
+    const { resumeName } = req.body;
 
     if (!userId) {
       logger.warn("Unauthorised access attempt", {
@@ -201,7 +202,7 @@ feedbackRouter.post(
           tailoringSessionId: session.id,
           applicationId: session.applicationId,
           userId,
-          name: `New resume - ${userId}`,
+          name: resumeName || `New resume - ${userId}`,
           content: tailoredContent,
         },
       });
@@ -224,7 +225,9 @@ feedbackRouter.post(
       });
     } catch (error) {
       logger.warn("Unable to generate tailored resume", { userId, error });
-      return res.status(500).json({ message: "Unable to generate tailored resume" });
+      return res
+        .status(500)
+        .json({ message: "Unable to generate tailored resume" });
     }
   },
 );
