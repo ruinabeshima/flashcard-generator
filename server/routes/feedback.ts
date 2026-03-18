@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+import logAudit from "../lib/monitoring/audit";
 import { requireAuth } from "@clerk/express";
 import { logger } from "../lib/monitoring/logger";
 import { prisma } from "../lib/prisma";
@@ -76,6 +77,14 @@ feedbackRouter.post(
         },
       });
 
+      await logAudit(
+        userId,
+        "TAILORING_SESSION_CREATED",
+        `Tailoring started for ${app.company} - ${app.role}`,
+        "TailoringSession",
+        session.id,
+      );
+
       return res
         .status(201)
         .json({ sessionId: session.id, suggestions, status: session.status });
@@ -130,6 +139,14 @@ feedbackRouter.post(
           status: "REVIEWED",
         },
       });
+
+      await logAudit(
+        userId,
+        "TAILORING_SUGGESTIONS_REVIEWED",
+        `Accepted: ${acceptedSuggestions.length}, Dismissed: ${dismissedSuggestions.length}`,
+        "TailoringSession",
+        session.id,
+      );
 
       res.status(200).json({
         message: "Suggestions updated",
@@ -216,6 +233,14 @@ feedbackRouter.post(
           status: "TAILORED",
         },
       });
+
+      await logAudit(
+        userId,
+        "RESUME_TAILORED",
+        resumeName,
+        "TailoredResume",
+        newResume.id,
+      );
 
       return res.status(201).json({
         message: "Resume created",
