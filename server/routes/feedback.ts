@@ -88,6 +88,7 @@ feedbackRouter.post(
 // Update suggestion decisions, and track accepted / dismissed
 feedbackRouter.post(
   "/update/:sessionId",
+  requireAuth(),
   async (req: Request<{ sessionId: string }>, res: Response) => {
     const { userId } = req.auth;
     const { sessionId } = req.params;
@@ -134,7 +135,5 @@ feedbackRouter.post(
     }
   },
 );
-
-// Generate tailored resume
 
 export { feedbackRouter };
