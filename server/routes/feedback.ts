@@ -72,6 +72,7 @@ feedbackRouter.post(
           applicationId,
           userId,
           suggestions,
+          status: "PENDING",
         },
       });
 
