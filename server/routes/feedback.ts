@@ -82,6 +82,54 @@ feedbackRouter.post("/", requireAuth(), async (req: Request, res: Response) => {
 });
 
 // Update suggestion decisions, and track accepted / dismissed
+feedbackRouter.post(
+  "/update/:sessionId",
+  async (req: Request<{ sessionId: string }>, res: Response) => {
+    const { userId } = req.auth;
+    const { sessionId } = req.params;
+    const { acceptedSuggestions, dismissedSuggestions } = req.body;
+
+    if (!userId) {
+      logger.warn("Unauthorised access attempt", {
+        endpoint: `/feedback/${sessionId}`,
+      });
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+      // Retrieve tailoring session
+      const session = await prisma.tailoringSession.findUnique({
+        where: {
+          id: sessionId,
+        },
+      });
+      if (!session || session?.userId !== userId) {
+        logger.warn("Unauthorised access attempt", {
+          endpoint: `/feedback/${sessionId}`,
+        });
+      }
+
+      // Update session
+      const updatedSession = await prisma.tailoringSession.update({
+        where: {
+          id: sessionId,
+        },
+        data: {
+          acceptedSuggestions,
+          dismissedSuggestions,
+          status: "REVIEWED",
+        },
+      });
+
+      res
+        .status(200)
+        .json({ message: "Suggestions updated", session: updatedSession });
+    } catch (error) {
+      logger.error("Failed to update suggestion decisions", { userId, error });
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  },
+);
 
 // Generate tailored resume
 
