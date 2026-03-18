@@ -219,7 +219,7 @@ feedbackRouter.post(
           tailoringSessionId: session.id,
           applicationId: session.applicationId,
           userId,
-          name: resumeName || `New resume - ${userId}`,
+          name: resumeName || `Resume - ${new Date().toLocaleDateString()}`,
           content: tailoredContent,
         },
       });
