@@ -1,5 +1,12 @@
 import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
+import { TrackResumeSuggestions } from "./ResumeSuggestions";
+import type { TypeResumeSuggestions } from "./ResumeSuggestions";
+
+type Suggestion = {
+  sessionId: string;
+  suggestions: TypeResumeSuggestions;
+};
 
 type TailorResumeProps = {
   applicationId: string;
@@ -9,6 +16,8 @@ export default function TailorResume(props: TailorResumeProps) {
   const appUrl = import.meta.env.VITE_SERVER_URL;
   const { getToken } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<Suggestion | null>(null);
+  const [getSuggestions, setGetSuggestions] = useState(false);
   const [error, setError] = useState(false);
 
   const handleTailorApplication = async (
@@ -35,7 +44,10 @@ export default function TailorResume(props: TailorResumeProps) {
       }
 
       const data = await response.json();
-      console.log(data);
+      if (data.status === "PENDING") {
+        setData(data);
+        setGetSuggestions(true);
+      }
     } catch {
       setError(true);
     } finally {
@@ -49,6 +61,11 @@ export default function TailorResume(props: TailorResumeProps) {
         <span className="loading loading-spinner loading-md"></span>
       ) : error ? (
         <p>An error occurred</p>
+      ) : getSuggestions ? (
+        <TrackResumeSuggestions
+          sessionId={data?.sessionId!}
+          suggestions={data?.suggestions!}
+        />
       ) : (
         <section className="w-full flex justify-center items-center">
           <button
