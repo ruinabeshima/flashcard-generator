@@ -23,6 +23,10 @@ type SuggestionTypes = (typeof SuggestionTypes)[keyof typeof SuggestionTypes];
 
 export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
   const [hidden, setHidden] = useState<Set<string>>(new Set());
+  const [acceptedSuggestions, setAcceptedSuggestions] = useState<string[]>([]);
+  const [dismissedSuggestions, setDismissedSuggestions] = useState<string[]>(
+    [],
+  );
 
   const hideSuggestion = (key: string) => {
     setHidden((prev) => new Set(prev).add(key));
@@ -34,6 +38,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
   ) => {
     event.preventDefault();
     hideSuggestion(key);
+    setAcceptedSuggestions((prev) => [...prev, key]);
   };
 
   const handleRejectSuggestion = (
@@ -42,6 +47,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
   ) => {
     event.preventDefault();
     hideSuggestion(key);
+    setDismissedSuggestions((prev) => [...prev, key]);
   };
 
   return (
