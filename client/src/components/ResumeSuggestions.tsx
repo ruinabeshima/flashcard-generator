@@ -22,8 +22,19 @@ const SuggestionTypes = {
 type SuggestionTypes = (typeof SuggestionTypes)[keyof typeof SuggestionTypes];
 
 export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
-  const [suggestionType, setSuggestionType] = useState<SuggestionTypes>("MISS");
-  const [suggestion, setSuggestion] = useState();
+  const handleAcceptSuggestion = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault();
+    console.log("Accepted");
+  };
+
+  const handleRejectSuggestion = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault();
+    console.log("Rejected");
+  };
 
   return (
     <div className="flex flex-col gap-5 m-10">
@@ -39,6 +50,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
               <button
                 className="btn btn-circle btn-sm bg-green-100 text-green-700 hover:bg-green-200 border-green-200"
                 aria-label="Accept suggestion"
+                onClick={handleAcceptSuggestion}
               >
                 <svg
                   width="18"
@@ -59,6 +71,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
               <button
                 className="btn btn-circle btn-sm bg-red-100 text-red-700 hover:bg-red-200 border-red-200"
                 aria-label="Deny suggestion"
+                onClick={handleRejectSuggestion}
               >
                 <svg
                   width="18"
@@ -90,6 +103,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
               <button
                 className="btn btn-circle btn-sm bg-green-100 text-green-700 hover:bg-green-200 border-green-200"
                 aria-label="Accept suggestion"
+                onClick={handleAcceptSuggestion}
               >
                 <svg
                   width="18"
@@ -110,6 +124,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
               <button
                 className="btn btn-circle btn-sm bg-red-100 text-red-700 hover:bg-red-200 border-red-200"
                 aria-label="Deny suggestion"
+                onClick={handleRejectSuggestion}
               >
                 <svg
                   width="18"
@@ -141,6 +156,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
               <button
                 className="btn btn-circle btn-sm bg-green-100 text-green-700 hover:bg-green-200 border-green-200"
                 aria-label="Accept suggestion"
+                onClick={handleAcceptSuggestion}
               >
                 <svg
                   width="18"
@@ -161,6 +177,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
               <button
                 className="btn btn-circle btn-sm bg-red-100 text-red-700 hover:bg-red-200 border-red-200"
                 aria-label="Deny suggestion"
+                onClick={handleRejectSuggestion}
               >
                 <svg
                   width="18"
@@ -192,6 +209,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
               <button
                 className="btn btn-circle btn-sm bg-green-100 text-green-700 hover:bg-green-200 border-green-200"
                 aria-label="Accept suggestion"
+                onClick={handleAcceptSuggestion}
               >
                 <svg
                   width="18"
@@ -212,6 +230,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
               <button
                 className="btn btn-circle btn-sm bg-red-100 text-red-700 hover:bg-red-200 border-red-200"
                 aria-label="Deny suggestion"
+                onClick={handleRejectSuggestion}
               >
                 <svg
                   width="18"
