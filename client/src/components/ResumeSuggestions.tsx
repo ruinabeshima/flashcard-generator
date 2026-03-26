@@ -26,7 +26,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
   const [suggestion, setSuggestion] = useState();
 
   return (
-    <div>
+    <div className="flex flex-col gap-5 m-10">
       {props.suggestions.miss.map((suggestion, i) => (
         <div
           className="card bg-error w-96 shadow-sm border border-red-500"
