@@ -6,6 +6,7 @@ import logAudit from "../lib/monitoring/audit";
 
 const applicationRouter = express.Router();
 
+// Get paginated list of job applications
 applicationRouter.get(
   "/",
   requireAuth(),
@@ -44,6 +45,7 @@ applicationRouter.get(
   },
 );
 
+// Get singular job application
 applicationRouter.get(
   "/:id",
   requireAuth(),
@@ -88,6 +90,52 @@ applicationRouter.get(
   },
 );
 
+// Create new job application
+applicationRouter.post(
+  "/add",
+  requireAuth(),
+  async (req: Request, res: Response) => {
+    const { userId } = req.auth;
+
+    if (!userId) {
+      logger.warn("Unauthorised access attempt", {
+        endpoint: "/applications/add",
+      });
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { role, company, status, appliedDate, notes, jobUrl } = req.body;
+
+    try {
+      const application = await prisma.application.create({
+        data: {
+          role: role,
+          company: company,
+          status: status,
+          appliedDate: appliedDate ? new Date(appliedDate) : undefined,
+          notes: notes ?? null,
+          jobUrl: jobUrl ?? null,
+          userId: userId,
+        },
+      });
+
+      await logAudit(
+        userId,
+        "APPLICATION_CREATED",
+        undefined,
+        "Application",
+        application.id,
+      );
+
+      res.status(201).json(application);
+    } catch (error) {
+      logger.error("Failed to add application", { userId, error });
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+);
+
+// Update job application
 applicationRouter.patch(
   "/:id",
   requireAuth(),
@@ -136,6 +184,7 @@ applicationRouter.patch(
   },
 );
 
+// Delete job application
 applicationRouter.delete(
   "/:id",
   requireAuth(),
@@ -170,50 +219,6 @@ applicationRouter.delete(
         .json({ message: "Application successfully deleted" });
     } catch (error) {
       logger.error("Failed to delete application", { userId, error });
-      res.status(500).json({ message: "Internal server error" });
-    }
-  },
-);
-
-applicationRouter.post(
-  "/add",
-  requireAuth(),
-  async (req: Request, res: Response) => {
-    const { userId } = req.auth;
-
-    if (!userId) {
-      logger.warn("Unauthorised access attempt", {
-        endpoint: "/applications/add",
-      });
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const { role, company, status, appliedDate, notes, jobUrl } = req.body;
-
-    try {
-      const application = await prisma.application.create({
-        data: {
-          role: role,
-          company: company,
-          status: status,
-          appliedDate: appliedDate ? new Date(appliedDate) : undefined,
-          notes: notes ?? null,
-          jobUrl: jobUrl ?? null,
-          userId: userId,
-        },
-      });
-
-      await logAudit(
-        userId,
-        "APPLICATION_CREATED",
-        undefined,
-        "Application",
-        application.id,
-      );
-
-      res.status(201).json(application);
-    } catch (error) {
-      logger.error("Failed to add application", { userId, error });
       res.status(500).json({ message: "Internal server error" });
     }
   },

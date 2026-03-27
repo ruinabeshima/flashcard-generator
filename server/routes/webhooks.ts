@@ -15,6 +15,7 @@ interface ClerkWebhookEvent {
   };
 }
 
+// Webhook to sync ClerkID to Users table
 webhookRouter.post(
   "/clerk",
   express.raw({ type: "application/json" }),
