@@ -13,15 +13,6 @@ export type ResumeSuggestionsProps = {
   suggestions: TypeResumeSuggestions;
 };
 
-const SuggestionTypes = {
-  miss: "MISS",
-  improve: "IMPROVE",
-  add: "ADD",
-  weak: "WEAK",
-} as const;
-
-type SuggestionTypes = (typeof SuggestionTypes)[keyof typeof SuggestionTypes];
-
 export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
   const appUrl = import.meta.env.VITE_SERVER_URL;
   const { getToken } = useAuth();
