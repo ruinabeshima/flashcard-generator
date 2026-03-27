@@ -16,6 +16,7 @@ import parsePDF from "../lib/storage/parse";
 
 const resumeRouter = express.Router();
 
+// Get URL of user's resume
 resumeRouter.get("/", requireAuth(), async (req: Request, res: Response) => {
   const { userId } = req.auth;
 
@@ -55,6 +56,7 @@ resumeRouter.get("/", requireAuth(), async (req: Request, res: Response) => {
   }
 });
 
+// Upload / update resume 
 resumeRouter.post(
   "/upload",
   requireAuth(),

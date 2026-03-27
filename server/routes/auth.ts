@@ -6,6 +6,7 @@ import logAudit from "../lib/monitoring/audit";
 
 const authRouter = express.Router();
 
+// Check user's onboarding status
 authRouter.get(
   "/status",
   requireAuth(),
@@ -42,6 +43,7 @@ authRouter.get(
   },
 );
 
+// Update user's onboarding status
 authRouter.patch(
   "/status",
   requireAuth(),

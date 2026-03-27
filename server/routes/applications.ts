@@ -6,6 +6,7 @@ import logAudit from "../lib/monitoring/audit";
 
 const applicationRouter = express.Router();
 
+// Get paginated list of job applications
 applicationRouter.get(
   "/",
   requireAuth(),
@@ -44,6 +45,7 @@ applicationRouter.get(
   },
 );
 
+// Get singular job application
 applicationRouter.get(
   "/:id",
   requireAuth(),
@@ -88,93 +90,7 @@ applicationRouter.get(
   },
 );
 
-applicationRouter.patch(
-  "/:id",
-  requireAuth(),
-  async (req: Request<{ id: string }>, res: Response) => {
-    const { userId } = req.auth;
-    const { id } = req.params;
-
-    if (!userId) {
-      logger.warn("Unauthorised access attempt", {
-        endpoint: "/applications/:id",
-      });
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const { role, company, status, appliedDate, notes, jobUrl } = req.body;
-
-    try {
-      const application = await prisma.application.update({
-        where: {
-          id: id,
-        },
-        data: {
-          role: role,
-          company: company,
-          status: status,
-          appliedDate: appliedDate ? new Date(appliedDate) : undefined,
-          notes: notes ?? null,
-          jobUrl: jobUrl ?? null,
-          userId: userId,
-        },
-      });
-
-      await logAudit(
-        userId,
-        "APPLICATION_UPDATED",
-        undefined,
-        "Application",
-        id,
-      );
-
-      res.status(201).json(application);
-    } catch (error) {
-      logger.error("Failed to update application", { userId, error });
-      res.status(500).json({ message: "Internal server error" });
-    }
-  },
-);
-
-applicationRouter.delete(
-  "/:id",
-  requireAuth(),
-  async (req: Request<{ id: string }>, res: Response) => {
-    const { userId } = req.auth;
-    const { id } = req.params;
-
-    if (!userId) {
-      logger.warn("Unauthorised access attempt", {
-        endpoint: "/applications/:id",
-      });
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    try {
-      await prisma.application.delete({
-        where: {
-          id: id,
-        },
-      });
-
-      await logAudit(
-        userId,
-        "APPLICATION_DELETED",
-        undefined,
-        "Application",
-        id,
-      );
-
-      return res
-        .status(204)
-        .json({ message: "Application successfully deleted" });
-    } catch (error) {
-      logger.error("Failed to delete application", { userId, error });
-      res.status(500).json({ message: "Internal server error" });
-    }
-  },
-);
-
+// Create new job application
 applicationRouter.post(
   "/add",
   requireAuth(),
@@ -214,6 +130,119 @@ applicationRouter.post(
       res.status(201).json(application);
     } catch (error) {
       logger.error("Failed to add application", { userId, error });
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+);
+
+// Update job application
+applicationRouter.patch(
+  "/:id",
+  requireAuth(),
+  async (req: Request<{ id: string }>, res: Response) => {
+    const { userId } = req.auth;
+    const { id } = req.params;
+
+    if (!userId) {
+      logger.warn("Unauthorised access attempt", {
+        endpoint: "/applications/:id",
+      });
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { role, company, status, appliedDate, notes, jobUrl } = req.body;
+
+    try {
+      const existing = await prisma.application.findUnique({
+        where: { id },
+        select: { id: true, userId: true },
+      });
+
+      if (!existing) {
+        return res.status(404).json({ message: "Application not found" });
+      }
+
+      if (existing.userId !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      const updated = await prisma.application.update({
+        where: {
+          id
+        },
+        data: {
+          role: role,
+          company: company,
+          status: status,
+          appliedDate: appliedDate ? new Date(appliedDate) : undefined,
+          notes: notes ?? null,
+          jobUrl: jobUrl ?? null,
+          userId: userId,
+        },
+      });
+
+      await logAudit(
+        userId,
+        "APPLICATION_UPDATED",
+        undefined,
+        "Application",
+        id,
+      );
+
+      res.status(200).json(updated);
+    } catch (error) {
+      logger.error("Failed to update application", { userId, error });
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+);
+
+// Delete job application
+applicationRouter.delete(
+  "/:id",
+  requireAuth(),
+  async (req: Request<{ id: string }>, res: Response) => {
+    const { userId } = req.auth;
+    const { id } = req.params;
+
+    if (!userId) {
+      logger.warn("Unauthorised access attempt", {
+        endpoint: "/applications/:id",
+      });
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+      const existing = await prisma.application.findUnique({
+        where: { id },
+        select: { id: true, userId: true },
+      });
+
+      if (!existing) {
+        return res.status(404).json({ message: "Application not found" });
+      }
+
+      if (existing.userId !== userId) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      await prisma.application.delete({
+        where: {
+          id
+        },
+      });
+
+      await logAudit(
+        userId,
+        "APPLICATION_DELETED",
+        undefined,
+        "Application",
+        id,
+      );
+
+      return res.sendStatus(204);
+    } catch (error) {
+      logger.error("Failed to delete application", { userId, error });
       res.status(500).json({ message: "Internal server error" });
     }
   },
