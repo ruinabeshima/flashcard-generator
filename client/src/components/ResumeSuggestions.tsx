@@ -29,10 +29,11 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [acceptedSuggestions, setAcceptedSuggestions] = useState<string[]>([]);
-  const [submitted, setSubmitted] = useState(false);
   const [dismissedSuggestions, setDismissedSuggestions] = useState<string[]>(
     [],
   );
+  const [submitted, setSubmitted] = useState(false);
+  const [generated, setGenerated] = useState(false);
 
   const total =
     props.suggestions.miss.length +
@@ -68,8 +69,6 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
         }
 
         setSubmitted(true);
-        const data = await response.json();
-        console.log(data.message, data.status);
       } catch {
         setError(true);
       } finally {
@@ -91,12 +90,51 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
     props.sessionId,
   ]);
 
+  useEffect(() => {
+    if (!submitted || loading || error || generated) {
+      return;
+    }
+
+    const getTailoredResume = async () => {
+      setLoading(true);
+      try {
+        const token = await getToken();
+        const response = await fetch(
+          `${appUrl}/feedback/generate/${props.sessionId}`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (!response.ok) {
+          setError(true);
+          return;
+        }
+
+        const data = await response.json();
+        console.log(data);
+        setGenerated(true);
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getTailoredResume();
+  }, [submitted, loading, error, generated, appUrl, getToken, props.sessionId]);
+
   const handleAcceptSuggestion = (
     key: string,
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     event.preventDefault();
 
+    // States have to immutable
     setHidden((prev) => {
       const next = new Set(prev);
       next.add(key);
@@ -111,6 +149,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
   ) => {
     event.preventDefault();
 
+    // States have to be immutable
     setHidden((prev) => {
       const next = new Set(prev);
       next.add(key);
@@ -122,7 +161,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
   return (
     <div className="flex flex-col gap-5 m-10">
       {error ? (
-        <h1>An error occured</h1>
+        <h1>An error occurred</h1>
       ) : loading ? (
         <span className="loading loading-spinner loading-xl"></span>
       ) : (
