@@ -39,7 +39,7 @@ export default function Dashboard() {
     };
 
     checkOnboardingStatus();
-  }, [getToken]);
+  }, [getToken, appUrl, navigate]);
 
   return (
     <div className="flex min-h-screen flex-col gap-5 w-full items-center">

@@ -39,7 +39,7 @@ export default function AddApplication() {
     };
 
     checkOnboardingStatus();
-  }, [getToken]);
+  }, [getToken, navigate, appUrl]);
 
   return (
     <div className="flex flex-col gap-10 items-center">

@@ -10,10 +10,9 @@ export default function UserResume() {
   const [url, setUrl] = useState("");
   const { getToken } = useAuth();
   const navigate = useNavigate();
+  const appUrl = import.meta.env.VITE_SERVER_URL;
 
   useEffect(() => {
-    const appUrl = import.meta.env.VITE_SERVER_URL;
-
     const getResumeLink = async () => {
       try {
         const token = await getToken();
@@ -67,7 +66,7 @@ export default function UserResume() {
 
     checkOnboardingStatus();
     getResumeLink();
-  }, [getToken]);
+  }, [getToken, appUrl, navigate]);
 
   return (
     <div className="w-full min-h-screen flex flex-col gap-7 items-center">

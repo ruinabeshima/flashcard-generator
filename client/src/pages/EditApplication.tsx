@@ -22,7 +22,7 @@ export default function EditApplication() {
   const [application, setApplication] = useState<Application | null>(null);
   const [error, setError] = useState<null | string>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { getToken } = useAuth();
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export default function EditApplication() {
 
     checkOnboardingStatus();
     getIndividualApplication();
-  }, [getToken, id]);
+  }, [getToken, id, appUrl, navigate]);
 
   return (
     <div className="flex flex-col gap-5 min-h-screen w-full items-center">

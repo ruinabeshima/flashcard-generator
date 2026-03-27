@@ -77,7 +77,7 @@ export default function ApplicationDetail() {
 
     checkOnboardingStatus();
     getIndividualApplication();
-  }, [getToken, id]);
+  }, [getToken, id, appUrl, navigate]);
 
   const handleApplicationDelete = async () => {
     setLoading(true);
