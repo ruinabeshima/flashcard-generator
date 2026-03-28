@@ -92,14 +92,16 @@ applicationRouter.get(
 );
 
 // Create new job application
-const newApplicationSchema = z.object({
-  role: z.string().min(1).max(100),
-  company: z.string().min(1).max(100),
-  status: z.enum(["APPLIED", "INTERVIEW", "OFFER", "REJECTED"]),
-  appliedDate: z.iso.datetime().optional(),
-  notes: z.string().nullish(),
-  jobUrl: z.url().nullish(),
-});
+const newApplicationSchema = z
+  .object({
+    role: z.string().min(1).max(100),
+    company: z.string().min(1).max(100),
+    status: z.enum(["APPLIED", "INTERVIEW", "OFFER", "REJECTED"]),
+    appliedDate: z.iso.datetime().optional(),
+    notes: z.string().nullish(),
+    jobUrl: z.url().nullish(),
+  })
+  .strict();
 applicationRouter.post(
   "/add",
   requireAuth(),
@@ -152,14 +154,16 @@ applicationRouter.post(
 );
 
 // Update job application
-const updateApplicationSchema = z.object({
-  role: z.string().min(1).max(100),
-  company: z.string().min(1).max(100),
-  status: z.enum(["APPLIED", "INTERVIEW", "OFFER", "REJECTED"]),
-  appliedDate: z.iso.datetime().optional(),
-  notes: z.string().nullish(),
-  jobUrl: z.url().nullish(),
-});
+const updateApplicationSchema = z
+  .object({
+    role: z.string().min(1).max(100),
+    company: z.string().min(1).max(100),
+    status: z.enum(["APPLIED", "INTERVIEW", "OFFER", "REJECTED"]),
+    appliedDate: z.iso.datetime().optional(),
+    notes: z.string().nullish(),
+    jobUrl: z.url().nullish(),
+  })
+  .strict();
 applicationRouter.patch(
   "/:id",
   requireAuth(),
