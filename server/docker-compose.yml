@@ -1,5 +1,5 @@
-services: 
-  db: 
+services:
+  db:
     image: postgres:16
     container_name: flashcard_generator_dev
     environment:

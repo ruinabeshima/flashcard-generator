@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import background from "../assets/background.jpg"
-import reference from "../assets/reference.png"
+import background from "../assets/background.jpg";
+import reference from "../assets/reference.png";
 import NavBar from "../components/Navbar";
 
 export default function Home() {

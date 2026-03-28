@@ -56,7 +56,7 @@ resumeRouter.get("/", requireAuth(), async (req: Request, res: Response) => {
   }
 });
 
-// Upload / update resume 
+// Upload / update resume
 resumeRouter.post(
   "/upload",
   requireAuth(),
