@@ -152,6 +152,14 @@ applicationRouter.post(
 );
 
 // Update job application
+const updateApplicationSchema = z.object({
+  role: z.string().min(1).max(100),
+  company: z.string().min(1).max(100),
+  status: z.enum(["APPLIED", "INTERVIEW", "OFFER", "REJECTED"]),
+  appliedDate: z.iso.datetime().optional(),
+  notes: z.string().nullish(),
+  jobUrl: z.url().nullish(),
+});
 applicationRouter.patch(
   "/:id",
   requireAuth(),
@@ -166,7 +174,14 @@ applicationRouter.patch(
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const { role, company, status, appliedDate, notes, jobUrl } = req.body;
+    const result = updateApplicationSchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({
+        message: "Invalid request",
+        errors: z.treeifyError(result.error),
+      });
+    }
+    const { role, company, status, appliedDate, notes, jobUrl } = result.data;
 
     try {
       const existing = await prisma.application.findUnique({
@@ -187,13 +202,13 @@ applicationRouter.patch(
           id,
         },
         data: {
-          role: role,
-          company: company,
-          status: status,
+          role,
+          company,
+          status,
           appliedDate: appliedDate ? new Date(appliedDate) : undefined,
           notes: notes ?? null,
           jobUrl: jobUrl ?? null,
-          userId: userId,
+          userId,
         },
       });
 
