@@ -11,6 +11,7 @@ import {
   ResumeSuggestions,
 } from "../lib/openai/openai";
 import { parseAcceptedSuggestions } from "../lib/tailoring/tailoring";
+import * as z from "zod";
 
 const feedbackRouter = express.Router();
 
@@ -99,13 +100,45 @@ feedbackRouter.post(
 );
 
 // Update suggestion decisions, and track accepted / dismissed
+const suggestionId = z
+  .string()
+  .regex(/^(miss|improve|add|weak)-\d+$/, "Invalid suggestion ID format");
+const noDuplicates = (arr: string[]) => {
+  return new Set(arr).size === arr.length;
+};
+const updateSuggestionsSchema = z
+  .object({
+    acceptedSuggestions: z.array(suggestionId),
+    dismissedSuggestions: z.array(suggestionId),
+  })
+  .refine((data) => noDuplicates(data.acceptedSuggestions), {
+    path: ["acceptedSuggestions"],
+    message: "acceptedSuggestions contains duplicates",
+  })
+  .refine((data) => noDuplicates(data.dismissedSuggestions), {
+    path: ["dismissedSuggestions"],
+    message: "dismissedSuggestions contains duplicates",
+  })
+  .refine(
+    (data) => {
+      const acceptedSet = new Set(data.acceptedSuggestions);
+      const duplicates = data.dismissedSuggestions.filter((item) =>
+        acceptedSet.has(item),
+      );
+      return duplicates.length === 0;
+    },
+    {
+      message: "Suggestions cannot be both accepted and dismissed",
+    },
+  )
+  .strict();
+
 feedbackRouter.post(
   "/update/:sessionId",
   requireAuth(),
   async (req: Request<{ sessionId: string }>, res: Response) => {
     const { userId } = req.auth;
     const { sessionId } = req.params;
-    const { acceptedSuggestions, dismissedSuggestions } = req.body;
 
     if (!userId) {
       logger.warn("Unauthorised access attempt", {
@@ -114,6 +147,15 @@ feedbackRouter.post(
       return res.status(401).json({ message: "Unauthorized" });
     }
 
+    const result = updateSuggestionsSchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({
+        message: "Invalid request",
+        errors: z.treeifyError(result.error),
+      });
+    }
+    const { acceptedSuggestions, dismissedSuggestions } = result.data;
+
     try {
       // Retrieve tailoring session and update with values
       const session = await prisma.tailoringSession.findUnique({
@@ -121,7 +163,7 @@ feedbackRouter.post(
           id: sessionId,
         },
       });
-      if (!session || session?.userId !== userId) {
+      if (!session || session.userId !== userId) {
         logger.warn("Unauthorised access attempt", {
           endpoint: `/feedback/${sessionId}`,
         });
@@ -160,13 +202,15 @@ feedbackRouter.post(
 );
 
 // Generate tailored resume
+const generateTailoredResumeSchema = z.object({
+  resumeName: z.string().min(5).max(30).nullish(),
+});
 feedbackRouter.post(
   "/generate/:sessionId",
   requireAuth(),
   async (req: Request<{ sessionId: string }>, res: Response) => {
     const { userId } = req.auth;
     const { sessionId } = req.params;
-    const { resumeName } = req.body;
 
     if (!userId) {
       logger.warn("Unauthorised access attempt", {
@@ -174,6 +218,15 @@ feedbackRouter.post(
       });
       return res.status(401).json({ message: "Unauthorized" });
     }
+
+    const result = generateTailoredResumeSchema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({
+        message: "Invalid request",
+        errors: z.treeifyError(result.error),
+      });
+    }
+    const { resumeName } = result.data;
 
     try {
       // Retrieve tailoring session and update status
@@ -237,7 +290,7 @@ feedbackRouter.post(
       await logAudit(
         userId,
         "RESUME_TAILORED",
-        resumeName,
+        newResume.name,
         "TailoredResume",
         newResume.id,
       );
