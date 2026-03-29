@@ -121,7 +121,16 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
     };
 
     getTailoredResume();
-  }, [submitted, loading, error, generated, appUrl, getToken, props.sessionId]);
+  }, [
+    submitted,
+    loading,
+    error,
+    navigate,
+    generated,
+    appUrl,
+    getToken,
+    props.sessionId,
+  ]);
 
   const handleAcceptSuggestion = (
     key: string,
