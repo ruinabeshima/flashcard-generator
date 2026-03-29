@@ -9,6 +9,8 @@ import Onboarding from "./pages/Onboarding";
 import UserResume from "./pages/UserResume";
 import ApplicationDetail from "./pages/ApplicationDetail";
 import EditApplication from "./pages/EditApplication";
+import TailoredList from "./pages/TailoredList";
+import TailoredResume from "./pages/TailoredResume";
 
 const routes = (
   <Routes>
@@ -81,6 +83,22 @@ const routes = (
       element={
         <ProtectedRoute>
           <EditApplication />
+        </ProtectedRoute>
+      }
+    ></Route>
+    <Route
+      path="/applications/:id/tailored"
+      element={
+        <ProtectedRoute>
+          <TailoredList />
+        </ProtectedRoute>
+      }
+    ></Route>
+    <Route
+      path="/applications/:id/tailored/:tailoredResumeId"
+      element={
+        <ProtectedRoute>
+          <TailoredResume />
         </ProtectedRoute>
       }
     ></Route>
