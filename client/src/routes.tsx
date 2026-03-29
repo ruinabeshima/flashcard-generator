@@ -2,15 +2,15 @@ import { Route, Routes } from "react-router-dom";
 import { ProtectedRoute, AlreadySignedIn } from "./protected_routes";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import AddApplication from "./pages/AddApplication";
-import Onboarding from "./pages/Onboarding";
-import UserResume from "./pages/UserResume";
-import ApplicationDetail from "./pages/ApplicationDetail";
-import EditApplication from "./pages/EditApplication";
-import TailoredList from "./pages/TailoredList";
-import TailoredResume from "./pages/TailoredResume";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import AddApplication from "./pages/applications/AddApplication";
+import Onboarding from "./pages/auth/Onboarding";
+import UserResume from "./pages/resumes/UserResume";
+import ApplicationDetail from "./pages/applications/ApplicationDetail";
+import EditApplication from "./pages/applications/EditApplication";
+import TailoredList from "./pages/tailoring/TailoredList";
+import TailoredResume from "./pages/tailoring/TailoredResume";
 
 const routes = (
   <Routes>

@@ -1,43 +1,17 @@
+import Navbar from "../../components/navbar/Navbar";
+import ApplicationForm from "../../components/applications/ApplicationForm";
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import ResumeUpload from "../components/ResumeUpload";
 
-export default function UserResume() {
-  const [error, setError] = useState<null | string>(null);
+export default function AddApplication() {
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [url, setUrl] = useState("");
-  const { getToken } = useAuth();
   const navigate = useNavigate();
   const appUrl = import.meta.env.VITE_SERVER_URL;
+  const { getToken } = useAuth();
 
   useEffect(() => {
-    const getResumeLink = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch(`${appUrl}/resumes`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          setError("Failed to retrieve resume");
-          return;
-        }
-
-        const { url } = await response.json();
-        setUrl(url);
-        console.log(url);
-      } catch {
-        setError("Failed to retreive resume");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     const checkOnboardingStatus = async () => {
       try {
         const token = await getToken();
@@ -65,14 +39,17 @@ export default function UserResume() {
     };
 
     checkOnboardingStatus();
-    getResumeLink();
-  }, [getToken, appUrl, navigate]);
+  }, [getToken, navigate, appUrl]);
 
   return (
-    <div className="w-full min-h-screen flex flex-col gap-7 items-center">
+    <div className="flex flex-col gap-10 items-center">
       <Navbar />
-      {error ? (
-        <div role="alert" className="alert alert-error w-4/5">
+      {loading ? (
+        <button className="btn btn-square">
+          <span className="loading loading-spinner"></span>
+        </button>
+      ) : error ? (
+        <div role="alert" className="alert alert-error mb-10 w-4/5">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6 shrink-0 stroke-current"
@@ -88,15 +65,8 @@ export default function UserResume() {
           </svg>
           <span>{error}</span>
         </div>
-      ) : loading ? (
-        <button className="btn btn-square">
-          <span className="loading loading-spinner"></span>
-        </button>
       ) : (
-        <>
-          <iframe src={url} className="w-4/5 h-screen" />
-          <ResumeUpload isUpdate={true} />
-        </>
+        <ApplicationForm />
       )}
     </div>
   );

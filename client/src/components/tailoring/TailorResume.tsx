@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
-import { TrackResumeSuggestions } from "./ResumeSuggestions";
-import type { TypeResumeSuggestions } from "./ResumeSuggestions";
+import { TrackResumeSuggestions } from "../resumes/ResumeSuggestions";
+import type { TypeResumeSuggestions } from "../resumes/ResumeSuggestions";
 
 type Suggestion = {
   sessionId: string;
