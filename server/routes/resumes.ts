@@ -56,7 +56,7 @@ resumeRouter.get("/", requireAuth(), async (req: Request, res: Response) => {
   }
 });
 
-// Get all user's tailored resume texts
+// Get all user's tailored resumes
 resumeRouter.get(
   "/tailored",
   requireAuth(),
@@ -94,7 +94,7 @@ resumeRouter.get(
   },
 );
 
-// Get individual tailored resume text
+// Get individual tailored resume url
 resumeRouter.get(
   "/tailored/:tailoredResumeId",
   requireAuth(),
@@ -116,7 +116,7 @@ resumeRouter.get(
           userId,
         },
         select: {
-          content: true,
+          key: true,
         },
       });
 
@@ -124,10 +124,16 @@ resumeRouter.get(
         return res.status(404).json({ message: "Tailored resume not found" });
       }
 
-      const { content } = tailoredResume;
-      return res.status(200).json({
-        content,
-      });
+      const url = await getSignedUrl(
+        r2,
+        new GetObjectCommand({
+          Bucket: process.env.R2_BUCKET_NAME!,
+          Key: tailoredResume.key,
+        }),
+        { expiresIn: 3600 },
+      );
+
+      res.json({ url });
     } catch (error) {
       logger.error("Failed to retrieve tailored resume", { userId, error });
       return res.status(500).json({ message: "Internal server error" });

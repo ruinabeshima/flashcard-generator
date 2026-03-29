@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
 
 export type TypeResumeSuggestions = {
   miss: string[];
@@ -14,6 +15,7 @@ export type ResumeSuggestionsProps = {
 };
 
 export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
+  const navigate = useNavigate();
   const appUrl = import.meta.env.VITE_SERVER_URL;
   const { getToken } = useAuth();
   const [hidden, setHidden] = useState<Set<string>>(new Set());
@@ -107,8 +109,10 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
         }
 
         const data = await response.json();
-        console.log(data);
         setGenerated(true);
+        navigate(
+          `/applications/${data.applicationId}/tailored/${data.tailoredResumeId}`,
+        );
       } catch {
         setError(true);
       } finally {
@@ -117,7 +121,16 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
     };
 
     getTailoredResume();
-  }, [submitted, loading, error, generated, appUrl, getToken, props.sessionId]);
+  }, [
+    submitted,
+    loading,
+    error,
+    navigate,
+    generated,
+    appUrl,
+    getToken,
+    props.sessionId,
+  ]);
 
   const handleAcceptSuggestion = (
     key: string,

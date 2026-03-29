@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
+import { Link } from "react-router-dom";
 import Navbar from "../../components/navbar/Navbar";
 
 interface TailoredResume {
@@ -16,7 +17,7 @@ interface TailoredResumeResponse {
 export default function TailoredList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [resumes, setResumes] = useState<TailoredResume[]>([]);
+  const [data, setData] = useState<TailoredResume[]>([]);
   const { getToken } = useAuth();
   const appUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -37,7 +38,7 @@ export default function TailoredList() {
         }
 
         const data: TailoredResumeResponse = await response.json();
-        setResumes(data.resumes);
+        setData(data.resumes);
       } catch {
         setError(true);
       } finally {
@@ -73,26 +74,30 @@ export default function TailoredList() {
             </svg>
             <span>An error occured.</span>
           </div>
-        ) : resumes.length === 0 ? (
+        ) : data.length === 0 ? (
           <p className="text-base-content/50">No tailored resumes found.</p>
         ) : (
           <ul className="flex flex-col gap-3 w-4/5">
-            {resumes.map((resume) => (
-              <li
-                key={resume.id}
-                className="flex items-center justify-between p-4 rounded-xl border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition-shadow"
+            {data.map((resume) => (
+              <Link
+                to={`/applications/${resume.applicationId}/tailored/${resume.id}`}
               >
-                <div className="flex flex-col gap-1">
-                  <span className="font-semibold">{resume.name}</span>
-                  <span className="text-sm text-base-content/50">
-                    {new Date(resume.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </span>
-                </div>
-              </li>
+                <li
+                  key={resume.id}
+                  className="flex items-center justify-between p-4 rounded-xl border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="flex flex-col gap-1">
+                    <span className="font-semibold">{resume.name}</span>
+                    <span className="text-sm text-base-content/50">
+                      {new Date(resume.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </span>
+                  </div>
+                </li>
+              </Link>
             ))}
           </ul>
         )}

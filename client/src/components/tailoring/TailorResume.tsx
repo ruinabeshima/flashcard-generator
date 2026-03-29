@@ -57,14 +57,14 @@ export default function TailorResume(props: TailorResumeProps) {
 
   return (
     <>
-      {loading || !data ? (
+      {loading ? (
         <span className="loading loading-spinner loading-md"></span>
       ) : error ? (
         <p>An error occurred</p>
-      ) : getSuggestions ? (
+      ) : getSuggestions && data ? (
         <TrackResumeSuggestions
-          sessionId={data.sessionId!}
-          suggestions={data.suggestions!}
+          sessionId={data.sessionId}
+          suggestions={data.suggestions}
         />
       ) : (
         <section className="w-full flex justify-center items-center">
