@@ -26,6 +26,7 @@ export type AggregateTailoredResume = {
 
 export type TailoredResumeMinAggregateOutputType = {
   id: string | null;
+  key: string | null;
   tailoringSessionId: string | null;
   applicationId: string | null;
   userId: string | null;
@@ -36,6 +37,7 @@ export type TailoredResumeMinAggregateOutputType = {
 
 export type TailoredResumeMaxAggregateOutputType = {
   id: string | null;
+  key: string | null;
   tailoringSessionId: string | null;
   applicationId: string | null;
   userId: string | null;
@@ -46,6 +48,7 @@ export type TailoredResumeMaxAggregateOutputType = {
 
 export type TailoredResumeCountAggregateOutputType = {
   id: number;
+  key: number;
   tailoringSessionId: number;
   applicationId: number;
   userId: number;
@@ -57,6 +60,7 @@ export type TailoredResumeCountAggregateOutputType = {
 
 export type TailoredResumeMinAggregateInputType = {
   id?: true;
+  key?: true;
   tailoringSessionId?: true;
   applicationId?: true;
   userId?: true;
@@ -67,6 +71,7 @@ export type TailoredResumeMinAggregateInputType = {
 
 export type TailoredResumeMaxAggregateInputType = {
   id?: true;
+  key?: true;
   tailoringSessionId?: true;
   applicationId?: true;
   userId?: true;
@@ -77,6 +82,7 @@ export type TailoredResumeMaxAggregateInputType = {
 
 export type TailoredResumeCountAggregateInputType = {
   id?: true;
+  key?: true;
   tailoringSessionId?: true;
   applicationId?: true;
   userId?: true;
@@ -171,6 +177,7 @@ export type TailoredResumeGroupByArgs<
 
 export type TailoredResumeGroupByOutputType = {
   id: string;
+  key: string;
   tailoringSessionId: string;
   applicationId: string;
   userId: string;
@@ -182,25 +189,26 @@ export type TailoredResumeGroupByOutputType = {
   _max: TailoredResumeMaxAggregateOutputType | null;
 };
 
-type GetTailoredResumeGroupByPayload<T extends TailoredResumeGroupByArgs> =
-  Prisma.PrismaPromise<
-    Array<
-      Prisma.PickEnumerable<TailoredResumeGroupByOutputType, T["by"]> & {
-        [P in keyof T &
-          keyof TailoredResumeGroupByOutputType]: P extends "_count"
-          ? T[P] extends boolean
-            ? number
-            : Prisma.GetScalarType<T[P], TailoredResumeGroupByOutputType[P]>
-          : Prisma.GetScalarType<T[P], TailoredResumeGroupByOutputType[P]>;
-      }
-    >
-  >;
+export type GetTailoredResumeGroupByPayload<
+  T extends TailoredResumeGroupByArgs,
+> = Prisma.PrismaPromise<
+  Array<
+    Prisma.PickEnumerable<TailoredResumeGroupByOutputType, T["by"]> & {
+      [P in keyof T & keyof TailoredResumeGroupByOutputType]: P extends "_count"
+        ? T[P] extends boolean
+          ? number
+          : Prisma.GetScalarType<T[P], TailoredResumeGroupByOutputType[P]>
+        : Prisma.GetScalarType<T[P], TailoredResumeGroupByOutputType[P]>;
+    }
+  >
+>;
 
 export type TailoredResumeWhereInput = {
   AND?: Prisma.TailoredResumeWhereInput | Prisma.TailoredResumeWhereInput[];
   OR?: Prisma.TailoredResumeWhereInput[];
   NOT?: Prisma.TailoredResumeWhereInput | Prisma.TailoredResumeWhereInput[];
   id?: Prisma.StringFilter<"TailoredResume"> | string;
+  key?: Prisma.StringFilter<"TailoredResume"> | string;
   tailoringSessionId?: Prisma.StringFilter<"TailoredResume"> | string;
   applicationId?: Prisma.StringFilter<"TailoredResume"> | string;
   userId?: Prisma.StringFilter<"TailoredResume"> | string;
@@ -220,6 +228,7 @@ export type TailoredResumeWhereInput = {
 
 export type TailoredResumeOrderByWithRelationInput = {
   id?: Prisma.SortOrder;
+  key?: Prisma.SortOrder;
   tailoringSessionId?: Prisma.SortOrder;
   applicationId?: Prisma.SortOrder;
   userId?: Prisma.SortOrder;
@@ -237,6 +246,7 @@ export type TailoredResumeWhereUniqueInput = Prisma.AtLeast<
     AND?: Prisma.TailoredResumeWhereInput | Prisma.TailoredResumeWhereInput[];
     OR?: Prisma.TailoredResumeWhereInput[];
     NOT?: Prisma.TailoredResumeWhereInput | Prisma.TailoredResumeWhereInput[];
+    key?: Prisma.StringFilter<"TailoredResume"> | string;
     tailoringSessionId?: Prisma.StringFilter<"TailoredResume"> | string;
     applicationId?: Prisma.StringFilter<"TailoredResume"> | string;
     userId?: Prisma.StringFilter<"TailoredResume"> | string;
@@ -258,6 +268,7 @@ export type TailoredResumeWhereUniqueInput = Prisma.AtLeast<
 
 export type TailoredResumeOrderByWithAggregationInput = {
   id?: Prisma.SortOrder;
+  key?: Prisma.SortOrder;
   tailoringSessionId?: Prisma.SortOrder;
   applicationId?: Prisma.SortOrder;
   userId?: Prisma.SortOrder;
@@ -278,6 +289,7 @@ export type TailoredResumeScalarWhereWithAggregatesInput = {
     | Prisma.TailoredResumeScalarWhereWithAggregatesInput
     | Prisma.TailoredResumeScalarWhereWithAggregatesInput[];
   id?: Prisma.StringWithAggregatesFilter<"TailoredResume"> | string;
+  key?: Prisma.StringWithAggregatesFilter<"TailoredResume"> | string;
   tailoringSessionId?:
     | Prisma.StringWithAggregatesFilter<"TailoredResume">
     | string;
@@ -293,6 +305,7 @@ export type TailoredResumeScalarWhereWithAggregatesInput = {
 
 export type TailoredResumeCreateInput = {
   id?: string;
+  key: string;
   name: string;
   content: string;
   createdAt?: Date | string;
@@ -303,6 +316,7 @@ export type TailoredResumeCreateInput = {
 
 export type TailoredResumeUncheckedCreateInput = {
   id?: string;
+  key: string;
   tailoringSessionId: string;
   applicationId: string;
   userId: string;
@@ -313,6 +327,7 @@ export type TailoredResumeUncheckedCreateInput = {
 
 export type TailoredResumeUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -323,6 +338,7 @@ export type TailoredResumeUpdateInput = {
 
 export type TailoredResumeUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   tailoringSessionId?: Prisma.StringFieldUpdateOperationsInput | string;
   applicationId?: Prisma.StringFieldUpdateOperationsInput | string;
   userId?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -333,6 +349,7 @@ export type TailoredResumeUncheckedUpdateInput = {
 
 export type TailoredResumeCreateManyInput = {
   id?: string;
+  key: string;
   tailoringSessionId: string;
   applicationId: string;
   userId: string;
@@ -343,6 +360,7 @@ export type TailoredResumeCreateManyInput = {
 
 export type TailoredResumeUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -350,6 +368,7 @@ export type TailoredResumeUpdateManyMutationInput = {
 
 export type TailoredResumeUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   tailoringSessionId?: Prisma.StringFieldUpdateOperationsInput | string;
   applicationId?: Prisma.StringFieldUpdateOperationsInput | string;
   userId?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -370,6 +389,7 @@ export type TailoredResumeOrderByRelationAggregateInput = {
 
 export type TailoredResumeCountOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  key?: Prisma.SortOrder;
   tailoringSessionId?: Prisma.SortOrder;
   applicationId?: Prisma.SortOrder;
   userId?: Prisma.SortOrder;
@@ -380,6 +400,7 @@ export type TailoredResumeCountOrderByAggregateInput = {
 
 export type TailoredResumeMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  key?: Prisma.SortOrder;
   tailoringSessionId?: Prisma.SortOrder;
   applicationId?: Prisma.SortOrder;
   userId?: Prisma.SortOrder;
@@ -390,6 +411,7 @@ export type TailoredResumeMaxOrderByAggregateInput = {
 
 export type TailoredResumeMinOrderByAggregateInput = {
   id?: Prisma.SortOrder;
+  key?: Prisma.SortOrder;
   tailoringSessionId?: Prisma.SortOrder;
   applicationId?: Prisma.SortOrder;
   userId?: Prisma.SortOrder;
@@ -732,6 +754,7 @@ export type TailoredResumeUncheckedUpdateManyWithoutTailoringSessionNestedInput 
 
 export type TailoredResumeCreateWithoutUserInput = {
   id?: string;
+  key: string;
   name: string;
   content: string;
   createdAt?: Date | string;
@@ -741,6 +764,7 @@ export type TailoredResumeCreateWithoutUserInput = {
 
 export type TailoredResumeUncheckedCreateWithoutUserInput = {
   id?: string;
+  key: string;
   tailoringSessionId: string;
   applicationId: string;
   name: string;
@@ -800,6 +824,7 @@ export type TailoredResumeScalarWhereInput = {
     | Prisma.TailoredResumeScalarWhereInput
     | Prisma.TailoredResumeScalarWhereInput[];
   id?: Prisma.StringFilter<"TailoredResume"> | string;
+  key?: Prisma.StringFilter<"TailoredResume"> | string;
   tailoringSessionId?: Prisma.StringFilter<"TailoredResume"> | string;
   applicationId?: Prisma.StringFilter<"TailoredResume"> | string;
   userId?: Prisma.StringFilter<"TailoredResume"> | string;
@@ -810,6 +835,7 @@ export type TailoredResumeScalarWhereInput = {
 
 export type TailoredResumeCreateWithoutApplicationInput = {
   id?: string;
+  key: string;
   name: string;
   content: string;
   createdAt?: Date | string;
@@ -819,6 +845,7 @@ export type TailoredResumeCreateWithoutApplicationInput = {
 
 export type TailoredResumeUncheckedCreateWithoutApplicationInput = {
   id?: string;
+  key: string;
   tailoringSessionId: string;
   userId: string;
   name: string;
@@ -871,6 +898,7 @@ export type TailoredResumeUpdateManyWithWhereWithoutApplicationInput = {
 
 export type TailoredResumeCreateWithoutTailoringSessionInput = {
   id?: string;
+  key: string;
   name: string;
   content: string;
   createdAt?: Date | string;
@@ -880,6 +908,7 @@ export type TailoredResumeCreateWithoutTailoringSessionInput = {
 
 export type TailoredResumeUncheckedCreateWithoutTailoringSessionInput = {
   id?: string;
+  key: string;
   applicationId: string;
   userId: string;
   name: string;
@@ -932,6 +961,7 @@ export type TailoredResumeUpdateManyWithWhereWithoutTailoringSessionInput = {
 
 export type TailoredResumeCreateManyUserInput = {
   id?: string;
+  key: string;
   tailoringSessionId: string;
   applicationId: string;
   name: string;
@@ -941,6 +971,7 @@ export type TailoredResumeCreateManyUserInput = {
 
 export type TailoredResumeUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -950,6 +981,7 @@ export type TailoredResumeUpdateWithoutUserInput = {
 
 export type TailoredResumeUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   tailoringSessionId?: Prisma.StringFieldUpdateOperationsInput | string;
   applicationId?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -959,6 +991,7 @@ export type TailoredResumeUncheckedUpdateWithoutUserInput = {
 
 export type TailoredResumeUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   tailoringSessionId?: Prisma.StringFieldUpdateOperationsInput | string;
   applicationId?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -968,6 +1001,7 @@ export type TailoredResumeUncheckedUpdateManyWithoutUserInput = {
 
 export type TailoredResumeCreateManyApplicationInput = {
   id?: string;
+  key: string;
   tailoringSessionId: string;
   userId: string;
   name: string;
@@ -977,6 +1011,7 @@ export type TailoredResumeCreateManyApplicationInput = {
 
 export type TailoredResumeUpdateWithoutApplicationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -986,6 +1021,7 @@ export type TailoredResumeUpdateWithoutApplicationInput = {
 
 export type TailoredResumeUncheckedUpdateWithoutApplicationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   tailoringSessionId?: Prisma.StringFieldUpdateOperationsInput | string;
   userId?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -995,6 +1031,7 @@ export type TailoredResumeUncheckedUpdateWithoutApplicationInput = {
 
 export type TailoredResumeUncheckedUpdateManyWithoutApplicationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   tailoringSessionId?: Prisma.StringFieldUpdateOperationsInput | string;
   userId?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1004,6 +1041,7 @@ export type TailoredResumeUncheckedUpdateManyWithoutApplicationInput = {
 
 export type TailoredResumeCreateManyTailoringSessionInput = {
   id?: string;
+  key: string;
   applicationId: string;
   userId: string;
   name: string;
@@ -1013,6 +1051,7 @@ export type TailoredResumeCreateManyTailoringSessionInput = {
 
 export type TailoredResumeUpdateWithoutTailoringSessionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1022,6 +1061,7 @@ export type TailoredResumeUpdateWithoutTailoringSessionInput = {
 
 export type TailoredResumeUncheckedUpdateWithoutTailoringSessionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   applicationId?: Prisma.StringFieldUpdateOperationsInput | string;
   userId?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1031,6 +1071,7 @@ export type TailoredResumeUncheckedUpdateWithoutTailoringSessionInput = {
 
 export type TailoredResumeUncheckedUpdateManyWithoutTailoringSessionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
+  key?: Prisma.StringFieldUpdateOperationsInput | string;
   applicationId?: Prisma.StringFieldUpdateOperationsInput | string;
   userId?: Prisma.StringFieldUpdateOperationsInput | string;
   name?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1044,6 +1085,7 @@ export type TailoredResumeSelect<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    key?: boolean;
     tailoringSessionId?: boolean;
     applicationId?: boolean;
     userId?: boolean;
@@ -1063,6 +1105,7 @@ export type TailoredResumeSelectCreateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    key?: boolean;
     tailoringSessionId?: boolean;
     applicationId?: boolean;
     userId?: boolean;
@@ -1082,6 +1125,7 @@ export type TailoredResumeSelectUpdateManyAndReturn<
 > = runtime.Types.Extensions.GetSelect<
   {
     id?: boolean;
+    key?: boolean;
     tailoringSessionId?: boolean;
     applicationId?: boolean;
     userId?: boolean;
@@ -1097,6 +1141,7 @@ export type TailoredResumeSelectUpdateManyAndReturn<
 
 export type TailoredResumeSelectScalar = {
   id?: boolean;
+  key?: boolean;
   tailoringSessionId?: boolean;
   applicationId?: boolean;
   userId?: boolean;
@@ -1110,6 +1155,7 @@ export type TailoredResumeOmit<
     runtime.Types.Extensions.DefaultArgs,
 > = runtime.Types.Extensions.GetOmit<
   | "id"
+  | "key"
   | "tailoringSessionId"
   | "applicationId"
   | "userId"
@@ -1156,6 +1202,7 @@ export type $TailoredResumePayload<
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
       id: string;
+      key: string;
       tailoringSessionId: string;
       applicationId: string;
       userId: string;
@@ -1809,6 +1856,7 @@ export interface Prisma__TailoredResumeClient<
  */
 export interface TailoredResumeFieldRefs {
   readonly id: Prisma.FieldRef<"TailoredResume", "String">;
+  readonly key: Prisma.FieldRef<"TailoredResume", "String">;
   readonly tailoringSessionId: Prisma.FieldRef<"TailoredResume", "String">;
   readonly applicationId: Prisma.FieldRef<"TailoredResume", "String">;
   readonly userId: Prisma.FieldRef<"TailoredResume", "String">;

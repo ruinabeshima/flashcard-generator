@@ -149,6 +149,7 @@ export type TailoringSessionScalarFieldEnum =
 
 export const TailoredResumeScalarFieldEnum = {
   id: "id",
+  key: "key",
   tailoringSessionId: "tailoringSessionId",
   applicationId: "applicationId",
   userId: "userId",

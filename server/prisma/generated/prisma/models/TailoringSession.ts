@@ -184,19 +184,20 @@ export type TailoringSessionGroupByOutputType = {
   _max: TailoringSessionMaxAggregateOutputType | null;
 };
 
-type GetTailoringSessionGroupByPayload<T extends TailoringSessionGroupByArgs> =
-  Prisma.PrismaPromise<
-    Array<
-      Prisma.PickEnumerable<TailoringSessionGroupByOutputType, T["by"]> & {
-        [P in keyof T &
-          keyof TailoringSessionGroupByOutputType]: P extends "_count"
-          ? T[P] extends boolean
-            ? number
-            : Prisma.GetScalarType<T[P], TailoringSessionGroupByOutputType[P]>
-          : Prisma.GetScalarType<T[P], TailoringSessionGroupByOutputType[P]>;
-      }
-    >
-  >;
+export type GetTailoringSessionGroupByPayload<
+  T extends TailoringSessionGroupByArgs,
+> = Prisma.PrismaPromise<
+  Array<
+    Prisma.PickEnumerable<TailoringSessionGroupByOutputType, T["by"]> & {
+      [P in keyof T &
+        keyof TailoringSessionGroupByOutputType]: P extends "_count"
+        ? T[P] extends boolean
+          ? number
+          : Prisma.GetScalarType<T[P], TailoringSessionGroupByOutputType[P]>
+        : Prisma.GetScalarType<T[P], TailoringSessionGroupByOutputType[P]>;
+    }
+  >
+>;
 
 export type TailoringSessionWhereInput = {
   AND?: Prisma.TailoringSessionWhereInput | Prisma.TailoringSessionWhereInput[];

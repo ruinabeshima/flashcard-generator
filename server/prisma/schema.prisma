@@ -136,6 +136,7 @@ model TailoringSession{
 
 model TailoredResume {
   id String @id @default(uuid())
+  key String
 
   tailoringSessionId String
   tailoringSession TailoringSession @relation(fields: [tailoringSessionId], references: [id], onDelete: Cascade)
