@@ -11,6 +11,10 @@ import {
   ResumeSuggestions,
 } from "../lib/openai/openai";
 import { parseAcceptedSuggestions } from "../lib/tailoring/tailoring";
+import convertTextToPDF from "../lib/tailoring/convert";
+import { r2 } from "../lib/storage/r2";
+import { v4 as uuidv4 } from "uuid";
+import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import * as z from "zod";
 
 const feedbackRouter = express.Router();
@@ -235,7 +239,7 @@ feedbackRouter.post(
           id: sessionId,
         },
       });
-      if (!session || session?.userId !== userId) {
+      if (!session || session.userId !== userId) {
         logger.warn("Unauthorised access attempt", {
           endpoint: `/feedback/${sessionId}`,
         });
@@ -266,41 +270,77 @@ feedbackRouter.post(
           .json({ message: "Failed to retrieve tailored resume" });
       }
 
-      // Create tailored resume
-      const newResume = await prisma.tailoredResume.create({
-        data: {
-          tailoringSessionId: session.id,
-          applicationId: session.applicationId,
-          userId,
-          name: resumeName || `Resume - ${new Date().toLocaleDateString()}`,
-          content: tailoredContent,
-        },
-      });
+      const dbResumeName =
+        resumeName || `Resume - ${new Date().toLocaleDateString()}`;
+      const key = `uploads/${uuidv4()}.pdf`;
 
-      // Update tailoring session
-      const updatedSession = await prisma.tailoringSession.update({
-        where: {
-          id: sessionId,
-        },
-        data: {
-          status: "TAILORED",
-        },
-      });
-
-      await logAudit(
-        userId,
-        "RESUME_TAILORED",
-        newResume.name,
-        "TailoredResume",
-        newResume.id,
+      // Build PDF Buffer and send to R2
+      const PDFBuffer = await convertTextToPDF(tailoredContent);
+      await r2.send(
+        new PutObjectCommand({
+          Bucket: process.env.R2_BUCKET_NAME!,
+          Key: key,
+          Body: PDFBuffer,
+          ContentType: "application/pdf",
+        }),
       );
 
-      return res.status(201).json({
-        message: "Resume created",
-        name: newResume.name,
-        resume: newResume.content,
-        status: updatedSession.status,
-      });
+      try {
+        const [newResume, updatedSession] = await prisma.$transaction([
+          // Create tailored resume
+          prisma.tailoredResume.create({
+            data: {
+              tailoringSessionId: session.id,
+              applicationId: session.applicationId,
+              userId,
+              name: dbResumeName,
+              content: tailoredContent,
+              key,
+            },
+          }),
+
+          // Update tailoring session
+          prisma.tailoringSession.update({
+            where: {
+              id: sessionId,
+            },
+            data: {
+              status: "TAILORED",
+            },
+          }),
+        ]);
+
+        try {
+          await logAudit(
+            userId,
+            "RESUME_TAILORED",
+            newResume.name,
+            "TailoredResume",
+            newResume.id,
+          );
+        } catch (error) {
+          logger.warn("Audit log failed", { userId, error });
+        }
+
+        return res.status(201).json({
+          message: "Resume created",
+          applicationId: newResume.applicationId,
+          tailoredResumeId: newResume.id,
+          status: updatedSession.status,
+        });
+      } catch (error) {
+        // Clean up R2 object if DB transaction fails
+        await r2.send(
+          new DeleteObjectCommand({
+            Bucket: process.env.R2_BUCKET_NAME!,
+            Key: key,
+          }),
+        );
+        logger.warn("Unable to generate tailored resume", { userId, error });
+        return res
+          .status(500)
+          .json({ message: "Unable to generate tailored resume" });
+      }
     } catch (error) {
       logger.warn("Unable to generate tailored resume", { userId, error });
       return res
