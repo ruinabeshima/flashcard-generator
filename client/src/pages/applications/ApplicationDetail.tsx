@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import TailorResume from "../components/TailorResume";
+import Navbar from "../../components/navbar/Navbar";
+import TailorResume from "../../components/tailoring/TailorResume";
 
 interface Application {
   id: string;

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-import ResumeUpload from "../components/ResumeUpload";
-import Navbar from "../components/Navbar";
-import ApplicationForm from "../components/ApplicationForm";
+import ResumeUpload from "../../components/resumes/ResumeUpload";
+import Navbar from "../../components/navbar/Navbar";
+import ApplicationForm from "../../components/applications/ApplicationForm";
 
 export default function Onboarding() {
   const [page, setPage] = useState(1);

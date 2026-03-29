@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import background from "../assets/background.jpg";
 import reference from "../assets/reference.png";
-import NavBar from "../components/Navbar";
+import NavBar from "../components/navbar/Navbar";
 
 export default function Home() {
   const { isSignedIn } = useAuth();

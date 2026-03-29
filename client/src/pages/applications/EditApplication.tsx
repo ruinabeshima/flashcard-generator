@@ -1,10 +1,10 @@
-import Navbar from "../components/Navbar";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ApplicationForm from "../components/ApplicationForm";
+import Navbar from "../../components/navbar/Navbar";
+import ApplicationForm from "../../components/applications/ApplicationForm";
 
 interface Application {
   id: string;

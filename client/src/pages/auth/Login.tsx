@@ -1,6 +1,6 @@
 import { SignIn } from "@clerk/clerk-react";
-import background from "../assets/background.jpg";
-import AuthNavbar from "../components/AuthNavbar";
+import background from "../../assets/background.jpg";
+import AuthNavbar from "../../components/navbar/AuthNavbar";
 
 export default function Login() {
   return (

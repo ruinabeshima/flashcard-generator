@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-import ApplicationList from "../components/ApplicationList";
-import Navbar from "../components/Navbar";
+import ApplicationList from "../components/applications/ApplicationList";
+import Navbar from "../components/navbar/Navbar";
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
