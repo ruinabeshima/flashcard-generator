@@ -15,6 +15,10 @@ export const prisma = {
   },
   resume: {
     findUnique: jest.fn(),
+    findMany: jest.fn(),
+  },
+  tailoredResume: {
+    findMany: jest.fn(),
   },
   resumeFeedback: {
     create: jest.fn(),

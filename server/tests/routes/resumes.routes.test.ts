@@ -44,3 +44,36 @@ describe("GET /resumes", () => {
     expect(res.body).toEqual({ url: "https://fake-signed-url.com/resume.pdf" });
   });
 });
+
+describe("GET /resumes/tailored", () => {
+  it("returns 401 no userId", async () => {
+    const res = await request(app).get("/resumes/tailored");
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 200 list", async () => {
+    mockPrisma.tailoredResume.findMany.mockResolvedValue([
+      {
+        id: "resume-1",
+        name: "My-new-resume",
+        applicationId: "application-1",
+        createdAt: new Date("2026-03-18T23:31:21.834Z"),
+      },
+    ] as any);
+
+    const res = await request(app)
+      .get("/resumes/tailored")
+      .set("x-test-user-id", "user-1");
+    expect(res.status).toBe(200);
+  });
+
+  it("returns 500 error", async () => {
+    mockPrisma.tailoredResume.findMany.mockRejectedValue(new Error("DB down"));
+
+    const res = await request(app)
+      .get("/resumes/tailored")
+      .set("x-test-user-id", "user-1");
+
+    expect(res.status).toBe(500);
+  });
+});
