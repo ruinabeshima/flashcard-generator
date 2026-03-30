@@ -1,29 +1,8 @@
-import express from "express";
-import cors from "cors";
 import dotenv from "dotenv";
-import { clerkMiddleware } from "@clerk/express";
-import { webhookRouter } from "./routes/webhooks";
-import { applicationRouter } from "./routes/applications";
-import { authRouter } from "./routes/auth";
-import { resumeRouter } from "./routes/resumes";
-import { feedbackRouter } from "./routes/feedback";
-
 dotenv.config();
-const app = express();
+import createApp from "./app";
 
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-  }),
-);
-
-app.use("/webhooks", webhookRouter);
-app.use(express.json());
-app.use(clerkMiddleware());
-app.use("/applications", applicationRouter);
-app.use("/auth", authRouter);
-app.use("/resumes", resumeRouter);
-app.use("/feedback", feedbackRouter);
+const app = createApp();
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
