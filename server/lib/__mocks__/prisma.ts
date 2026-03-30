@@ -8,6 +8,7 @@ export const prisma = {
   },
   user: {
     upsert: jest.fn(),
+    update: jest.fn(),
     findFirst: jest.fn(),
     findUnique: jest.fn(),
     delete: jest.fn(),
