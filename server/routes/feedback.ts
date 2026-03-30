@@ -13,7 +13,7 @@ import {
 import { parseAcceptedSuggestions } from "../lib/tailoring/tailoring";
 import convertTextToPDF from "../lib/tailoring/convert";
 import { r2 } from "../lib/storage/r2";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import * as z from "zod";
 
@@ -272,7 +272,7 @@ feedbackRouter.post(
 
       const dbResumeName =
         resumeName || `Resume - ${new Date().toLocaleDateString()}`;
-      const key = `uploads/${uuidv4()}.pdf`;
+      const key = `uploads/${randomUUID()}.pdf`;
 
       // Build PDF Buffer and send to R2
       const PDFBuffer = await convertTextToPDF(tailoredContent);

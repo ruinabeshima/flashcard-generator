@@ -1,4 +1,4 @@
-export const prismaMock = {
+const prismaMock = {
   application: {
     findMany: jest.fn(),
     findUnique: jest.fn(),
@@ -18,3 +18,5 @@ export const prismaMock = {
   },
   $transaction: jest.fn(),
 };
+
+export default prismaMock;

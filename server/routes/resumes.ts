@@ -9,7 +9,7 @@ import { r2 } from "../lib/storage/r2";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { upload } from "../lib/storage/multer";
 import { requireAuth } from "@clerk/express";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import { logger } from "../lib/monitoring/logger";
 import logAudit from "../lib/monitoring/audit";
 import parsePDF from "../lib/storage/parse";
@@ -161,7 +161,7 @@ resumeRouter.post(
     }
 
     const ext = file.originalname.split(".").pop();
-    const key = `uploads/${uuidv4()}.${ext}`;
+    const key = `uploads/${randomUUID()}.${ext}`;
 
     try {
       const existing = await prisma.resume.findUnique({

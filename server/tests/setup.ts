@@ -1,5 +1,6 @@
 process.env.CLERK_WEBHOOK_SECRET = "whsec_test_secret";
 process.env.R2_BUCKET_NAME = "test-bucket";
+process.env.OPENAI_API_KEY = "test-openai-api-key";
 
 // Mock Clerk Auth middleware requireAuth()
 jest.mock("@clerk/express", () => ({
