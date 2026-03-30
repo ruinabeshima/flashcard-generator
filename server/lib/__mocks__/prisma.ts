@@ -13,6 +13,9 @@ export const prisma = {
     findUnique: jest.fn(),
     delete: jest.fn(),
   },
+  resume: {
+    findUnique: jest.fn(),
+  },
   resumeFeedback: {
     create: jest.fn(),
     findUnique: jest.fn(),
