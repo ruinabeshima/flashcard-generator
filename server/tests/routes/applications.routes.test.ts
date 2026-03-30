@@ -45,4 +45,14 @@ describe("/GET applications", () => {
       jobUrl: null,
     });
   });
+
+  it("returns 500 when database fails", async () => {
+    mockPrisma.application.findMany.mockRejectedValue(new Error("DB down"));
+
+    const res = await request(app)
+      .get("/applications")
+      .set("x-test-user-id", "user-1");
+
+    expect(res.status).toBe(500);
+  });
 });
