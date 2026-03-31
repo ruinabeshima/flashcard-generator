@@ -16,4 +16,17 @@ export default [
       ...tsPlugin.configs.recommended.rules,
     },
   },
+  {
+    files: ["tests/**/*.ts", "**/__mocks__/**/*.ts"],
+    languageOptions: {
+      parser: tsParser,
+      globals: {
+        ...globals.node,
+        ...globals.jest,
+      },
+    },
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 ];
