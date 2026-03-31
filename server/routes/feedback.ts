@@ -17,6 +17,8 @@ import { randomUUID } from "crypto";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import * as z from "zod";
 
+const MAX_TAILORING_SESSIONS = 3;
+
 const feedbackRouter = express.Router();
 
 // Start tailoring session, and retrieve AI suggestions
@@ -59,6 +61,17 @@ feedbackRouter.post(
       if (!resumeText) {
         logger.warn("Resume does not exist", { userId });
         return res.status(404).json({ message: "Resume not found" });
+      }
+
+      // Maximum 3 AI requests per user
+      const sessionCount = await prisma.tailoringSession.count({
+        where: { userId },
+      });
+      if (sessionCount >= MAX_TAILORING_SESSIONS) {
+        return res.status(403).json({
+          message: "You have reached the maximum of 3 tailoring sessions.",
+          limit: MAX_TAILORING_SESSIONS,
+        });
       }
 
       // Retrieve feedback
