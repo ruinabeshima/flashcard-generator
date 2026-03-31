@@ -21,7 +21,11 @@ const mockPrisma = jest.mocked(prisma);
 const mockR2Send = r2.send as jest.Mock;
 const mockParsePDF = jest.mocked(parsePDF);
 
-const app = createApp();
+let app: any;
+
+beforeAll(async () => {
+  app = await createApp();
+});
 
 describe("GET /resumes", () => {
   it("returns 401 no userId", async () => {

@@ -7,7 +7,11 @@ jest.mock("../../lib/prisma");
 const mockPrisma = jest.mocked(prisma);
 jest.mock("../../lib/monitoring/audit");
 
-const app = createApp();
+let app: any;
+
+beforeAll(async () => {
+  app = await createApp();
+});
 
 describe("GET /auth/status", () => {
   it("returns 401 no user ID", async () => {

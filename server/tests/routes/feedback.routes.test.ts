@@ -34,7 +34,11 @@ const mockGenerateTailoredResume = jest.mocked(generateTailoredResume);
 const mockConvertTextToPDF = jest.mocked(convertTextToPDF);
 const mockR2Send = r2.send as jest.Mock;
 
-const app = createApp();
+let app: any;
+
+beforeAll(async () => {
+  app = await createApp();
+});
 
 describe("POST /feedback/:applicationId", () => {
   it("returns 401 no userId", async () => {
