@@ -2,10 +2,21 @@ import request from "supertest";
 import createApp from "../../app";
 import { prisma } from "../../lib/prisma";
 
-// Mock prisma client and auditing
+// Mock
 jest.mock("../../lib/prisma");
 const mockPrisma = jest.mocked(prisma);
 jest.mock("../../lib/monitoring/audit");
+jest.mock("../../lib/redis/redis", () => ({
+  redis: {
+    isOpen: true,
+    connect: jest.fn().mockResolvedValue(undefined),
+    sendCommand: jest.fn().mockResolvedValue(null),
+  },
+}));
+
+jest.mock("../../lib/redis/rateLimiter", () => ({
+  createRateLimiter: () => (_req: any, _res: any, next: any) => next(),
+}));
 
 let app: any;
 

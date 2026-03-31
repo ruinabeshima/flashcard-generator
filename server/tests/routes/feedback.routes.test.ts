@@ -33,6 +33,17 @@ const mockParseAcceptedSuggestions = jest.mocked(parseAcceptedSuggestions);
 const mockGenerateTailoredResume = jest.mocked(generateTailoredResume);
 const mockConvertTextToPDF = jest.mocked(convertTextToPDF);
 const mockR2Send = r2.send as jest.Mock;
+jest.mock("../../lib/redis/redis", () => ({
+  redis: {
+    isOpen: true,
+    connect: jest.fn().mockResolvedValue(undefined),
+    sendCommand: jest.fn().mockResolvedValue(null),
+  },
+}));
+
+jest.mock("../../lib/redis/rateLimiter", () => ({
+  createRateLimiter: () => (_req: any, _res: any, next: any) => next(),
+}));
 
 let app: any;
 
@@ -96,6 +107,30 @@ describe("POST /feedback/:applicationId", () => {
     expect(res.body).toEqual({ message: "Resume not found" });
   });
 
+  it("returns 403 limit reached", async () => {
+    mockPrisma.application.findUnique.mockResolvedValue({
+      id: "application-1",
+      userId: "user-1",
+    } as any);
+    mockApplicationInfo.mockResolvedValue([
+      "Company: Company A",
+      "Role: Teacher",
+      "Status: APPLIED",
+      "Applied Date: 31/03/26",
+    ]);
+    mockResumeText.mockResolvedValue("This is a test resume");
+    mockPrisma.tailoringSession.count.mockResolvedValue(3);
+
+    const res = await request(app)
+      .post("/feedback/application-1")
+      .set("x-test-user-id", "user-1");
+
+    expect(res.status).toBe(403);
+    expect(res.body["message"]).toEqual(
+      "You have reached the maximum of 3 tailoring sessions",
+    );
+  });
+
   it("returns 500 no suggesstions", async () => {
     mockPrisma.application.findUnique.mockResolvedValue({
       id: "application-1",
@@ -108,6 +143,7 @@ describe("POST /feedback/:applicationId", () => {
       "Applied Date: 31/03/26",
     ]);
     mockResumeText.mockResolvedValue("This is a test resume");
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
     mockResumeSuggestions.mockResolvedValue(null);
 
     const res = await request(app)
@@ -129,6 +165,7 @@ describe("POST /feedback/:applicationId", () => {
       "Status: APPLIED",
       "Applied Date: 31/03/26",
     ]);
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
     mockResumeText.mockResolvedValue("This is a test resume");
     mockResumeSuggestions.mockResolvedValue({
       miss: ["missing skill A", "missing skill B"],

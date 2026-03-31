@@ -26,6 +26,7 @@ export const prisma = {
     create: jest.fn(),
     findUnique: jest.fn(),
     update: jest.fn(),
+    count: jest.fn()
   },
   resumeFeedback: {
     create: jest.fn(),

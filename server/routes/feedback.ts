@@ -69,7 +69,7 @@ feedbackRouter.post(
       });
       if (sessionCount >= MAX_TAILORING_SESSIONS) {
         return res.status(403).json({
-          message: "You have reached the maximum of 3 tailoring sessions.",
+          message: "You have reached the maximum of 3 tailoring sessions",
           limit: MAX_TAILORING_SESSIONS,
         });
       }

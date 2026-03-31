@@ -38,11 +38,7 @@ export default async function createApp() {
   app.use("/applications", applicationRouter);
   app.use("/auth", authRouter);
   app.use("/resumes", resumeRouter);
-  app.use(
-    "/feedback",
-    createRateLimiter({ windowMs: 60_000, limit: 10, prefix: "rl:feedback:" }),
-    feedbackRouter,
-  );
+  app.use("/feedback", feedbackRouter);
 
   return app;
 }

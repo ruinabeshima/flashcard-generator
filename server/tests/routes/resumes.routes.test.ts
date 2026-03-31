@@ -20,6 +20,17 @@ jest.mock("../../lib/storage/parse", () => ({
 const mockPrisma = jest.mocked(prisma);
 const mockR2Send = r2.send as jest.Mock;
 const mockParsePDF = jest.mocked(parsePDF);
+jest.mock("../../lib/redis/redis", () => ({
+  redis: {
+    isOpen: true,
+    connect: jest.fn().mockResolvedValue(undefined),
+    sendCommand: jest.fn().mockResolvedValue(null),
+  },
+}));
+
+jest.mock("../../lib/redis/rateLimiter", () => ({
+  createRateLimiter: () => (_req: any, _res: any, next: any) => next(),
+}));
 
 let app: any;
 
