@@ -42,11 +42,28 @@ describe("POST /feedback/:applicationId", () => {
     expect(res.status).toBe(401);
   });
 
+  it("returns 403 request limit reached", async () => {
+    mockPrisma.application.findUnique.mockResolvedValue({
+      id: "application-1",
+      userId: "user-1",
+    } as any);
+    mockPrisma.tailoringSession.count.mockResolvedValue(3);
+
+    const res = await request(app)
+      .post("/feedback/application-1")
+      .set("x-test-user-id", "user-1");
+
+    expect(res.status).toBe(403);
+    expect(res.body).toEqual({ message: "Maximum number of requests reached" });
+  });
+
   it("returns 403 ownership mismatch", async () => {
     mockPrisma.application.findUnique.mockResolvedValue({
       id: "application-1",
       userId: "user-2",
     } as any);
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
+
 
     const res = await request(app)
       .post("/feedback/application-1")
@@ -61,6 +78,7 @@ describe("POST /feedback/:applicationId", () => {
       id: "application-1",
       userId: "user-1",
     } as any);
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
     mockApplicationInfo.mockResolvedValue(null);
 
     const res = await request(app)
@@ -76,6 +94,7 @@ describe("POST /feedback/:applicationId", () => {
       id: "application-1",
       userId: "user-1",
     } as any);
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
     mockApplicationInfo.mockResolvedValue([
       "Company: Company A",
       "Role: Teacher",
@@ -97,6 +116,7 @@ describe("POST /feedback/:applicationId", () => {
       id: "application-1",
       userId: "user-1",
     } as any);
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
     mockApplicationInfo.mockResolvedValue([
       "Company: Company A",
       "Role: Teacher",
@@ -119,6 +139,7 @@ describe("POST /feedback/:applicationId", () => {
       id: "application-1",
       userId: "user-1",
     } as any);
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
     mockApplicationInfo.mockResolvedValue([
       "Company: Company A",
       "Role: Teacher",

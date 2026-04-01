@@ -17,6 +17,8 @@ import { randomUUID } from "crypto";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import * as z from "zod";
 
+const MAXIMUM_FEEDBACK_COUNT = 3;
+
 const feedbackRouter = express.Router();
 
 // Start tailoring session, and retrieve AI suggestions
@@ -42,6 +44,16 @@ feedbackRouter.post(
           applicationId,
         });
         return res.status(403).json({ message: "Forbidden" });
+      }
+
+      // Check if user is allowed
+      const count = await prisma.tailoringSession.count({
+        where: { userId },
+      });
+      if (count >= MAXIMUM_FEEDBACK_COUNT) {
+        return res
+          .status(403)
+          .json({ message: "Maximum number of requests reached" });
       }
 
       // Retrieve user application
