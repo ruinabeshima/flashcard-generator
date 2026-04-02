@@ -91,13 +91,25 @@ applicationRouter.get(
   },
 );
 
+const appliedDateSchema = z.preprocess((value) => {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+
+  if (typeof value === "string" && value.length === 16) {
+    return `${value}:00`;
+  }
+
+  return value;
+}, z.coerce.date().nullable());
+
 // Create new job application
 const newApplicationSchema = z
   .object({
     role: z.string().min(1).max(100),
     company: z.string().min(1).max(100),
     status: z.enum(["APPLIED", "INTERVIEW", "OFFER", "REJECTED"]),
-    appliedDate: z.iso.datetime().optional(),
+    appliedDate: appliedDateSchema,
     notes: z.string().nullish(),
     jobUrl: z.url().nullish(),
   })
@@ -130,7 +142,7 @@ applicationRouter.post(
           role,
           company,
           status,
-          appliedDate: appliedDate ? new Date(appliedDate) : undefined,
+          appliedDate: appliedDate ?? undefined,
           notes: notes ?? null,
           jobUrl: jobUrl ?? null,
           userId,
@@ -159,7 +171,7 @@ const updateApplicationSchema = z
     role: z.string().min(1).max(100),
     company: z.string().min(1).max(100),
     status: z.enum(["APPLIED", "INTERVIEW", "OFFER", "REJECTED"]),
-    appliedDate: z.iso.datetime().optional(),
+    appliedDate: appliedDateSchema,
     notes: z.string().nullish(),
     jobUrl: z.url().nullish(),
   })
@@ -209,7 +221,7 @@ applicationRouter.patch(
           role,
           company,
           status,
-          appliedDate: appliedDate ? new Date(appliedDate) : undefined,
+          appliedDate: appliedDate ?? undefined,
           notes: notes ?? null,
           jobUrl: jobUrl ?? null,
           userId,

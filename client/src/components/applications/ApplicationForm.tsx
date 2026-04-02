@@ -55,6 +55,23 @@ export default function ApplicationForm(props: ApplicationFormProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const buildPayload = () => {
+    const normalizedAppliedDate = appliedDate
+      ? new Date(appliedDate).toISOString()
+      : undefined;
+    const normalizedNotes = notes.trim() ? notes.trim() : undefined;
+    const normalizedJobUrl = link.trim() ? link.trim() : undefined;
+
+    return {
+      role,
+      company,
+      status: status.toUpperCase(),
+      ...(normalizedAppliedDate ? { appliedDate: normalizedAppliedDate } : {}),
+      ...(normalizedNotes ? { notes: normalizedNotes } : {}),
+      ...(normalizedJobUrl ? { jobUrl: normalizedJobUrl } : {}),
+    };
+  };
+
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
@@ -78,18 +95,12 @@ export default function ApplicationForm(props: ApplicationFormProps) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          role: role,
-          company: company,
-          status: status.toUpperCase(),
-          appliedDate: appliedDate || null,
-          notes: notes || null,
-          jobUrl: link || null,
-        }),
+        body: JSON.stringify(buildPayload()),
       });
 
       if (!addResponse.ok) {
-        setError("Failed to create item");
+        const data = await addResponse.json();
+        setError(data.message);
         return;
       }
 
@@ -142,14 +153,7 @@ export default function ApplicationForm(props: ApplicationFormProps) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          role: role,
-          company: company,
-          status: status.toUpperCase(),
-          appliedDate: appliedDate || null,
-          notes: notes || null,
-          jobUrl: link || null,
-        }),
+        body: JSON.stringify(buildPayload()),
       });
 
       if (!response.ok) {
