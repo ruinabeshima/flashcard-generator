@@ -170,125 +170,155 @@ export default function ApplicationForm(props: ApplicationFormProps) {
   };
 
   return (
-    <div className="card card-border bg-base-100 w-140">
-      <div className="card-body">
-        {props.isOnboarding ? (
-          <h2 className="card-title">2. Add an Application (Optional)</h2>
-        ) : props.isEdit ? (
-          <h2 className="card-title">Update Application</h2>
-        ) : (
-          <h2 className="card-title">Add an Application</h2>
-        )}
+    <div className="card card-border bg-base-100 w-full max-w-3xl">
+      <div className="card-body gap-6">
+        <div className="flex flex-col gap-2">
+          {props.isOnboarding ? (
+            <h2 className="card-title">2. Add an Application (Optional)</h2>
+          ) : props.isEdit ? (
+            <h2 className="card-title">Update Application</h2>
+          ) : (
+            <h2 className="card-title">Add an Application</h2>
+          )}
+          <p className="text-sm text-base-content/60">
+            Keep it simple now. You can always edit details later.
+          </p>
+        </div>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Role</legend>
-            <input
-              required
-              type="text"
-              className="input w-full"
-              placeholder="e.g. Sales Assistant"
-              value={role}
-              onChange={(event) => {
-                setRole(event.target.value);
-              }}
-            />
-            <p className="label">Required</p>
-          </fieldset>
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div className="grid gap-4 md:grid-cols-2">
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Role</legend>
+              <input
+                required
+                type="text"
+                className="input w-full"
+                placeholder="e.g. Sales Assistant"
+                value={role}
+                onChange={(event) => {
+                  setRole(event.target.value);
+                }}
+              />
+              <p className="label">Required</p>
+            </fieldset>
 
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Company</legend>
-            <input
-              required
-              type="text"
-              className="input w-full"
-              placeholder="e.g. Acme Company Inc"
-              value={company}
-              onChange={(event) => {
-                setCompany(event.target.value);
-              }}
-            />
-            <p className="label">Required</p>
-          </fieldset>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Company</legend>
+              <input
+                required
+                type="text"
+                className="input w-full"
+                placeholder="e.g. Acme Company Inc"
+                value={company}
+                onChange={(event) => {
+                  setCompany(event.target.value);
+                }}
+              />
+              <p className="label">Required</p>
+            </fieldset>
+          </div>
 
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Application Status</legend>
-            <select
-              className="select w-full"
-              value={status}
-              onChange={(event) => setStatus(event.target.value)}
-            >
-              <option value="APPLIED">Applied</option>
-              <option value="INTERVIEW">Interview</option>
-              <option value="OFFER">Offer</option>
-              <option value="REJECTED">Rejected</option>
-            </select>
-            <p className="label">Required</p>
-          </fieldset>
+          <div className="grid gap-4 md:grid-cols-2">
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Application Status</legend>
+              <select
+                className="select w-full"
+                value={status}
+                onChange={(event) => setStatus(event.target.value)}
+              >
+                <option value="APPLIED">Applied</option>
+                <option value="INTERVIEW">Interview</option>
+                <option value="OFFER">Offer</option>
+                <option value="REJECTED">Rejected</option>
+              </select>
+              <p className="label">Required</p>
+            </fieldset>
 
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Application Date</legend>
-            <input
-              type="datetime-local"
-              className="input w-full"
-              value={appliedDate}
-              onChange={(event) => {
-                setAppliedDate(event.target.value);
-              }}
-            />
-            <p className="label">Optional</p>
-          </fieldset>
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Application Date</legend>
+              <input
+                type="datetime-local"
+                className="input w-full"
+                value={appliedDate}
+                onChange={(event) => {
+                  setAppliedDate(event.target.value);
+                }}
+              />
+              <p className="label">Optional</p>
+            </fieldset>
+          </div>
 
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Extra Notes</legend>
-            <textarea
-              className="textarea h-24 w-full"
-              placeholder="e.g. On-site, Internship"
-              value={notes}
-              onChange={(event) => {
-                setNotes(event.target.value);
-              }}
-            ></textarea>
-            <div className="label">Optional</div>
-          </fieldset>
+          <div className="grid gap-4">
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Extra Notes</legend>
+              <textarea
+                className="textarea h-24 w-full"
+                placeholder="e.g. On-site, Internship"
+                value={notes}
+                onChange={(event) => {
+                  setNotes(event.target.value);
+                }}
+              ></textarea>
+              <div className="label">Optional</div>
+            </fieldset>
 
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend">Job Link</legend>
-            <label className="input validator w-full">
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Job Link</legend>
+              <label className="input validator w-full">
+                <svg
+                  className="h-[1em] opacity-50"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                >
+                  <g
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                    strokeWidth="2.5"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                  </g>
+                </svg>
+                <input
+                  type="url"
+                  placeholder="https://"
+                  value={link}
+                  onChange={(event) => {
+                    setLink(event.target.value);
+                  }}
+                  pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9\-].*[a-zA-Z0-9])?\.)+[a-zA-Z].*$"
+                  title="Must be valid URL"
+                />
+              </label>
+              <p className="label">Optional</p>
+              <p className="validator-hint">Must be valid URL</p>
+            </fieldset>
+          </div>
+
+          {error && (
+            <div role="alert" className="alert alert-error">
               <svg
-                className="h-[1em] opacity-50"
                 xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 shrink-0 stroke-current"
+                fill="none"
                 viewBox="0 0 24 24"
               >
-                <g
-                  strokeLinejoin="round"
+                <path
                   strokeLinecap="round"
-                  strokeWidth="2.5"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                </g>
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
-              <input
-                type="url"
-                placeholder="https://"
-                value={link}
-                onChange={(event) => {
-                  setLink(event.target.value);
-                }}
-                pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9\-].*[a-zA-Z0-9])?\.)+[a-zA-Z].*$"
-                title="Must be valid URL"
-              />
-            </label>
-            <p className="label">Optional</p>
-            <p className="validator-hint">Must be valid URL</p>
-          </fieldset>
+              <span>{error}</span>
+            </div>
+          )}
 
           {props.isOnboarding ? (
             <section className="flex flex-col gap-2">
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   className="btn btn-neutral"
@@ -310,30 +340,13 @@ export default function ApplicationForm(props: ApplicationFormProps) {
               </p>
             </section>
           ) : (
-            <button
-              className={`btn ${loading ? "btn-disabled" : "btn-primary"} w-full`}
-              type="submit"
-            >
-              {loading ? "Loading..." : "Save Application"}
-            </button>
-          )}
-
-          {error && (
-            <div role="alert" className="alert alert-error mb-10">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 shrink-0 stroke-current"
-                fill="none"
-                viewBox="0 0 24 24"
+            <div className="flex items-center justify-end">
+              <button
+                className={`btn ${loading ? "btn-disabled" : "btn-primary"}`}
+                type="submit"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>{error}</span>
+                {loading ? "Saving..." : "Save Application"}
+              </button>
             </div>
           )}
         </form>
