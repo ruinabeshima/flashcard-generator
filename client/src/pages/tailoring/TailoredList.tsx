@@ -1,64 +1,42 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/navbar/Navbar";
-
-interface TailoredResume {
-  id: string;
-  name: string;
-  applicationId: string;
-  createdAt: string;
-}
-
-interface TailoredResumeResponse {
-  resumes: TailoredResume[];
-}
+import useTailoredResumes from "../../lib/useTailoredResumes";
+import useOnboardingStatus from "../../lib/useOnboardingStatus";
 
 export default function TailoredList() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const [data, setData] = useState<TailoredResume[]>([]);
-  const { getToken } = useAuth();
-  const appUrl = import.meta.env.VITE_SERVER_URL;
+  const { loading: onboardingLoading, error: onboardingError } =
+    useOnboardingStatus();
+  const {
+    data,
+    loading: tailoredLoading,
+    error: tailoredError,
+  } = useTailoredResumes();
 
-  useEffect(() => {
-    const getTailoredResumes = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch(`${appUrl}/resumes/tailored`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          setError(true);
-          return;
-        }
-
-        const data: TailoredResumeResponse = await response.json();
-        setData(data.resumes);
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getTailoredResumes();
-  }, [getToken, appUrl]);
+  const loading = onboardingLoading || tailoredLoading;
+  const error = onboardingError || tailoredError;
 
   return (
-    <div className="flex flex-col gap-5 min-h-screen w-full">
+    <div className="w-full min-h-screen flex flex-col gap-5 bg-base-200/40">
       <Navbar />
 
-      <main className="flex flex-col items-center gap-10">
-        <h1 className="text-3xl font-bold">Your Tailored Resumes</h1>
+      <main className="flex flex-col items-center gap-8 px-4 pb-16">
+        <header className="w-full max-w-5xl flex flex-col gap-2 text-center">
+          <p className="text-sm uppercase tracking-[0.2em] text-base-content/50">
+            Tailored Resumes
+          </p>
+          <h1 className="text-3xl font-bold">Your tailored versions</h1>
+          <p className="text-sm text-base-content/60">
+            Open a version to review, export, or share with recruiters.
+          </p>
+        </header>
+
         {loading ? (
-          <span className="loading loading-spinner loading-xl"></span>
+          <div className="flex flex-col items-center gap-3 text-sm text-base-content/60">
+            <span className="loading loading-spinner loading-md"></span>
+            <span>Loading tailored resumes...</span>
+          </div>
         ) : error ? (
-          <div role="alert" className="alert alert-error w-4/5">
+          <div role="alert" className="alert alert-error w-full max-w-5xl">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6 shrink-0 stroke-current"
@@ -75,17 +53,18 @@ export default function TailoredList() {
             <span>An error occured.</span>
           </div>
         ) : data.length === 0 ? (
-          <p className="text-base-content/50">No tailored resumes found.</p>
+          <div className="w-full max-w-5xl rounded-2xl border border-dashed border-base-300 bg-base-100 p-8 text-center text-sm text-base-content/60">
+            No tailored resumes found yet.
+          </div>
         ) : (
-          <ul className="flex flex-col gap-3 w-4/5">
+          <ul className="w-full max-w-5xl flex flex-col gap-3">
             {data.map((resume) => (
               <Link
+                key={resume.id}
                 to={`/applications/${resume.applicationId}/tailored/${resume.id}`}
+                className="group"
               >
-                <li
-                  key={resume.id}
-                  className="flex items-center justify-between p-4 rounded-xl border border-base-300 bg-base-100 shadow-sm hover:shadow-md transition-shadow"
-                >
+                <li className="flex items-center justify-between gap-4 p-4 rounded-xl border border-base-300 bg-base-100 shadow-sm transition-shadow group-hover:shadow-md">
                   <div className="flex flex-col gap-1">
                     <span className="font-semibold">{resume.name}</span>
                     <span className="text-sm text-base-content/50">
@@ -96,6 +75,7 @@ export default function TailoredList() {
                       })}
                     </span>
                   </div>
+                  <span className="btn btn-ghost btn-sm">Open</span>
                 </li>
               </Link>
             ))}

@@ -165,7 +165,7 @@ export type ResumeGroupByOutputType = {
   _max: ResumeMaxAggregateOutputType | null
 }
 
-type GetResumeGroupByPayload<T extends ResumeGroupByArgs> = Prisma.PrismaPromise<
+export type GetResumeGroupByPayload<T extends ResumeGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ResumeGroupByOutputType, T['by']> &
       {
@@ -1104,6 +1104,11 @@ export type ResumeFindManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Skip the first `n` Resumes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Resumes.
+   */
   distinct?: Prisma.ResumeScalarFieldEnum | Prisma.ResumeScalarFieldEnum[]
 }
 

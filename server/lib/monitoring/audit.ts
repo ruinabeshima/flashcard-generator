@@ -1,5 +1,6 @@
 import { prisma } from "../prisma";
 import { AuditEvent } from "../../prisma/generated/prisma/enums";
+import { logger } from "./logger";
 
 export default async function logAudit(
   userId: string,
@@ -19,6 +20,6 @@ export default async function logAudit(
       },
     });
   } catch (error) {
-    console.error(`Failed to log audit: ${error}`);
+    logger.error(`Failed to log audit: ${error}`);
   }
 }

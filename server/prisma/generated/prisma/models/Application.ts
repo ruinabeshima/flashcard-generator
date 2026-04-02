@@ -193,7 +193,7 @@ export type ApplicationGroupByOutputType = {
   _max: ApplicationMaxAggregateOutputType | null
 }
 
-type GetApplicationGroupByPayload<T extends ApplicationGroupByArgs> = Prisma.PrismaPromise<
+export type GetApplicationGroupByPayload<T extends ApplicationGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<ApplicationGroupByOutputType, T['by']> &
       {
@@ -1548,6 +1548,11 @@ export type ApplicationFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Skip the first `n` Applications.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Applications.
+   */
   distinct?: Prisma.ApplicationScalarFieldEnum | Prisma.ApplicationScalarFieldEnum[]
 }
 

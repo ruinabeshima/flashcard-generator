@@ -179,7 +179,7 @@ export type TailoredResumeGroupByOutputType = {
   _max: TailoredResumeMaxAggregateOutputType | null
 }
 
-type GetTailoredResumeGroupByPayload<T extends TailoredResumeGroupByArgs> = Prisma.PrismaPromise<
+export type GetTailoredResumeGroupByPayload<T extends TailoredResumeGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<TailoredResumeGroupByOutputType, T['by']> &
       {
@@ -1503,6 +1503,11 @@ export type TailoredResumeFindManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Skip the first `n` TailoredResumes.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of TailoredResumes.
+   */
   distinct?: Prisma.TailoredResumeScalarFieldEnum | Prisma.TailoredResumeScalarFieldEnum[]
 }
 

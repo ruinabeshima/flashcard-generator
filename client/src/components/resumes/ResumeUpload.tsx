@@ -132,6 +132,7 @@ export default function ResumeUpload(props: ResumeUploadProps) {
               </div>
             </div>
             <button
+              type="button"
               onClick={handleFileRemove}
               className="text-gray-400 hover:text-red-500 transition-colors"
             >

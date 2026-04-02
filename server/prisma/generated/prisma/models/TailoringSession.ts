@@ -174,7 +174,7 @@ export type TailoringSessionGroupByOutputType = {
   _max: TailoringSessionMaxAggregateOutputType | null
 }
 
-type GetTailoringSessionGroupByPayload<T extends TailoringSessionGroupByArgs> = Prisma.PrismaPromise<
+export type GetTailoringSessionGroupByPayload<T extends TailoringSessionGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<TailoringSessionGroupByOutputType, T['by']> &
       {
@@ -1551,6 +1551,11 @@ export type TailoringSessionFindManyArgs<ExtArgs extends runtime.Types.Extension
    * Skip the first `n` TailoringSessions.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of TailoringSessions.
+   */
   distinct?: Prisma.TailoringSessionScalarFieldEnum | Prisma.TailoringSessionScalarFieldEnum[]
 }
 

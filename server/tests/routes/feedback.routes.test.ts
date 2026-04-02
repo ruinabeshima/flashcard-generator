@@ -8,11 +8,13 @@ import { parseAcceptedSuggestions } from "../../lib/tailoring/tailoring";
 import { generateTailoredResume } from "../../lib/openai/openai";
 import convertTextToPDF from "../../lib/tailoring/convert";
 import { r2 } from "../../lib/storage/r2";
+import logAudit from "../../lib/monitoring/audit";
 
 // Mock
 jest.mock("../../lib/prisma");
 const mockPrisma = jest.mocked(prisma);
 jest.mock("../../lib/monitoring/audit");
+const mockLogAudit = jest.mocked(logAudit);
 jest.mock("../../lib/openai/openai");
 jest.mock("../../lib/tailoring/tailoring", () => ({
   parseAcceptedSuggestions: jest.fn(),
@@ -42,11 +44,27 @@ describe("POST /feedback/:applicationId", () => {
     expect(res.status).toBe(401);
   });
 
+  it("returns 403 request limit reached", async () => {
+    mockPrisma.application.findUnique.mockResolvedValue({
+      id: "application-1",
+      userId: "user-1",
+    } as any);
+    mockPrisma.tailoringSession.count.mockResolvedValue(3);
+
+    const res = await request(app)
+      .post("/feedback/application-1")
+      .set("x-test-user-id", "user-1");
+
+    expect(res.status).toBe(403);
+    expect(res.body).toEqual({ message: "Maximum number of requests reached" });
+  });
+
   it("returns 403 ownership mismatch", async () => {
     mockPrisma.application.findUnique.mockResolvedValue({
       id: "application-1",
       userId: "user-2",
     } as any);
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
 
     const res = await request(app)
       .post("/feedback/application-1")
@@ -61,6 +79,7 @@ describe("POST /feedback/:applicationId", () => {
       id: "application-1",
       userId: "user-1",
     } as any);
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
     mockApplicationInfo.mockResolvedValue(null);
 
     const res = await request(app)
@@ -76,6 +95,7 @@ describe("POST /feedback/:applicationId", () => {
       id: "application-1",
       userId: "user-1",
     } as any);
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
     mockApplicationInfo.mockResolvedValue([
       "Company: Company A",
       "Role: Teacher",
@@ -97,6 +117,7 @@ describe("POST /feedback/:applicationId", () => {
       id: "application-1",
       userId: "user-1",
     } as any);
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
     mockApplicationInfo.mockResolvedValue([
       "Company: Company A",
       "Role: Teacher",
@@ -119,6 +140,7 @@ describe("POST /feedback/:applicationId", () => {
       id: "application-1",
       userId: "user-1",
     } as any);
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
     mockApplicationInfo.mockResolvedValue([
       "Company: Company A",
       "Role: Teacher",
@@ -261,6 +283,7 @@ describe("POST /feedback/generate/:sessionId", () => {
     mockPrisma.tailoringSession.findUnique.mockResolvedValue({
       userId: "user-1",
     } as any);
+    mockPrisma.tailoredResume.findFirst.mockResolvedValue(null);
     mockResumeText.mockResolvedValue(null);
 
     const res = await request(app)
@@ -285,6 +308,7 @@ describe("POST /feedback/generate/:sessionId", () => {
       add: ["add certification Y"],
       weak: ["weak point Z"],
     });
+    mockPrisma.tailoredResume.findFirst.mockResolvedValue(null);
     mockGenerateTailoredResume.mockResolvedValue(null);
 
     const res = await request(app)
@@ -319,6 +343,7 @@ describe("POST /feedback/generate/:sessionId", () => {
         weak: ["weak point Z"],
       },
     } as any);
+    mockPrisma.tailoredResume.findFirst.mockResolvedValue(null);
     mockResumeText.mockResolvedValue("Resume text");
     mockParseAcceptedSuggestions.mockReturnValue({
       miss: ["missing skill A", "missing skill B"],
@@ -329,9 +354,10 @@ describe("POST /feedback/generate/:sessionId", () => {
     mockGenerateTailoredResume.mockResolvedValue("Tailored resume text");
     mockConvertTextToPDF.mockResolvedValue(Buffer.from("pdf-buffer"));
     mockR2Send.mockResolvedValue({} as any);
-    (mockPrisma as any).tailoredResume = {
-      create: jest.fn().mockResolvedValue(createdResume),
-    };
+    mockLogAudit.mockResolvedValue(undefined);
+    mockPrisma.tailoredResume.create = jest
+      .fn()
+      .mockResolvedValue(createdResume);
     mockPrisma.tailoringSession.update.mockResolvedValue(updatedSession as any);
     mockPrisma.$transaction.mockResolvedValue([
       createdResume,
