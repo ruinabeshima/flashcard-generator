@@ -160,8 +160,15 @@ resumeRouter.post(
       return res.status(400).json({ message: "No file uploaded" });
     }
 
+    // Validate file contents
+    const isPDF = file.buffer.slice(0, 4).toString() === "%PDF";
+    if (!isPDF) {
+      return res.status(400).json({ message: "File must be a valid PDF" });
+    }
+
     const ext = file.originalname.split(".").pop();
     const key = `uploads/${randomUUID()}.${ext}`;
+    let uploadedKey: string | null = null;
 
     try {
       const existing = await prisma.resume.findUnique({
@@ -173,13 +180,10 @@ resumeRouter.post(
         },
       });
 
-      if (existing) {
-        await r2.send(
-          new DeleteObjectCommand({
-            Bucket: process.env.R2_BUCKET_NAME!,
-            Key: existing.key,
-          }),
-        );
+      const text = await parsePDF(file.buffer);
+      if (!text) {
+        logger.error("Failed to parse PDF", { userId });
+        return res.status(400).json({ message: "Failed to parse resume" });
       }
 
       await r2.send(
@@ -190,12 +194,7 @@ resumeRouter.post(
           ContentType: file.mimetype,
         }),
       );
-
-      const text = await parsePDF(file.buffer);
-      if (!text) {
-        logger.error("Failed to parse PDF", { userId });
-        return res.status(400).json({ message: "Failed to parse resume" });
-      }
+      uploadedKey = key;
 
       const resume = await prisma.resume.upsert({
         where: {
@@ -223,7 +222,41 @@ resumeRouter.post(
       res
         .status(201)
         .json({ id: resume.id, message: "File sent successfully" });
+
+      // Delete old file separately (best-effort, won't cascade on failure)
+      if (existing) {
+        try {
+          await r2.send(
+            new DeleteObjectCommand({
+              Bucket: process.env.R2_BUCKET_NAME!,
+              Key: existing.key,
+            }),
+          );
+        } catch (deleteError) {
+          logger.warn("Failed to delete old resume", {
+            userId,
+            key: existing.key,
+            error: deleteError,
+          });
+        }
+      }
     } catch (error) {
+      if (uploadedKey) {
+        try {
+          await r2.send(
+            new DeleteObjectCommand({
+              Bucket: process.env.R2_BUCKET_NAME!,
+              Key: uploadedKey,
+            }),
+          );
+        } catch (cleanupError) {
+          logger.error("Failed to cleanup uploaded resume", {
+            userId,
+            key: uploadedKey,
+            error: cleanupError,
+          });
+        }
+      }
       logger.error("Failed to upload file", { userId, error });
       res.status(500).json({ message: "Internal server error" });
     }
