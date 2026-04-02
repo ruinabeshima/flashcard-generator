@@ -97,6 +97,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
     resumeName,
     appUrl,
     getToken,
+    props,
     props.sessionId,
     props.onTailoringLoadingChange,
   ]);
@@ -154,6 +155,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
     resumeNameSnapshot,
     appUrl,
     getToken,
+    props,
     props.sessionId,
     props.onTailoringLoadingChange,
   ]);
@@ -161,7 +163,7 @@ export function TrackResumeSuggestions(props: ResumeSuggestionsProps) {
   useEffect(() => {
     if (total !== 0) return;
     props.onTailoringLoadingChange?.(false);
-  }, [total, props.onTailoringLoadingChange]);
+  }, [total, props, props.onTailoringLoadingChange]);
 
   const handleAcceptSuggestion = (
     key: string,
