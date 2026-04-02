@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { TrackResumeSuggestions } from "../resumes/ResumeSuggestions";
-import type { TypeResumeSuggestions } from "../resumes/ResumeSuggestions";
-
-type Suggestion = {
-  sessionId: string;
-  suggestions: TypeResumeSuggestions;
-};
+import useTailoredStatus from "../../lib/useTailoredStatus";
 
 type TailorResumeProps = {
   applicationId: string;
@@ -16,17 +11,25 @@ type TailorResumeProps = {
 export default function TailorResume(props: TailorResumeProps) {
   const appUrl = import.meta.env.VITE_SERVER_URL;
   const { getToken } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<Suggestion | null>(null);
-  const [getSuggestions, setGetSuggestions] = useState(false);
-  const [error, setError] = useState(false);
+  const [tailoringLoading, setTailoringLoading] = useState(false);
+  const [tailoringError, setTailoringError] = useState(false);
+
+  const {
+    loading: statusLoading,
+    error: statusError,
+    status,
+    suggestions,
+    sessionId,
+    tailoredResumeId,
+    refetch,
+  } = useTailoredStatus(props.applicationId);
 
   const handleTailorApplication = async (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     event.preventDefault();
-    setLoading(true);
-    setError(false);
+    setTailoringLoading(true);
+    setTailoringError(false);
     props.onTailoringLoadingChange?.(true);
 
     try {
@@ -42,25 +45,24 @@ export default function TailorResume(props: TailorResumeProps) {
       );
 
       if (!response.ok) {
-        setError(true);
+        setTailoringError(true);
         props.onTailoringLoadingChange?.(false);
         return;
       }
 
-      const data = await response.json();
-      if (data.status === "PENDING") {
-        setData(data);
-        setGetSuggestions(true);
-      } else {
-        props.onTailoringLoadingChange?.(false);
-      }
+      // Success - tailoring initiated
+      await refetch();
+      props.onTailoringLoadingChange?.(false);
     } catch {
-      setError(true);
+      setTailoringError(true);
       props.onTailoringLoadingChange?.(false);
     } finally {
-      setLoading(false);
+      setTailoringLoading(false);
     }
   };
+
+  const loading = tailoringLoading || statusLoading;
+  const error = tailoringError || statusError;
 
   return (
     <section className="w-full">
@@ -99,13 +101,44 @@ export default function TailorResume(props: TailorResumeProps) {
           </svg>
           <span>An error occurred while tailoring this resume.</span>
         </div>
-      ) : getSuggestions && data ? (
+      ) : status === "PENDING" || status === "REVIEWED" ? (
         <TrackResumeSuggestions
-          sessionId={data.sessionId}
-          suggestions={data.suggestions}
+          sessionId={sessionId!}
+          suggestions={suggestions!}
           onTailoringLoadingChange={props.onTailoringLoadingChange}
         />
-      ) : (
+      ) : status === "TAILORED" ? (
+        <div className="rounded-2xl border border-base-300 bg-base-100 shadow-sm p-6">
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div className="badge badge-success">Tailored</div>
+            <div>
+              <h3 className="text-lg font-semibold">Resume tailored</h3>
+              <p className="text-sm text-base-content/60">
+                Your customized resume is ready to download.
+              </p>
+            </div>
+            <button
+              className="btn btn-primary gap-2"
+              onClick={() =>
+                window.open(
+                  `${appUrl}/resumes/tailored/${tailoredResumeId}`,
+                  "_blank",
+                )
+              }
+            >
+              <svg
+                className="w-4 h-4"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4z" />
+              </svg>
+              Download Resume
+            </button>
+          </div>
+        </div>
+      ) : status === "NONE" ? (
         <div className="rounded-2xl border border-base-300 bg-base-100 shadow-sm p-6">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="badge badge-ghost">AI Tailoring</div>
@@ -118,6 +151,7 @@ export default function TailorResume(props: TailorResumeProps) {
             <button
               className="btn btn-primary gap-2"
               onClick={handleTailorApplication}
+              disabled={tailoringLoading}
             >
               <svg
                 className="w-4 h-4"
@@ -131,7 +165,7 @@ export default function TailorResume(props: TailorResumeProps) {
             </button>
           </div>
         </div>
-      )}
+      ) : null}
     </section>
   );
 }

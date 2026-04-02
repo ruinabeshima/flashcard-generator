@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import type { TypeResumeSuggestions } from "../components/resumes/ResumeSuggestions";
 
@@ -8,57 +8,71 @@ export default function useTailoredStatus(applicationId: string) {
   const [status, setStatus] = useState<null | string>(null);
   const [suggestions, setSuggestions] =
     useState<null | TypeResumeSuggestions>();
-  const [tailoredKey, setTailoredKey] = useState<null | string>(null);
+  const [sessionId, setSessionId] = useState<null | string>(null);
+  const [tailoredResumeId, setTailoredResumeId] = useState<null | string>(null);
   const { getToken } = useAuth();
   const appUrl = import.meta.env.VITE_SERVER_URL;
 
-  useEffect(() => {
-    const getTailoredStatus = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch(
-          `${appUrl}/tailored/status/${applicationId}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+  const fetchTailoredStatus = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const token = await getToken();
+      const response = await fetch(
+        `${appUrl}/tailoring/status/${applicationId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        },
+      );
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          setError(errorData.message);
-          return;
-        }
-
-        const data = await response.json();
-        if (data.status === "NONE") {
-          setStatus(data.status);
-          return;
-        }
-
-        if (data.status === "PENDING" || data.status === "REVIEWED") {
-          setStatus(data.status);
-          setSuggestions(data.suggestions);
-          return;
-        }
-
-        if (data.status === "TAILORED") {
-          setStatus(data.status);
-          setTailoredKey(data.key);
-        }
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "An error occurred";
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.message);
+        return;
       }
-    };
 
-    getTailoredStatus();
+      const data = await response.json();
+      if (data.status === "NONE") {
+        setStatus(data.status);
+        return;
+      }
+
+      if (data.status === "PENDING" || data.status === "REVIEWED") {
+        setStatus(data.status);
+        setSessionId(data.sessionId);
+        setSuggestions(data.suggestions);
+        return;
+      }
+
+      if (data.status === "TAILORED") {
+        setStatus(data.status);
+        setSessionId(data.sessionId);
+        setTailoredResumeId(data.tailoredResumeId);
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An error occurred";
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   }, [appUrl, applicationId, getToken]);
 
-  return { loading, error, status, suggestions, tailoredKey };
+  useEffect(() => {
+    fetchTailoredStatus();
+  }, [fetchTailoredStatus]);
+
+  return {
+    loading,
+    error,
+    status,
+    suggestions,
+    sessionId,
+    tailoredResumeId,
+    refetch: fetchTailoredStatus,
+  };
 }
