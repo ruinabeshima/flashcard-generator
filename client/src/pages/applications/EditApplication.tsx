@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Navbar from "../../components/navbar/Navbar";
 import ApplicationForm from "../../components/applications/ApplicationForm";
-import useIndividualApplication from "../../lib/useApplication";
+import useIndividualApplication from "../../lib/useIndividualApplication";
 import useOnboardingStatus from "../../lib/useOnboardingStatus";
 
 export default function EditApplication() {

@@ -150,5 +150,5 @@ VITE_CLERK_PUBLISHABLE_KEY
   - `pnpm dev` (from `/server`)
 
 ## Background Image
+https://www.freepik.com/free-vector/abstract-seamless-geometric-shape-lines-pattern-design-background_386291308.htm#fromView=keyword&page=1&position=1&uuid=73ee21b1-a895-4e6b-952f-5deac1313597&query=Background+pattern
 
-Taken from: https://www.freepik.com/free-vector/abstract-elegant-geometric-shape-background-design_149441939.htm#fromView=keyword&page=1&position=0&uuid=42c7654b-6a10-4813-855b-c347f2986f8a&query=Background+shape

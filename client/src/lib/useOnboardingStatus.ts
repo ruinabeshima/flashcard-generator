@@ -26,7 +26,7 @@ export default function useOnboardingStatus() {
         }
 
         const data = await response.json();
-        if (data.onboardingComplete != true) {
+        if (!data.onboardingComplete) {
           navigate("/onboarding");
         }
       } catch {

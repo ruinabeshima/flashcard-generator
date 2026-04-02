@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/navbar/Navbar";
 import TailorResume from "../../components/tailoring/TailorResume";
 import useOnboardingStatus from "../../lib/useOnboardingStatus";
-import useIndividualApplication from "../../lib/useApplication";
+import useIndividualApplication from "../../lib/useIndividualApplication";
 
 export default function ApplicationDetail() {
   const appUrl = import.meta.env.VITE_SERVER_URL;

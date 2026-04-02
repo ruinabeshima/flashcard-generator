@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 
 export default function useResumeLink() {
@@ -7,7 +6,6 @@ export default function useResumeLink() {
   const [loading, setLoading] = useState(true);
   const [url, setUrl] = useState("");
   const { getToken } = useAuth();
-  const navigate = useNavigate();
   const appUrl = import.meta.env.VITE_SERVER_URL;
 
   useEffect(() => {
@@ -36,7 +34,7 @@ export default function useResumeLink() {
     };
 
     getResumeLink();
-  }, [getToken, appUrl, navigate]);
+  }, [getToken, appUrl]);
 
   return { url, loading, error };
 }

@@ -3,7 +3,7 @@ import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import background from "../assets/background.jpg";
-import reference from "../assets/reference.png";
+import reference from "../assets/reference1.png";
 import NavBar from "../components/navbar/Navbar";
 
 export default function Home() {
@@ -20,7 +20,7 @@ export default function Home() {
     <div className="flex min-h-screen flex-col gap-10">
       <div
         style={{ backgroundImage: `url(${background})` }}
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat brightness-80 -z-10"
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
       />
 
       <NavBar />
@@ -32,6 +32,12 @@ export default function Home() {
             every job description.
           </p>
         </section>
+
+        <Link to="/register">
+          <button className="btn btn-active btn-primary btn-lg">
+            Get Started →
+          </button>
+        </Link>
 
         <section className="mockup-window bg-base-100 border border-base-300 w-9/10 h-150">
           <div className="flex justify-center items-center h-140">
@@ -65,10 +71,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        <Link to="/register">
-          <button className="btn btn-active btn-primary">Get Started →</button>
-        </Link>
       </main>
 
       <footer className="w-full bg-black h-20 flex items-center justify-center">

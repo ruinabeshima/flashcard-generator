@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import ResumeUpload from "../../components/resumes/ResumeUpload";
 import Navbar from "../../components/navbar/Navbar";
 import ApplicationForm from "../../components/applications/ApplicationForm";
+import useOnboardingStatus from "../../lib/useOnboardingStatus";
 
 export default function Onboarding() {
   const [page, setPage] = useState(1);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [updateError, setUpdateError] = useState<string | null>(null);
+  const [updateLoading, setUpdateLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState(
     "Checking your onboarding status...",
   );
@@ -28,43 +29,13 @@ export default function Onboarding() {
             "Add your first application or skip for now to head to your dashboard.",
         };
 
-  useEffect(() => {
-    const appUrl = import.meta.env.VITE_SERVER_URL;
-
-    const getOnboardingStatus = async () => {
-      setLoadingMessage("Checking your onboarding status...");
-      try {
-        const token = await getToken();
-        const response = await fetch(`${appUrl}/auth/status`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          setError("Failed to retreive onboarding data");
-          return;
-        }
-
-        const { onboardingComplete } = await response.json();
-        if (onboardingComplete) {
-          navigate("/dashboard");
-        }
-      } catch {
-        setError("Failed to retreive onboarding data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getOnboardingStatus();
-  }, [getToken, navigate]);
+  const { loading: onboardingLoading, error: onboardingError } =
+    useOnboardingStatus();
 
   const updateOnboarding = async () => {
     const appUrl = import.meta.env.VITE_SERVER_URL;
     setLoadingMessage("Skipping for now and finishing setup...");
-    setLoading(true);
+    setUpdateLoading(true);
 
     try {
       const token = await getToken();
@@ -76,16 +47,19 @@ export default function Onboarding() {
       });
 
       if (!response.ok) {
-        setError("Failed to update onboarding status");
+        setUpdateError("Failed to update onboarding status");
       }
 
       navigate("/dashboard");
     } catch {
-      setError("Failed to update onboarding status");
+      setUpdateError("Failed to update onboarding status");
     } finally {
-      setLoading(false);
+      setUpdateLoading(false);
     }
   };
+
+  const error = onboardingError || updateError;
+  const loading = onboardingLoading || updateLoading;
 
   return (
     <div className="flex flex-col w-full min-h-screen gap-5">
