@@ -1,84 +1,22 @@
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { useAuth } from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/navbar/Navbar";
 import ApplicationForm from "../../components/applications/ApplicationForm";
-
-interface Application {
-  id: string;
-  role: string;
-  company: string;
-  status: string;
-  appliedDate: string;
-  notes: string | null;
-  jobUrl: string | null;
-}
+import useIndividualApplication from "../../lib/useApplication";
+import useOnboardingStatus from "../../lib/useOnboardingStatus";
 
 export default function EditApplication() {
   const { id } = useParams<{ id: string }>();
-  const appUrl = import.meta.env.VITE_SERVER_URL;
-  const [application, setApplication] = useState<Application | null>(null);
-  const [error, setError] = useState<null | string>(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-  const { getToken } = useAuth();
+  const {
+    application,
+    loading: appLoading,
+    error: appError,
+  } = useIndividualApplication(id!);
+  const { loading: onboardingLoading, error: onboardingError } =
+    useOnboardingStatus();
 
-  useEffect(() => {
-    const getIndividualApplication = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch(`${appUrl}/applications/${id}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          setError("Failed to retrieve application");
-          return;
-        }
-
-        const data = await response.json();
-        setApplication(data);
-      } catch {
-        setError("Failed to retrieve applications");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const checkOnboardingStatus = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch(`${appUrl}/auth/status`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          setError("Failed to get onboarding status");
-          return;
-        }
-
-        const data = await response.json();
-        if (data.onboardingComplete != true) {
-          navigate("/onboarding");
-        }
-      } catch {
-        setError("Failed to get onboarding status");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkOnboardingStatus();
-    getIndividualApplication();
-  }, [getToken, id, appUrl, navigate]);
+  const loading = appLoading || onboardingLoading;
+  const error = appError || onboardingError;
 
   return (
     <div className="flex flex-col gap-5 min-h-screen w-full items-center">

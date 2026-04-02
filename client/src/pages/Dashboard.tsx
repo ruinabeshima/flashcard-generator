@@ -1,45 +1,9 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/clerk-react";
-import { useNavigate } from "react-router-dom";
 import ApplicationList from "../components/applications/ApplicationList";
 import Navbar from "../components/navbar/Navbar";
+import useOnboardingStatus from "../lib/useOnboardingStatus";
 
 export default function Dashboard() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<null | string>(null);
-  const appUrl = import.meta.env.VITE_SERVER_URL;
-  const navigate = useNavigate();
-  const { getToken } = useAuth();
-
-  useEffect(() => {
-    const checkOnboardingStatus = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch(`${appUrl}/auth/status`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          setError("Failed to get onboarding status");
-          return;
-        }
-
-        const data = await response.json();
-        if (data.onboardingComplete != true) {
-          navigate("/onboarding");
-        }
-      } catch {
-        setError("Failed to get onboarding status");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkOnboardingStatus();
-  }, [getToken, appUrl, navigate]);
+  const { loading, error } = useOnboardingStatus();
 
   return (
     <div className="flex min-h-screen flex-col gap-5 w-full items-center">

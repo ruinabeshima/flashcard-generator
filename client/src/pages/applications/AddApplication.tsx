@@ -1,45 +1,9 @@
 import Navbar from "../../components/navbar/Navbar";
 import ApplicationForm from "../../components/applications/ApplicationForm";
-import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/clerk-react";
-import { useNavigate } from "react-router-dom";
+import useOnboardingStatus from "../../lib/useOnboardingStatus";
 
 export default function AddApplication() {
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-  const appUrl = import.meta.env.VITE_SERVER_URL;
-  const { getToken } = useAuth();
-
-  useEffect(() => {
-    const checkOnboardingStatus = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch(`${appUrl}/auth/status`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          setError("Failed to get onboarding status");
-          return;
-        }
-
-        const data = await response.json();
-        if (data.onboardingComplete != true) {
-          navigate("/onboarding");
-        }
-      } catch {
-        setError("Failed to get onboarding status");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkOnboardingStatus();
-  }, [getToken, navigate, appUrl]);
+  const { loading, error } = useOnboardingStatus();
 
   return (
     <div className="flex flex-col gap-10 items-center">

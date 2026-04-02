@@ -1,86 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/navbar/Navbar";
 import TailorResume from "../../components/tailoring/TailorResume";
-
-interface Application {
-  id: string;
-  role: string;
-  company: string;
-  status: string;
-  appliedDate: string;
-  notes: string | null;
-  jobUrl: string | null;
-}
+import useOnboardingStatus from "../../lib/useOnboardingStatus";
+import useIndividualApplication from "../../lib/useApplication";
 
 export default function ApplicationDetail() {
   const appUrl = import.meta.env.VITE_SERVER_URL;
   const navigate = useNavigate();
   const { getToken } = useAuth();
   const { id } = useParams<{ id: string }>();
-  const [application, setApplication] = useState<Application | null>(null);
-  const [error, setError] = useState<null | string>(null);
-  const [loading, setLoading] = useState(true);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState<null | string>(null);
 
-  useEffect(() => {
-    const getIndividualApplication = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch(`${appUrl}/applications/${id}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          setError("Failed to retrieve application");
-          return;
-        }
-
-        const data = await response.json();
-        setApplication(data);
-      } catch {
-        setError("Failed to retrieve applications");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const checkOnboardingStatus = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch(`${appUrl}/auth/status`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          setError("Failed to get onboarding status");
-          return;
-        }
-
-        const data = await response.json();
-        if (data.onboardingComplete != true) {
-          navigate("/onboarding");
-        }
-      } catch {
-        setError("Failed to get onboarding status");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkOnboardingStatus();
-    getIndividualApplication();
-  }, [getToken, id, appUrl, navigate]);
+  const { loading: onboardingLoading, error: onboardingError } =
+    useOnboardingStatus();
+  const {
+    application,
+    loading: appLoading,
+    error: appError,
+  } = useIndividualApplication(id!);
 
   const handleApplicationDelete = async () => {
-    setLoading(true);
+    setDeleteLoading(true);
 
     try {
       const token = await getToken();
@@ -92,17 +36,20 @@ export default function ApplicationDetail() {
       });
 
       if (!response.ok) {
-        setError("Failed to delete application");
+        setDeleteError("Failed to delete application");
         return;
       }
 
       navigate("/dashboard");
     } catch {
-      setError("Failed to delete application");
+      setDeleteError("Failed to delete application");
     } finally {
-      setLoading(false);
+      setDeleteLoading(false);
     }
   };
+
+  const loading = onboardingLoading || appLoading || deleteLoading;
+  const error = onboardingError || appError || deleteError;
 
   return (
     <div className="flex flex-col gap-5 min-h-screen w-full items-center">
