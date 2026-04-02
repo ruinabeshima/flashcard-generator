@@ -283,17 +283,27 @@ export default function ApplicationForm(props: ApplicationFormProps) {
           </fieldset>
 
           {props.isOnboarding ? (
-            <section className="flex gap-2">
-              <button
-                type="button"
-                className="btn btn-neutral"
-                onClick={props.onSkip}
-              >
-                Skip
-              </button>
-              <button className="btn btn-primary" type="submit">
-                Save
-              </button>
+            <section className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  className="btn btn-neutral"
+                  onClick={props.onSkip}
+                >
+                  Skip for now
+                </button>
+                <button
+                  className={`btn ${loading ? "btn-disabled" : "btn-primary"}`}
+                  type="submit"
+                  disabled={loading}
+                >
+                  {loading ? "Saving..." : "Save & Finish"}
+                </button>
+              </div>
+              <p className="text-xs text-gray-500">
+                Skip takes you to your dashboard. You can add applications
+                later.
+              </p>
             </section>
           ) : (
             <button

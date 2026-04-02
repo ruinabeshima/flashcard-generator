@@ -9,13 +9,30 @@ export default function Onboarding() {
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMessage, setLoadingMessage] = useState(
+    "Checking your onboarding status...",
+  );
   const { getToken } = useAuth();
   const navigate = useNavigate();
+
+  const stepDetails =
+    page === 1
+      ? {
+          label: "Step 1 of 2",
+          description:
+            "Upload a resume to personalize your experience and tailor recommendations.",
+        }
+      : {
+          label: "Step 2 of 2",
+          description:
+            "Add your first application or skip for now to head to your dashboard.",
+        };
 
   useEffect(() => {
     const appUrl = import.meta.env.VITE_SERVER_URL;
 
     const getOnboardingStatus = async () => {
+      setLoadingMessage("Checking your onboarding status...");
       try {
         const token = await getToken();
         const response = await fetch(`${appUrl}/auth/status`, {
@@ -46,6 +63,7 @@ export default function Onboarding() {
 
   const updateOnboarding = async () => {
     const appUrl = import.meta.env.VITE_SERVER_URL;
+    setLoadingMessage("Skipping for now and finishing setup...");
     setLoading(true);
 
     try {
@@ -78,10 +96,48 @@ export default function Onboarding() {
           <h1 className="text-4xl font-bold">Set up your account</h1>
         </div>
 
+        <section className="w-full max-w-3xl flex flex-col items-center gap-3">
+          <div className="w-full flex items-center justify-between text-xs uppercase tracking-wide text-gray-400">
+            <span
+              className={
+                page === 1 ? "text-primary font-semibold" : "text-gray-400"
+              }
+            >
+              Resume
+            </span>
+            <span
+              className={
+                page === 2 ? "text-primary font-semibold" : "text-gray-400"
+              }
+            >
+              Application
+            </span>
+          </div>
+          <div className="w-full flex items-center gap-2">
+            <div
+              className={`h-2 flex-1 rounded-full ${
+                page >= 1 ? "bg-primary" : "bg-gray-200"
+              }`}
+            ></div>
+            <div
+              className={`h-2 flex-1 rounded-full ${
+                page >= 2 ? "bg-primary" : "bg-gray-200"
+              }`}
+            ></div>
+          </div>
+          <p className="text-sm text-gray-500">
+            <span className="font-semibold text-gray-700">
+              {stepDetails.label}.
+            </span>{" "}
+            {stepDetails.description}
+          </p>
+        </section>
+
         {loading ? (
-          <button className="btn btn-square">
-            <span className="loading loading-spinner"></span>
-          </button>
+          <div className="flex flex-col items-center gap-3 text-sm text-gray-500">
+            <span className="loading loading-spinner loading-md"></span>
+            <span>{loadingMessage}</span>
+          </div>
         ) : error ? (
           <div role="alert" className="alert alert-error mb-10 w-4/5">
             <svg
