@@ -34,7 +34,9 @@ export default function Home() {
         </section>
 
         <Link to="/register">
-          <button className="btn btn-active btn-primary btn-lg">Get Started →</button>
+          <button className="btn btn-active btn-primary btn-lg">
+            Get Started →
+          </button>
         </Link>
 
         <section className="mockup-window bg-base-100 border border-base-300 w-9/10 h-150">
@@ -69,7 +71,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
       </main>
 
       <footer className="w-full bg-black h-20 flex items-center justify-center">
