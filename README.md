@@ -80,21 +80,25 @@ A full-stack application where users can sign in, view their job applications an
 
 ## Server API Routes
 
-| Method | Endpoint                        | Description                                                                    |
-| ------ | ------------------------------- | ------------------------------------------------------------------------------ |
-| GET    | `/applications`                 | Paginated list of user's job application (query params: `pageNum`, `pageSize`) |
-| POST   | `/applications/add`             | Create a new job application                                                   |
-| GET    | `/applications/:id`             | Retrieve a specific application by ID                                          |
-| PATCH  | `/applications/:id`             | Update application details                                                     |
-| DELETE | `/applications/:id`             | Delete an application                                                          |
-| GET    | `/auth/status`                  | Get user's onboarding status                                                   |
-| PATCH  | `/auth/status`                  | Mark onboarding as complete                                                    |
-| GET    | `/resumes`                      | Get pre-signed URL to view resume (expires in 1 hour)                          |
-| POST   | `/resumes/upload`               | Upload or replace user's resume (PDF only, max 10MB)                           |
-| POST   | `/feedback/:applicationId`      | Start tailoring session and get AI suggestions for an application              |
-| POST   | `/feedback/update/:sessionId`   | Accept or dismiss individual suggestions                                       |
-| POST   | `/feedback/generate/:sessionId` | Generate final tailored resume from accepted suggestions                       |
-| POST   | `/webhooks/clerk`               | Receive Clerk webhook to sync user data with database                          |
+| Method | Endpoint                              | Description                                                                           |
+| ------ | ------------------------------------- | ------------------------------------------------------------------------------------- |
+| GET    | `/health`                             | Health check endpoint                                                                 |
+| GET    | `/applications`                       | Paginated list of user's job application (query params: `pageNum`, `pageSize`)        |
+| POST   | `/applications/add`                   | Create a new job application                                                          |
+| GET    | `/applications/:id`                   | Retrieve a specific application by ID                                                 |
+| PATCH  | `/applications/:id`                   | Update application details                                                            |
+| DELETE | `/applications/:id`                   | Delete an application                                                                 |
+| GET    | `/auth/status`                        | Get user's onboarding status                                                          |
+| PATCH  | `/auth/status`                        | Mark onboarding as complete                                                           |
+| GET    | `/resumes`                            | Get pre-signed URL to view resume (expires in 1 hour)                                 |
+| GET    | `/resumes/tailored`                   | Get all user's tailored resumes                                                       |
+| GET    | `/resumes/tailored/:tailoredResumeId` | Get individual tailored resume URL                                                    |
+| POST   | `/resumes/upload`                     | Upload or replace user's resume (PDF only, max 10MB)                                  |
+| POST   | `/feedback/:applicationId`            | Start tailoring session and get AI suggestions for an application                     |
+| POST   | `/feedback/update/:sessionId`         | Accept or dismiss individual suggestions                                              |
+| POST   | `/feedback/generate/:sessionId`       | Generate final tailored resume from accepted suggestions                              |
+| POST   | `/webhooks/clerk`                     | Receive Clerk webhook to sync user data with database                                 |
+| GET    | `/tailoring/status/:applicationId`    | Check if tailoring status exists and returns suggestions or tailored resume key if so |
 
 ## Database Models
 
@@ -150,5 +154,5 @@ VITE_CLERK_PUBLISHABLE_KEY
   - `pnpm dev` (from `/server`)
 
 ## Background Image
-https://www.freepik.com/free-vector/abstract-seamless-geometric-shape-lines-pattern-design-background_386291308.htm#fromView=keyword&page=1&position=1&uuid=73ee21b1-a895-4e6b-952f-5deac1313597&query=Background+pattern
 
+https://www.freepik.com/free-vector/abstract-seamless-geometric-shape-lines-pattern-design-background_386291308.htm#fromView=keyword&page=1&position=1&uuid=73ee21b1-a895-4e6b-952f-5deac1313597&query=Background+pattern
