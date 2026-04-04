@@ -14,13 +14,12 @@ function requireEnv(keys: string[]) {
 
 requireEnv([
   "DATABASE_URL",
-  "CLERK_SECRET_KEY",
-  "CLERK_WEBHOOK_SECRET",
   "R2_ACCOUNT_ID",
   "R2_ACCESS_KEY_ID",
   "R2_SECRET_ACCESS_KEY",
   "R2_BUCKET_NAME",
   "OPENAI_API_KEY",
+  "FIREBASE_SERVICE_ACCOUNT", 
 ]);
 
 const app = createApp();

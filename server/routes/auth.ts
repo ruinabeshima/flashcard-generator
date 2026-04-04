@@ -21,7 +21,7 @@ authRouter.get(
     try {
       const data = await prisma.user.findFirst({
         where: {
-          clerkId: userId,
+          id: userId,
         },
         select: {
           onboarding_complete: true,
@@ -58,7 +58,7 @@ authRouter.patch(
     try {
       await prisma.user.update({
         where: {
-          clerkId: userId,
+          id: userId,
         },
         data: {
           onboarding_complete: true,

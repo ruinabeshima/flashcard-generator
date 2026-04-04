@@ -1,6 +1,5 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
-import { webhookRouter } from "./routes/webhooks";
 import { applicationRouter } from "./routes/applications";
 import { authRouter } from "./routes/auth";
 import { resumeRouter } from "./routes/resumes";
@@ -41,7 +40,6 @@ export default function createApp() {
     res.status(200).json({ status: "ok" });
   });
 
-  app.use("/webhooks", webhookRouter);
   app.use(express.json());
   app.use("/applications", applicationRouter);
   app.use("/auth", authRouter);
