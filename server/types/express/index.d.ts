@@ -3,8 +3,8 @@ declare global {
     interface Request {
       auth: {
         userId?: string;
-        sessionId?: string;
-        orgId?: string;
+        email?: string;
+        imageUrl?: string;
         [key: string]: unknown;
       };
     }

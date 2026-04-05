@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
-import { requireAuth } from "@clerk/express";
+import { requireFirebaseAuth } from "../lib/firebase/middleware";
 import { logger } from "../lib/monitoring/logger";
 import logAudit from "../lib/monitoring/audit";
 import * as z from "zod";
@@ -10,7 +10,7 @@ const applicationRouter = express.Router();
 // Get paginated list of job applications
 applicationRouter.get(
   "/",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request, res: Response) => {
     const { userId } = req.auth;
     const pageNum = parseInt(req.query.pageNum as string) || 1;
@@ -49,7 +49,7 @@ applicationRouter.get(
 // Get singular job application
 applicationRouter.get(
   "/:id",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request<{ id: string }>, res: Response) => {
     const { userId } = req.auth;
     const { id } = req.params;
@@ -116,7 +116,7 @@ const newApplicationSchema = z
   .strict();
 applicationRouter.post(
   "/add",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request, res: Response) => {
     const { userId } = req.auth;
 
@@ -178,7 +178,7 @@ const updateApplicationSchema = z
   .strict();
 applicationRouter.patch(
   "/:id",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request<{ id: string }>, res: Response) => {
     const { userId } = req.auth;
     const { id } = req.params;
@@ -247,7 +247,7 @@ applicationRouter.patch(
 // Delete job application
 applicationRouter.delete(
   "/:id",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request<{ id: string }>, res: Response) => {
     const { userId } = req.auth;
     const { id } = req.params;

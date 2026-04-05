@@ -1,7 +1,7 @@
 import Navbar from "../../components/navbar/Navbar";
 import ResumeUpload from "../../components/resumes/ResumeUpload";
-import useOnboardingStatus from "../../lib/useOnboardingStatus";
-import useResumeLink from "../../lib/useResumeLink";
+import useOnboardingStatus from "../../hooks/useOnboardingStatus";
+import useResumeLink from "../../hooks/useResumeLink";
 
 export default function UserResume() {
   const {

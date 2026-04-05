@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "../../hooks/useAuth";
 import { TrackResumeSuggestions } from "../resumes/ResumeSuggestions";
-import useTailoredStatus from "../../lib/useTailoredStatus";
+import useTailoredStatus from "../../hooks/useTailoredStatus";
 
 type TailorResumeProps = {
   applicationId: string;

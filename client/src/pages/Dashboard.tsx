@@ -1,6 +1,6 @@
 import ApplicationList from "../components/applications/ApplicationList";
 import Navbar from "../components/navbar/Navbar";
-import useOnboardingStatus from "../lib/useOnboardingStatus";
+import useOnboardingStatus from "../hooks/useOnboardingStatus";
 
 export default function Dashboard() {
   const { loading, error } = useOnboardingStatus();

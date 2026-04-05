@@ -1,15 +1,41 @@
 import express, { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
-import { requireAuth } from "@clerk/express";
+import { requireFirebaseAuth } from "../lib/firebase/middleware";
 import { logger } from "../lib/monitoring/logger";
 import logAudit from "../lib/monitoring/audit";
 
 const authRouter = express.Router();
 
+authRouter.post(
+  "/sync",
+  requireFirebaseAuth(),
+  async (req: Request, res: Response) => {
+    const { userId, email, imageUrl } = req.auth;
+    if (!userId || !email) {
+      return res.status(400).json({ message: "Missing user info" });
+    }
+
+    await prisma.user.upsert({
+      where: { id: userId },
+      create: {
+        id: userId,
+        email,
+        imageUrl: imageUrl ?? null,
+      },
+      update: {
+        email,
+        imageUrl: imageUrl ?? null,
+      },
+    });
+
+    return res.status(200).json({ ok: true });
+  },
+);
+
 // Check user's onboarding status
 authRouter.get(
   "/status",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request, res: Response) => {
     const { userId } = req.auth;
 
@@ -21,7 +47,7 @@ authRouter.get(
     try {
       const data = await prisma.user.findFirst({
         where: {
-          clerkId: userId,
+          id: userId,
         },
         select: {
           onboarding_complete: true,
@@ -46,7 +72,7 @@ authRouter.get(
 // Update user's onboarding status
 authRouter.patch(
   "/status",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request, res: Response) => {
     const { userId } = req.auth;
 
@@ -58,7 +84,7 @@ authRouter.patch(
     try {
       await prisma.user.update({
         where: {
-          clerkId: userId,
+          id: userId,
         },
         data: {
           onboarding_complete: true,

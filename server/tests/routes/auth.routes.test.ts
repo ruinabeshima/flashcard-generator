@@ -27,7 +27,6 @@ describe("GET /auth/status", () => {
   it("returns 300 onboarding complete", async () => {
     mockPrisma.user.findFirst.mockResolvedValue({
       id: "user-1",
-      clerkId: "clerk-user-1",
       email: "user1@email.com",
       imageUrl: "image.com",
       createdAt: new Date("2026-03-18T23:31:21.834Z"),
@@ -51,7 +50,6 @@ describe("PATCH /auth/status", () => {
   it("returns 200 success", async () => {
     mockPrisma.user.update.mockResolvedValue({
       id: "user-1",
-      clerkId: "clerk-user-1",
       email: "user1@email.com",
       imageUrl: "image.com",
       createdAt: new Date("2026-03-18T23:31:21.834Z"),

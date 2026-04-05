@@ -8,7 +8,7 @@ import {
 import { r2 } from "../lib/storage/r2";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { upload } from "../lib/storage/multer";
-import { requireAuth } from "@clerk/express";
+import { requireFirebaseAuth } from "../lib/firebase/middleware";
 import { randomUUID } from "crypto";
 import { logger } from "../lib/monitoring/logger";
 import logAudit from "../lib/monitoring/audit";
@@ -17,49 +17,53 @@ import parsePDF from "../lib/storage/parse";
 const resumeRouter = express.Router();
 
 // Get URL of user's resume
-resumeRouter.get("/", requireAuth(), async (req: Request, res: Response) => {
-  const { userId } = req.auth;
+resumeRouter.get(
+  "/",
+  requireFirebaseAuth(),
+  async (req: Request, res: Response) => {
+    const { userId } = req.auth;
 
-  if (!userId) {
-    logger.warn("Unauthorised access attempt", { route: "/your-resume" });
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-
-  try {
-    const resume = await prisma.resume.findUnique({
-      where: {
-        userId: userId,
-      },
-      select: {
-        key: true,
-      },
-    });
-
-    if (!resume) {
-      logger.warn("Resume not found", { userId });
-      return res.status(404).json({ message: "Resume not found" });
+    if (!userId) {
+      logger.warn("Unauthorised access attempt", { route: "/your-resume" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const url = await getSignedUrl(
-      r2,
-      new GetObjectCommand({
-        Bucket: process.env.R2_BUCKET_NAME!,
-        Key: resume.key,
-      }),
-      { expiresIn: 3600 },
-    );
+    try {
+      const resume = await prisma.resume.findUnique({
+        where: {
+          userId: userId,
+        },
+        select: {
+          key: true,
+        },
+      });
 
-    res.json({ url });
-  } catch (error) {
-    logger.error("Failed to retrieve resume", { userId, error });
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
+      if (!resume) {
+        logger.warn("Resume not found", { userId });
+        return res.status(404).json({ message: "Resume not found" });
+      }
+
+      const url = await getSignedUrl(
+        r2,
+        new GetObjectCommand({
+          Bucket: process.env.R2_BUCKET_NAME!,
+          Key: resume.key,
+        }),
+        { expiresIn: 3600 },
+      );
+
+      res.json({ url });
+    } catch (error) {
+      logger.error("Failed to retrieve resume", { userId, error });
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+);
 
 // Get all user's tailored resumes
 resumeRouter.get(
   "/tailored",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request, res: Response) => {
     const { userId } = req.auth;
 
@@ -97,7 +101,7 @@ resumeRouter.get(
 // Get individual tailored resume url
 resumeRouter.get(
   "/tailored/:tailoredResumeId",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request<{ tailoredResumeId: string }>, res: Response) => {
     const { tailoredResumeId } = req.params;
     const { userId } = req.auth;
@@ -144,7 +148,7 @@ resumeRouter.get(
 // Upload / update resume
 resumeRouter.post(
   "/upload",
-  requireAuth(),
+  requireFirebaseAuth(),
   upload.single("file"),
   async (req: Request, res: Response) => {
     const { userId } = req.auth;

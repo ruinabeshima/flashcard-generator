@@ -1,6 +1,6 @@
 import Navbar from "../../components/navbar/Navbar";
 import ApplicationForm from "../../components/applications/ApplicationForm";
-import useOnboardingStatus from "../../lib/useOnboardingStatus";
+import useOnboardingStatus from "../../hooks/useOnboardingStatus";
 
 export default function AddApplication() {
   const { loading, error } = useOnboardingStatus();

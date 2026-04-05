@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "./generated/prisma"
@@ -14,8 +8,7 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  clerkId String @unique
+  id String @id
   email String @unique 
   imageUrl String? 
   createdAt DateTime @default(now())
@@ -67,7 +60,7 @@ model Application {
   jobUrl String? 
 
   userId String 
-  user User @relation(fields: [userId], references:[clerkId])
+  user User @relation(fields: [userId], references:[id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -82,7 +75,7 @@ model Resume {
   key String 
   
   userId String 
-  user User @relation(fields: [userId], references:[clerkId])
+  user User @relation(fields: [userId], references:[id], onDelete: Cascade)
 
   text String @db.Text
 
@@ -95,7 +88,7 @@ model Resume {
 model AuditLog{
   id String @id @default(uuid())
   userId String
-  user User @relation(fields: [userId], references:[clerkId])
+  user User @relation(fields: [userId], references:[id])
 
   event AuditEvent
   description String? 
@@ -115,7 +108,7 @@ model TailoringSession{
   application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   userId String
-  user User @relation(fields: [userId], references:[clerkId], onDelete: Cascade)
+  user User @relation(fields: [userId], references:[id], onDelete: Cascade)
 
   // Feedback from OpenAI 
   suggestions Json 
@@ -145,7 +138,7 @@ model TailoredResume {
   application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
   userId String 
-  user User @relation(fields: [userId], references:[clerkId], onDelete: Cascade)
+  user User @relation(fields: [userId], references:[id], onDelete: Cascade)
 
   name String 
   content String @db.Text 

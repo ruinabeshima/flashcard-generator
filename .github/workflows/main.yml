@@ -91,15 +91,16 @@ jobs:
     env:
       CLIENT_URL: ${{ secrets.CLIENT_URL }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
-      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-      CLERK_WEBHOOK_SECRET: ${{ secrets.CLERK_WEBHOOK_SECRET }}
-      VITE_SERVER_URL: ${{secrets.VITE_SERVER_URL }}
-      VITE_CLERK_PUBLISHABLE_KEY: ${{secrets.VITE_CLERK_PUBLISHABLE_KEY }}
       R2_ACCOUNT_ID: ${{secrets.R2_ACCOUNT_ID}}
       R2_ACCESS_KEY_ID: ${{secrets.R2_ACCESS_KEY_ID}}
       R2_BUCKET_NAME: ${{secrets.R2_BUCKET_NAME}}
       R2_SECRET_ACCESS_KEY: ${{secrets.R2_SECRET_ACCESS_KEY}}
+      VITE_SERVER_URL: ${{ secrets.VITE_SERVER_URL }}
+      VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+      VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+      VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+      VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+      FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
     steps:
       - name: Checkout code
@@ -140,7 +141,10 @@ jobs:
         run: |
           docker build \
             --build-arg VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }} \
-            --build-arg VITE_CLERK_PUBLISHABLE_KEY=${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }} \
+            --build-arg VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }} \
+            --build-arg VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }} \
+            --build-arg VITE_FIREBASE_PROJECT_ID=${{ secrets.VITE_FIREBASE_PROJECT_ID }} \
+            --build-arg VITE_FIREBASE_APP_ID=${{ secrets.VITE_FIREBASE_APP_ID }} \
             -t ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/applywise-repo/apply-wise:${{ github.sha }} .
           docker push ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/applywise-repo/apply-wise:${{ github.sha }}
 
@@ -170,5 +174,8 @@ jobs:
           image: ${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/applywise-repo/apply-wise:${{ github.sha }}
           flags: "--allow-unauthenticated"
           env_vars: |
-            VITE_SERVER_URL = ${{ secrets.VITE_SERVER_URL }}
-            VITE_CLERK_PUBLISHABLE_KEY = ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+            VITE_SERVER_URL=${{ secrets.VITE_SERVER_URL }} 
+            VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }} 
+            VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }} 
+            VITE_FIREBASE_PROJECT_ID=${{ secrets.VITE_FIREBASE_PROJECT_ID }} 
+            VITE_FIREBASE_APP_ID=${{ secrets.VITE_FIREBASE_APP_ID }}

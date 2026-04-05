@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import logAudit from "../lib/monitoring/audit";
-import { requireAuth } from "@clerk/express";
+import { requireFirebaseAuth } from "../lib/firebase/middleware";
 import { logger } from "../lib/monitoring/logger";
 import { prisma } from "../lib/prisma";
 import {
@@ -24,7 +24,7 @@ const feedbackRouter = express.Router();
 // Start tailoring session, and retrieve AI suggestions
 feedbackRouter.post(
   "/:applicationId",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request<{ applicationId: string }>, res: Response) => {
     const { userId } = req.auth;
     const { applicationId } = req.params;
@@ -151,7 +151,7 @@ const updateSuggestionsSchema = z
 
 feedbackRouter.post(
   "/update/:sessionId",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request<{ sessionId: string }>, res: Response) => {
     const { userId } = req.auth;
     const { sessionId } = req.params;
@@ -223,7 +223,7 @@ const generateTailoredResumeSchema = z.object({
 });
 feedbackRouter.post(
   "/generate/:sessionId",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request<{ sessionId: string }>, res: Response) => {
     const { userId } = req.auth;
     const { sessionId } = req.params;

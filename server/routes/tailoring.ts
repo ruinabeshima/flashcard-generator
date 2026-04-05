@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { requireAuth } from "@clerk/express";
+import { requireFirebaseAuth } from "../lib/firebase/middleware";
 import { prisma } from "../lib/prisma";
 import { logger } from "../lib/monitoring/logger";
 
@@ -8,7 +8,7 @@ const tailoringRouter = express.Router();
 // Check if tailoring session exists, and return null, suggestions or tailored resume key
 tailoringRouter.get(
   "/status/:applicationId",
-  requireAuth(),
+  requireFirebaseAuth(),
   async (req: Request<{ applicationId: string }>, res: Response) => {
     const { userId } = req.auth;
     const { applicationId } = req.params;

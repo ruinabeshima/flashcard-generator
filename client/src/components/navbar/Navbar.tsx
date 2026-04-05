@@ -1,9 +1,15 @@
-import { UserButton, useAuth } from "@clerk/clerk-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Navbar() {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn, signOut, user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/login");
+  };
 
   const navLinks = [
     { to: "/your-resume", label: "Your Resume" },
@@ -32,13 +38,12 @@ export default function Navbar() {
             </Link>
           ))}
           <div className="w-px h-6 bg-base-300" />
-          <UserButton
-            appearance={{
-              elements: {
-                avatarBox: "!w-9 !h-9",
-              },
-            }}
-          />
+          <span className="text-sm text-base-content/70">
+            {user?.displayName || user?.email}
+          </span>
+          <button className="btn btn-ghost btn-sm" onClick={handleSignOut}>
+            Sign out
+          </button>
         </div>
       ) : (
         <div className="flex items-center gap-3">
