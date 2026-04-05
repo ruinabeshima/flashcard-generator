@@ -19,7 +19,7 @@ requireEnv([
   "R2_SECRET_ACCESS_KEY",
   "R2_BUCKET_NAME",
   "OPENAI_API_KEY",
-  "FIREBASE_SERVICE_ACCOUNT", 
+  "FIREBASE_SERVICE_ACCOUNT",
 ]);
 
 const app = createApp();

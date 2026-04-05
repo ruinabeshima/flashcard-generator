@@ -1,4 +1,4 @@
-import { createContext} from "react";
+import { createContext } from "react";
 
 import type { User } from "firebase/auth";
 type AuthContextValue = {
@@ -9,5 +9,6 @@ type AuthContextValue = {
   signOut: () => Promise<void>;
 };
 
-export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
+export const AuthContext = createContext<AuthContextValue | undefined>(
+  undefined,
+);
