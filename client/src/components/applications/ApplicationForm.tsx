@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../lib/auth";
+import { useAuth } from "../../context/AuthContext";
 
 type ApplicationFormProps = {
   isOnboarding?: boolean;

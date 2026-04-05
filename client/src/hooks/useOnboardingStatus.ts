@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "./auth";
+import { useAuth } from "../context/AuthContext";
 
 export default function useOnboardingStatus() {
   const navigate = useNavigate();

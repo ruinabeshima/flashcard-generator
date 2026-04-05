@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "./auth";
+import { useAuth } from "../context/AuthContext";
 
 export default function useResumeLink() {
   const [error, setError] = useState<null | string>(null);

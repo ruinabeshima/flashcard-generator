@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useAuth } from "../../lib/auth";
+import { useAuth } from "../../context/AuthContext";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/navbar/Navbar";
 import TailorResume from "../../components/tailoring/TailorResume";
-import useOnboardingStatus from "../../lib/useOnboardingStatus";
-import useIndividualApplication from "../../lib/useIndividualApplication";
+import useOnboardingStatus from "../../hooks/useOnboardingStatus";
+import useIndividualApplication from "../../hooks/useIndividualApplication";
 
 export default function ApplicationDetail() {
   const appUrl = import.meta.env.VITE_SERVER_URL;

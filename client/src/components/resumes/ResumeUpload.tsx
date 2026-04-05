@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../../lib/auth";
+import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 type ResumeUploadProps = {

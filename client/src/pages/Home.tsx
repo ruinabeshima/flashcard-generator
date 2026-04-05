@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../lib/auth";
+import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import background from "../assets/background.jpg";

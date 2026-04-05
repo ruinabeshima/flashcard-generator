@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import Navbar from "../../components/navbar/Navbar";
-import useTailoredResumeURL from "../../lib/useTailoredResumeURL";
+import useTailoredResumeURL from "../../hooks/useTailoredResumeURL";
 
 export default function TailoredResume() {
   const { tailoredResumeId } = useParams();
