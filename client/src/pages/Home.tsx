@@ -20,7 +20,7 @@ export default function Home() {
       <div className="fixed inset-0 bg-linear-to-b from-base-200/85 via-base-200/70 to-base-200/90 -z-10" />
       <NavBar />
 
-      <main className="flex w-full flex-1 flex-col items-center gap-16 px-6 pb-16">
+      <main className="flex w-full flex-1 flex-col items-center gap-10 px-6 pb-16">
         <section className="hero w-full max-w-6xl pt-14">
           <div className="hero-content flex-col items-center text-center">
             <div className="flex flex-col items-center">
@@ -124,19 +124,6 @@ export default function Home() {
                   Stay on top of progress from first draft to interview.
                 </p>
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="w-full max-w-6xl">
-          <div className="card border border-base-300 bg-base-100 shadow-sm">
-            <div className="card-body gap-6">
-              <h3 className="card-title text-2xl">How it works</h3>
-              <ul className="steps steps-vertical lg:steps-horizontal">
-                <li className="step step-primary">Upload your resume</li>
-                <li className="step step-primary">Add a job description</li>
-                <li className="step step-primary">Apply with confidence</li>
-              </ul>
             </div>
           </div>
         </section>
