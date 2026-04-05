@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "./useAuth";
 
 export default function useTailoredResumeURL(tailoredResumeId: string) {
   const [loading, setLoading] = useState(true);
