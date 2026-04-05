@@ -2,8 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import background from "../assets/background.jpg";
-import reference from "../assets/reference1.png";
+import reference from "../assets/reference.png";
 import NavBar from "../components/navbar/Navbar";
 
 export default function Home() {
@@ -18,10 +17,6 @@ export default function Home() {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-base-200/40">
-      <div
-        style={{ backgroundImage: `url(${background})` }}
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat opacity-30 -z-20"
-      />
       <div className="fixed inset-0 bg-linear-to-b from-base-200/85 via-base-200/70 to-base-200/90 -z-10" />
       <NavBar />
 
