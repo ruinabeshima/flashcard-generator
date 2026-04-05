@@ -16,14 +16,14 @@ export default function Home() {
   }, [isSignedIn, navigate]);
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-base-200/40">
+    <div className="relative flex min-h-screen flex-col bg-base-200/40 w-full">
       <div className="fixed inset-0 bg-linear-to-b from-base-200/85 via-base-200/70 to-base-200/90 -z-10" />
       <NavBar />
 
       <main className="flex w-full flex-1 flex-col items-center gap-10 px-6 pb-16">
         <section className="hero w-full max-w-6xl pt-14">
           <div className="hero-content flex-col items-center text-center">
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center w-full">
               <div className="badge badge-outline">AI-first applications</div>
               <h2 className="mt-4 text-5xl font-bold leading-tight sm:text-6xl">
                 Stay ahead of the curve.
@@ -57,7 +57,7 @@ export default function Home() {
             <div className="mt-10 flex w-full justify-center">
               <img
                 src={reference}
-                className="w-full max-w-3xl object-contain"
+                className="w-full max-w-5xl object-contain"
                 alt="Reference"
               />
             </div>
