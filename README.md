@@ -73,6 +73,8 @@
 - Once all the suggestions have been reviewed, the AI generates a new resume based on the suggestions that have been accepted.
 - Users can view all of their tailored resumes in the `/tailored` page.
 
+### Tests
+
 ### Audit Logging
 
 - All user-triggered events are logged to the database for compliance and debugging.
@@ -204,6 +206,23 @@
 The client will be available at `http://localhost:5173` and the server at `http://localhost:3000`
 
 ### Testing
+
+The project includes comprehensive integration tests for all API routes using Jest and Supertest:
+
+**Tested Routes:**
+
+- **Applications** - CRUD operations for job applications, including authorization checks, pagination and error handling
+- **Authentication** - Onboarding status retrieval and completion, user authentication flow
+- **Resumes** - Resume upload/retrieval, pre-signed URL generation, and error cases
+- **Feedback/Tailoring** - Resume tailoring workflow including AI suggestion generation, user feedback acceptance, and tailored resume generation with file conversion and cloud storage
+
+**Test Coverage:**
+
+- Authorization and authentication (401/403 responses)
+- Success paths with mocked external services (OpenAI, Cloudflare R2)
+- Database failures and error handling (500 responses)
+- Input validation and constraints
+- Mock implementations for prisma, audit logging, and file conversion
 
 ```bash
 # Run tests
