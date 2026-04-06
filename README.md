@@ -36,15 +36,32 @@
 
 ## Features
 
+### Onboarding
+
+- Once a user creates an account, they are taken to an onboarding page where they are required to upload their resume, and optionally enter a job application.
+- The user cannot navigate to any other page unless they have completed onboarding.
+
+### Job Application Tracking
+
+- Users can see the resume they have uploaded and optionally update it in the `/your-resume` page.
+- The `/dashboard` page allows users to see thei job applications in a grid layout.
+- They can add new applications with required fields `role`, `company`, select `application status`, and optionally enter the application date, add extra notes and add the job link.
+- The application date is set to the time the application is created if nothing is entered.
+- Users can see the detailed view of a single application, where they have the option to edit, delete or tailor their resume to that application.
+
 ### Resume Suggestions and OpenAI Integration
 
 - Users can use AI to review their resume and tailor it to fit specific job applications.
+- Users can only tailor three resumes with AI. Deleting an application will not change the count if you have tailored a resume before.
 - OpenAI's API analyzes the resume against job requirements and provides specific, actionable suggestions.
 - Suggestions are grouped into four categories:
   - `miss:` Skills or requirements from the job description that are absent from the resume
   - `improve:` Existing resume content that could be strengthened with metrics, stronger action verbs, or better framing
   - `add:` Relevant experience or projects worth mentioning that aren't currently highlighted
   - `weak:` Content that doesn't align with the role and should be removed or reframed
+- The user can view all of these suggestions, and have the option to accept or ignore them.
+- Once all the suggestions have been reviewed, the AI generates a new resume based on the suggestions that have been accepted.
+- Users can view all of their tailored resumes in the `/tailored` page.
 
 ### Audit Logging
 
@@ -67,33 +84,6 @@
   - **Errors**: Database failures, file upload errors, webhook verification failures
   - **Warnings**: Unauthorised access attempts, missing resources, validation errors
 - Logs are output to stdout in JSON format, making them queryable in production environments (Google Cloud Run Logs, Render Logs, etc.)
-
-## Workflow / Logic of the Application
-
-### Tailoring
-
-**1. User clicks "Tailor Resume" on a job application**
-
-- Backend analyses job description and resume text via OpenAI
-- AI returns suggestions in JSON format: `{"miss":[],"improve":[],"add":[],"weak":[]}`
-- A `TailoringSession` is created to track the tailoring process
-
-**2. User reviews suggestions individually**
-
-- Frontend displays suggestions grouped by category
-- User accepts or dismisses each suggestion
-- Decisions are saved, and dismissed suggestions will not be used in the final resume
-- User's decisions are stored as indices - `e.g ["miss-0", "miss-1", "improve-2", "add-1"]` - allowing the system to track which specific suggestions were accepted or dismissed
-
-**3. User generates tailored resume**
-
-- Only accepted suggestions are incorporated into the final resume
-- Backend rewrites the resume using OpenAI with the filtered suggestions
-- Tailored resume is saved with a name entered by the user
-
-**4. User downloads or views tailored version**
-
-- All tailored resumes are linked to the original application
 
 ## Server API Routes
 
