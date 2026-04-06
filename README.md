@@ -116,46 +116,42 @@
 | POST   | `/feedback/generate/:sessionId`       | Generate final tailored resume from accepted suggestions                              |
 | POST   | `/webhooks/clerk`                     | Receive Clerk webhook to sync user data with database                                 |
 | GET    | `/tailoring/status/:applicationId`    | Check if tailoring status exists and returns suggestions or tailored resume key if so |
+| GET    | `/tailoring/count`                    | Get count of all user's tailoring sessions                                            |
 
 ## Database Models
 
 ### Tables
 
-- `User`: id, clerkId, email, imageUrl, createdAt, updatedAt, onboarding_complete
+- `User`: id, email, imageUrl, createdAt, updatedAt, onboarding_complete
 - `Application`: id, role, company, status, appliedDate, notes, jobUrl, userId, createdAt, updatedAt
-- `Resume`: id, key, userId, uploadedAt, updatedAt
+- `Resume`: id, key, userId, text, uploadedAt, updatedAt
 - `AuditLog`: id, userId, event, description, entityType, entityId, createdAt
-- `TailoringSession`: id, applicationId, userId, suggestions, acceptedSuggestions, dismissedSuggestions, status, createdAt, updatedAt, tailoredResume
-- `TailoredResume`: id, tailoringSessionId, applicationId, userId, name, content, createdAt
-
-### Enumerated Values
-
-`Status`: APPLIED, INTERVIEW, OFFER, REJECTED
-`AuditEvent`: USER_CREATED, USER_UPDATED, USER_DELETED, ONBOARDING_COMPLETED, APPLICATION_CREATED, APPLICATION_UPDATED, APPLICATION_DELETED, RESUME_UPLOADED, TAILORING_SESSION_CREATED, TAILORING_SUGGESTIONS_REVIEWED, RESUME_TAILORED
-`TailoringSessionStatus`: PENDING, REVIEWED, TAILORED
+- `TailoringSession`: id, applicationId, userId, suggestions, acceptedSuggestions, dismissedSuggestions, status, createdAt, updatedAt
+- `TailoredResume`: id, key, tailoringSessionId, applicationId, userId, name, content, createdAt
 
 ## Environment Variables
 
 ### Client
 
-VITE_SERVER_URL
-VITE_CLERK_PUBLISHABLE_KEY
+- `VITE_SERVER_URL`: Backend server URL (e.g., `http://localhost:3000`)
+- `VITE_FIREBASE_API_KEY`: Firebase API key
+- `VITE_FIREBASE_AUTH_DOMAIN`: Firebase auth domain
+- `VITE_FIREBASE_PROJECT_ID`: Firebase project ID
+- `VITE_FIREBASE_APP_ID`: Firebase app ID
 
 ### Server
 
-- PORT
-- CLIENT_URL
-- POSTGRES_USER
-- POSTGRES_PASSWORD
-- DATABASE_URL
-- CLERK_PUBLISHABLE_KEY
-- CLERK_SECRET_KEY
-- CLERK_WEBHOOK_SECRET
-- R2_ACCOUNT_ID
-- R2_ACCESS_KEY_ID
-- R2_SECRET_ACCESS_KEY
-- R2_BUCKET_NAME
-- OPENAI_API_KEY
+- `PORT`: Server port (default: 3000)
+- `CLIENT_URL`: Frontend URL for CORS (e.g., `http://localhost:5173`)
+- `POSTGRES_USER`: PostgreSQL username
+- `POSTGRES_PASSWORD`: PostgreSQL password
+- `DATABASE_URL`: PostgreSQL connection string
+- `R2_ACCOUNT_ID`: Cloudflare R2 account ID
+- `R2_ACCESS_KEY_ID`: Cloudflare R2 access key
+- `R2_SECRET_ACCESS_KEY`: Cloudflare R2 secret key
+- `R2_BUCKET_NAME`: Cloudflare R2 bucket name
+- `OPENAI_API_KEY`: OpenAI API key for resume tailoring
+- `FIREBASE_SERVICE_ACCOUNT`: Firebase service account JSON (for admin SDK)
 
 ## Getting started
 
@@ -169,7 +165,3 @@ VITE_CLERK_PUBLISHABLE_KEY
 - Start development servers
   - `pnpm dev` (from `/client`)
   - `pnpm dev` (from `/server`)
-
-## Background Image
-
-https://www.freepik.com/free-vector/abstract-seamless-geometric-shape-lines-pattern-design-background_386291308.htm#fromView=keyword&page=1&position=1&uuid=73ee21b1-a895-4e6b-952f-5deac1313597&query=Background+pattern
