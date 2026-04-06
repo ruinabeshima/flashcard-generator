@@ -299,6 +299,17 @@ feedbackRouter.post(
         resumeName || `Resume - ${new Date().toLocaleDateString()}`;
       const key = `uploads/${randomUUID()}.pdf`;
 
+      // Ensure application ID exists before creating resume
+      if (!session.applicationId) {
+        logger.warn("Tailoring session missing application ID", {
+          sessionId,
+          userId,
+        });
+        return res.status(400).json({
+          message: "Invalid tailoring session: application ID missing",
+        });
+      }
+
       // Build PDF Buffer and send to R2
       const PDFBuffer = await convertTextToPDF(tailoredContent);
       await r2.send(
