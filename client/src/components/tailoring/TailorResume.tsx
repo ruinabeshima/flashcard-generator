@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { TrackResumeSuggestions } from "../resumes/ResumeSuggestions";
 import useTailoredStatus from "../../hooks/useTailoredStatus";
+import { Link } from "react-router-dom";
 
 type TailorResumeProps = {
   applicationId: string;
@@ -115,28 +116,25 @@ export default function TailorResume(props: TailorResumeProps) {
             <div>
               <h3 className="text-lg font-semibold">Resume tailored</h3>
               <p className="text-sm text-base-content/60">
-                Your customized resume is ready to download.
+                Your customized resume is ready to viewed
               </p>
             </div>
-            <button
-              className="btn btn-primary gap-2"
-              onClick={() =>
-                window.open(
-                  `${appUrl}/resumes/tailored/${tailoredResumeId}`,
-                  "_blank",
-                )
-              }
+
+            <Link
+              to={`/applications/${props.applicationId}/tailored/${tailoredResumeId}`}
             >
-              <svg
-                className="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4z" />
-              </svg>
-              Download Resume
-            </button>
+              <button className="btn btn-primary gap-2">
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4z" />
+                </svg>
+                View Resume
+              </button>
+            </Link>
           </div>
         </div>
       ) : status === "NONE" ? (
