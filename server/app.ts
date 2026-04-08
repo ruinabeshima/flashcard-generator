@@ -5,6 +5,7 @@ import { authRouter } from "./routes/auth";
 import { resumeRouter } from "./routes/resumes";
 import { feedbackRouter } from "./routes/feedback";
 import { tailoringRouter } from "./routes/tailoring";
+import { errorHandler } from "./lib/errors/errorHandler";
 import { randomUUID } from "node:crypto";
 import { logger } from "./lib/monitoring/logger";
 
@@ -45,6 +46,7 @@ export default function createApp() {
   app.use("/resumes", resumeRouter);
   app.use("/feedback", feedbackRouter);
   app.use("/tailoring", tailoringRouter);
+  app.use(errorHandler);
 
   return app;
 }
