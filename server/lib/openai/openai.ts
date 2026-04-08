@@ -10,6 +10,7 @@ export type ResumeSuggestions = {
   weak: string[];
 };
 
+// Retrieve application details to send to OpenAI prompt
 export async function getApplicationInfo(
   applicationId: string,
   userId: string,

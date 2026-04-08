@@ -21,7 +21,19 @@ const MAXIMUM_FEEDBACK_COUNT = 3;
 
 const feedbackRouter = express.Router();
 
-// Start tailoring session, and retrieve AI suggestions
+/**
+ * @route POST /feedback/:applicationId
+ * @desc Generate AI suggestions and create a tailoring session (max 3 per user)
+ * @access Private
+ *
+ * @param {string} applicationId - Application Id
+ *
+ * @returns {201} {sessionId, suggestions, status}
+ * @returns {401} Unauthorized
+ * @returns {403} Forbidden | Maximum number of requests reached
+ * @returns {404} Application not found | Resume not found
+ * @returns {500} Internal server error
+ */
 feedbackRouter.post(
   "/:applicationId",
   requireFirebaseAuth(),
@@ -38,7 +50,14 @@ feedbackRouter.post(
       const app = await prisma.application.findUnique({
         where: { id: applicationId },
       });
-      if (app?.userId !== userId) {
+      if (!app) {
+        logger.warn("Application not found", {
+          userId,
+          applicationId,
+        });
+        return res.status(404).json({ message: "Application not found" });
+      }
+      if (app.userId !== userId) {
         logger.warn("Application does not belong to user", {
           userId,
           applicationId,
@@ -46,7 +65,7 @@ feedbackRouter.post(
         return res.status(403).json({ message: "Forbidden" });
       }
 
-      // Check if user is allowed
+      // Check if user has enough tailoring sessions left
       const count = await prisma.tailoringSession.count({
         where: { userId },
       });
@@ -62,8 +81,11 @@ feedbackRouter.post(
         userId,
       );
       if (!application) {
-        logger.warn("Application does not exist", { applicationId, userId });
-        return res.status(404).json({ message: "Application not found" });
+        logger.error("Failed to retrieve application info", {
+          applicationId,
+          userId,
+        });
+        return res.status(500).json({ message: "Internal server error" });
       }
 
       // Retrieve resume text
@@ -73,7 +95,7 @@ feedbackRouter.post(
         return res.status(404).json({ message: "Resume not found" });
       }
 
-      // Retrieve feedback
+      // Retrieve AI feedback
       const suggestions: ResumeSuggestions | null = await getResumeSuggestions(
         application,
         resumeText,
@@ -108,14 +130,30 @@ feedbackRouter.post(
     } catch (error) {
       logger.error("Failed to process feedback request", {
         userId,
-        error: error instanceof Error ? error.message : String(error),
+        error,
       });
       return res.status(500).json({ message: "Internal server error" });
     }
   },
 );
 
-// Update suggestion decisions, and track accepted / dismissed
+/**
+ * @route PATCH /feedback/update/:sessionId
+ * @desc Update tailoring session with accepted and dismissed suggestions
+ * @access Private
+ *
+ * @param {string} sessionId - Tailoring session ID
+ *
+ * @body {string[]} acceptedSuggestions
+ * @body {string[]} dismissedSuggestions
+ *
+ * @returns {200} { message: "Suggestions updated", status }
+ * @returns {400} Invalid request body
+ * @returns {401} Unauthorized
+ * @returns {403} Forbidden
+ * @returns {404} Tailoring session not found
+ * @returns {500} Internal server error
+ */
 const suggestionId = z
   .string()
   .regex(/^(miss|improve|add|weak)-\d+$/, "Invalid suggestion ID format");
@@ -149,7 +187,7 @@ const updateSuggestionsSchema = z
   )
   .strict();
 
-feedbackRouter.post(
+feedbackRouter.patch(
   "/update/:sessionId",
   requireFirebaseAuth(),
   async (req: Request<{ sessionId: string }>, res: Response) => {
@@ -173,13 +211,17 @@ feedbackRouter.post(
     const { acceptedSuggestions, dismissedSuggestions } = result.data;
 
     try {
-      // Retrieve tailoring session and update with values
+      // Retrieve tailoring session
       const session = await prisma.tailoringSession.findUnique({
         where: {
           id: sessionId,
         },
       });
-      if (!session || session.userId !== userId) {
+      if (!session) {
+        logger.warn("Tailoring session not found", { userId, sessionId });
+        return res.status(404).json({ message: "Tailoring session not found" });
+      }
+      if (session.userId !== userId) {
         logger.warn("Unauthorised access attempt", {
           endpoint: `/feedback/${sessionId}`,
         });
@@ -217,7 +259,21 @@ feedbackRouter.post(
   },
 );
 
-// Generate tailored resume
+/**
+ * @route POST /generate/:sessionId
+ * @desc Generate a tailored resume for a given tailoring session
+ * @access Private
+ *
+ * @body {string} resumeName
+ *
+ * @returns {201} Resume successfully generated
+ * @returns {200} Resume already generated
+ * @returns {400} Invalid request body
+ * @returns {401} Unauthorized
+ * @returns {403} Forbidden
+ * @returns {404} Tailoring session not found | Resume not found
+ * @returns {500} Internal server error
+ */
 const generateTailoredResumeSchema = z.object({
   resumeName: z.string().min(5).max(30).nullish(),
 });
@@ -251,7 +307,11 @@ feedbackRouter.post(
           id: sessionId,
         },
       });
-      if (!session || session.userId !== userId) {
+      if (!session) {
+        logger.warn("Tailored session not found", { userId, sessionId });
+        return res.status(404).json({ message: "Tailoring session not found" });
+      }
+      if (session.userId !== userId) {
         logger.warn("Unauthorised access attempt", {
           endpoint: `/feedback/${sessionId}`,
         });
