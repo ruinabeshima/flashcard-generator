@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
+import helmet from "helmet";
 import { applicationRouter } from "./routes/applications";
 import { authRouter } from "./routes/auth";
 import { resumeRouter } from "./routes/resumes";
@@ -11,6 +12,8 @@ import { logger } from "./lib/monitoring/logger";
 
 export default function createApp() {
   const app = express();
+
+  app.use(helmet());
 
   app.use(
     cors({
