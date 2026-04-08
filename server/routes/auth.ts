@@ -125,7 +125,7 @@ authRouter.patch(
         throw new AppError(401, "Unauthorized");
       }
 
-      // P2025 error handled centrally
+      // P2025 (record not found) error handled centrally
       await prisma.user.update({
         where: {
           id: userId,
