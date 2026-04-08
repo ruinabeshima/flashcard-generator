@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "./useAuth";
+import type { ResumeUrlResponse } from "@apply-wise/shared";
 
 export default function useResumeLink() {
   const [error, setError] = useState<null | string>(null);
@@ -24,7 +25,8 @@ export default function useResumeLink() {
           return;
         }
 
-        const { url } = await response.json();
+        const data: ResumeUrlResponse = await response.json();
+        const { url } = data;
         setUrl(url);
       } catch {
         setError("Failed to retreive resume");

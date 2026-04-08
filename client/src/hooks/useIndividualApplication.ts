@@ -1,22 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./useAuth";
-
-interface Application {
-  id: string;
-  role: string;
-  company: string;
-  status: string;
-  appliedDate: string;
-  notes: string | null;
-  jobUrl: string | null;
-}
+import type { ApplicationResponse } from "@apply-wise/shared";
 
 export default function useIndividualApplication(id: string) {
   const navigate = useNavigate();
   const [error, setError] = useState<null | string>(null);
   const [loading, setLoading] = useState(true);
-  const [application, setApplication] = useState<Application | null>(null);
+  const [application, setApplication] = useState<ApplicationResponse | null>(
+    null,
+  );
   const appUrl = import.meta.env.VITE_SERVER_URL;
   const { getToken } = useAuth();
 

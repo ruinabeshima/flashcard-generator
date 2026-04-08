@@ -1,21 +1,12 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "./useAuth";
-
-interface TailoredResume {
-  id: string;
-  name: string;
-  applicationId: string;
-  createdAt: string;
-}
-
-interface TailoredResumeResponse {
-  resumes: TailoredResume[];
-}
+import type { TailoredResumesResponse } from "@apply-wise/shared";
+import type { TailoredResumeItem } from "@apply-wise/shared";
 
 export default function useTailoredResumes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [data, setData] = useState<TailoredResume[]>([]);
+  const [data, setData] = useState<TailoredResumeItem[] | undefined>();
   const { getToken } = useAuth();
   const appUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -35,7 +26,7 @@ export default function useTailoredResumes() {
           return;
         }
 
-        const data: TailoredResumeResponse = await response.json();
+        const data: TailoredResumesResponse = await response.json();
         setData(data.resumes);
       } catch {
         setError(true);

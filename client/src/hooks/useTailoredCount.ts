@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "./useAuth";
+import type { TailoringCountResponse } from "@apply-wise/shared";
 
 export default function useTailoredCount() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [count, setCount] = useState();
+  const [count, setCount] = useState<number>();
   const { getToken } = useAuth();
   const appUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -27,7 +28,7 @@ export default function useTailoredCount() {
           return;
         }
 
-        const data = await response.json();
+        const data: TailoringCountResponse = await response.json();
         setCount(data.count);
       } catch {
         setError(true);

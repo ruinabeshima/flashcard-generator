@@ -1,17 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-
-export type TypeResumeSuggestions = {
-  miss: string[];
-  improve: string[];
-  add: string[];
-  weak: string[];
-};
+import type { ResumeSuggestions } from "@apply-wise/shared";
 
 export type ResumeSuggestionsProps = {
   sessionId: string;
-  suggestions: TypeResumeSuggestions;
+  suggestions: ResumeSuggestions;
   onTailoringLoadingChange?: (loading: boolean) => void;
 };
 

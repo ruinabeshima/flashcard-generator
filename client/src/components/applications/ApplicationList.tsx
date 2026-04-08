@@ -2,20 +2,11 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
-interface Application {
-  id: string;
-  role: string;
-  company: string;
-  status: string;
-  appliedDate: string;
-  notes: string | null;
-  jobUrl: string | null;
-}
+import type { ApplicationResponse } from "@apply-wise/shared";
 
 export default function ApplicationList() {
   const navigate = useNavigate();
-  const [applications, setApplications] = useState<Application[]>([]);
+  const [applications, setApplications] = useState<ApplicationResponse[]>([]);
   const [error, setError] = useState("");
   const { getToken } = useAuth();
 
@@ -37,7 +28,7 @@ export default function ApplicationList() {
           return;
         }
 
-        const data: Application[] = await response.json();
+        const data: ApplicationResponse[] = await response.json();
         setApplications(data);
       } catch {
         setError("Failed to retrieve applications");

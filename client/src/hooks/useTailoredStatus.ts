@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "./useAuth";
-import type { TypeResumeSuggestions } from "../components/resumes/ResumeSuggestions";
+import type { ResumeSuggestions } from "@apply-wise/shared";
 
 export default function useTailoredStatus(applicationId: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);
   const [status, setStatus] = useState<null | string>(null);
-  const [suggestions, setSuggestions] =
-    useState<null | TypeResumeSuggestions>();
+  const [suggestions, setSuggestions] = useState<null | ResumeSuggestions>();
   const [sessionId, setSessionId] = useState<null | string>(null);
   const [tailoredResumeId, setTailoredResumeId] = useState<null | string>(null);
   const { getToken } = useAuth();

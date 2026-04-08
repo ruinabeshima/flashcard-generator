@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./useAuth";
+import type { OnboardingStatusResponse } from "@apply-wise/shared";
 
 export default function useOnboardingStatus() {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export default function useOnboardingStatus() {
           return;
         }
 
-        const data = await response.json();
+        const data: OnboardingStatusResponse = await response.json();
         if (!data.onboardingComplete) {
           navigate("/onboarding");
         }
