@@ -40,7 +40,7 @@ const appliedDateSchema = z.preprocess((value) => {
  * @query {number} [pageSize=10] - Number of results per page
  *
  * @returns {200} {id, role, company, status, appliedDate, notes, jobUrl}[]
- * @returns {401} Unauthorised
+ * @returns {401} Unauthorized
  * @returns {500} Internal server error
  */
 applicationRouter.get(
@@ -53,7 +53,7 @@ applicationRouter.get(
 
     try {
       if (!userId) {
-        logger.warn("Unauthorised access attempt", {
+        logger.warn("Unauthorized access attempt", {
           endpoint: "GET /applications",
         });
         throw new AppError(401, "Unauthorized");
@@ -106,7 +106,7 @@ applicationRouter.get(
 
     try {
       if (!userId) {
-        logger.warn("Unauthorised access attempt", {
+        logger.warn("Unauthorized access attempt", {
           endpoint: `GET /applications/${id}`,
         });
         throw new AppError(401, "Unauthorized");
@@ -179,7 +179,7 @@ applicationRouter.post(
 
     try {
       if (!userId) {
-        logger.warn("Unauthorised access attempt", {
+        logger.warn("Unauthorized access attempt", {
           endpoint: "POST /applications/add",
         });
         throw new AppError(401, "Unauthorized");
@@ -261,7 +261,7 @@ applicationRouter.put(
 
     try {
       if (!userId) {
-        logger.warn("Unauthorised access attempt", {
+        logger.warn("Unauthorized access attempt", {
           endpoint: `PUT /applications/${id}`,
         });
         throw new AppError(401, "Unauthorized");
@@ -343,7 +343,7 @@ applicationRouter.delete(
 
     try {
       if (!userId) {
-        logger.warn("Unauthorised access attempt", {
+        logger.warn("Unauthorized access attempt", {
           endpoint: `DELETE /applications/${id}`,
         });
         throw new AppError(401, "Unauthorized");

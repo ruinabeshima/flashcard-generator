@@ -229,7 +229,7 @@ feedbackRouter.patch(
         throw new AppError(404, "Tailoring session not found");
       }
       if (session.userId !== userId) {
-        logger.warn("Unauthorised access attempt", {
+        logger.warn("Unauthorized access attempt", {
           endpoint: `/feedback/${sessionId}`,
         });
         throw new AppError(403, "Forbidden");
@@ -325,7 +325,7 @@ feedbackRouter.post(
         throw new AppError(404, "Tailoring session not found");
       }
       if (session.userId !== userId) {
-        logger.warn("Unauthorised access attempt", {
+        logger.warn("Unauthorized access attempt", {
           endpoint: `/feedback/${sessionId}`,
         });
         throw new AppError(403, "Forbidden");

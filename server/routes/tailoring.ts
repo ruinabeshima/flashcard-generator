@@ -27,7 +27,7 @@ tailoringRouter.get(
     const { applicationId } = req.params;
 
     if (!userId) {
-      logger.warn("Unauthorised access attempt", {
+      logger.warn("Unauthorized access attempt", {
         endpoint: `/tailoring/status/${applicationId}`,
       });
       return res.status(401).json({ message: "Unauthorized" });
@@ -98,7 +98,7 @@ tailoringRouter.get(
     const { userId } = req.auth;
 
     if (!userId) {
-      logger.warn("Unauthorised access attempt", {
+      logger.warn("Unauthorized access attempt", {
         endpoint: `/tailoring/count`,
       });
       return res.status(401).json({ message: "Unauthorized" });
