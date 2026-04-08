@@ -17,6 +17,7 @@ import { randomUUID } from "crypto";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import * as z from "zod";
 import { AppError } from "../lib/errors/AppError";
+import { feedbackLimiter, mutationLimiter } from "../lib/ratelimit/rateLimiter";
 
 const MAXIMUM_FEEDBACK_COUNT = 3;
 
@@ -37,6 +38,7 @@ const feedbackRouter = express.Router();
  */
 feedbackRouter.post(
   "/:applicationId",
+  feedbackLimiter,
   requireFirebaseAuth(),
   async (
     req: Request<{ applicationId: string }>,
@@ -197,6 +199,7 @@ const updateSuggestionsSchema = z
 
 feedbackRouter.patch(
   "/update/:sessionId",
+  mutationLimiter,
   requireFirebaseAuth(),
   async (
     req: Request<{ sessionId: string }>,
@@ -293,6 +296,7 @@ const generateTailoredResumeSchema = z.object({
 });
 feedbackRouter.post(
   "/generate/:sessionId",
+  feedbackLimiter,
   requireFirebaseAuth(),
   async (
     req: Request<{ sessionId: string }>,

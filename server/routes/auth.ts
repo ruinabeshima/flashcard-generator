@@ -4,6 +4,7 @@ import { requireFirebaseAuth } from "../lib/firebase/middleware";
 import { logger } from "../lib/monitoring/logger";
 import logAudit from "../lib/monitoring/audit";
 import { AppError } from "../lib/errors/AppError";
+import { mutationLimiter } from "../lib/ratelimit/rateLimiter";
 
 const authRouter = express.Router();
 
@@ -19,6 +20,7 @@ const authRouter = express.Router();
  */
 authRouter.post(
   "/sync",
+  mutationLimiter,
   requireFirebaseAuth(),
   async (req: Request, res: Response, next: NextFunction) => {
     const { userId, email, imageUrl } = req.auth;
@@ -63,6 +65,7 @@ authRouter.post(
  */
 authRouter.get(
   "/status",
+  mutationLimiter,
   requireFirebaseAuth(),
   async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.auth;

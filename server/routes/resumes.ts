@@ -14,6 +14,7 @@ import { logger } from "../lib/monitoring/logger";
 import logAudit from "../lib/monitoring/audit";
 import parsePDF from "../lib/storage/parse";
 import { AppError } from "../lib/errors/AppError";
+import { uploadLimiter } from "../lib/ratelimit/rateLimiter";
 
 const resumeRouter = express.Router();
 
@@ -202,6 +203,7 @@ resumeRouter.get(
  */
 resumeRouter.post(
   "/upload",
+  uploadLimiter,
   requireFirebaseAuth(),
   upload.single("file"),
   async (req: Request, res: Response, next: NextFunction) => {

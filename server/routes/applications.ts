@@ -5,6 +5,7 @@ import { logger } from "../lib/monitoring/logger";
 import logAudit from "../lib/monitoring/audit";
 import { AppError } from "../lib/errors/AppError";
 import * as z from "zod";
+import { mutationLimiter } from "../lib/ratelimit/rateLimiter";
 
 const applicationRouter = express.Router();
 
@@ -173,6 +174,7 @@ const newApplicationSchema = z
   .strict();
 applicationRouter.post(
   "/add",
+  mutationLimiter,
   requireFirebaseAuth(),
   async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.auth;
@@ -254,6 +256,7 @@ const updateApplicationSchema = z
   .strict();
 applicationRouter.put(
   "/:id",
+  mutationLimiter,
   requireFirebaseAuth(),
   async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     const { userId } = req.auth;
@@ -336,6 +339,7 @@ applicationRouter.put(
  */
 applicationRouter.delete(
   "/:id",
+  mutationLimiter,
   requireFirebaseAuth(),
   async (req: Request<{ id: string }>, res: Response, next: NextFunction) => {
     const { userId } = req.auth;
