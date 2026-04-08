@@ -7,7 +7,41 @@ import * as z from "zod";
 
 const applicationRouter = express.Router();
 
-// Get paginated list of job applications
+/* 
+  HTML from frontend sends a string like "2026-04-08T10:30" (16 characters, no seconds)
+  Some environments (Prisma) require full ISO timestamps, so we normalise by adding seconds. 
+
+  This function: 
+  - Converts empty values (null, undefined, "") to null 
+  - Appends ":00" to strings missing seconds 
+  - Leaves other values unchanged
+
+  String is converted to a JS Date Object through z.coerce.date()
+*/
+const appliedDateSchema = z.preprocess((value) => {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+
+  if (typeof value === "string" && value.length === 16) {
+    return `${value}:00`;
+  }
+
+  return value;
+}, z.coerce.date().nullable());
+
+/**
+ * @route GET /applications
+ * @desc Get paginated list of user's applications
+ * @access Private
+ *
+ * @query {number} [pageNum=1]   - Page number
+ * @query {number} [pageSize=10] - Number of results per page
+ *
+ * @returns {200} {id, role, company, status, appliedDate, notes, jobUrl}[]
+ * @returns {401} Unauthorised
+ * @returns {500} Internal server error
+ */
 applicationRouter.get(
   "/",
   requireFirebaseAuth(),
@@ -46,7 +80,18 @@ applicationRouter.get(
   },
 );
 
-// Get singular job application
+/**
+ * @route GET /applications/:id
+ * @desc Get singular job application
+ * @access Private
+ *
+ * @param {string} id - Application ID
+ *
+ * @returns {200} {id, role, company, status, appliedDate, notes, jobUrl}
+ * @returns {401} Unauthorized
+ * @returns {404} Application not found
+ * @returns {500} Internal server error
+ */
 applicationRouter.get(
   "/:id",
   requireFirebaseAuth(),
@@ -91,19 +136,24 @@ applicationRouter.get(
   },
 );
 
-const appliedDateSchema = z.preprocess((value) => {
-  if (value === null || value === undefined || value === "") {
-    return null;
-  }
-
-  if (typeof value === "string" && value.length === 16) {
-    return `${value}:00`;
-  }
-
-  return value;
-}, z.coerce.date().nullable());
-
-// Create new job application
+/**
+ * @route POST /applications/add
+ * @desc Add new job application
+ * @access Private
+ *
+ * @body {string} role
+ * @body {string} company
+ * @body {"APPLIED" |"INTERVIEW" | "OFFER" | "REJECTED"} status
+ * @body {datetime} [appliedDate]
+ * @body {string} [notes]
+ * @body {string} [jobUrl]
+ *
+ * @returns {201} {id, role, company, status, appliedDate, notes, jobUrl, userId, createdAt, updatedAt}
+ * @returns {400} Invalid request body
+ * @returns {401} Unauthorized
+ * @returns {500} Internal server error
+ *
+ */
 const newApplicationSchema = z
   .object({
     role: z.string().min(1).max(100),
@@ -165,7 +215,27 @@ applicationRouter.post(
   },
 );
 
-// Update job application
+/**
+ * @route PUT /applications/:id
+ * @desc Update application details
+ * @access Private
+ *
+ * @param {string} id - Application ID
+ *
+ * @body {string} role
+ * @body {string} company
+ * @body {"APPLIED" |"INTERVIEW" | "OFFER" | "REJECTED"} status
+ * @body {datetime} appliedDate
+ * @body {string} notes
+ * @body {string} jobUrl
+ *
+ * @returns {200} {id, role, company, status, appliedDate, notes, jobUrl, userId, createdAt, updatedAt}
+ * @returns {400} Invalid request body
+ * @returns {401} Unauthorized
+ * @returns {403} Forbidden
+ * @returns {404} Application not found
+ * @returns {500} Internal server error
+ */
 const updateApplicationSchema = z
   .object({
     role: z.string().min(1).max(100),
@@ -176,7 +246,7 @@ const updateApplicationSchema = z
     jobUrl: z.url().nullish(),
   })
   .strict();
-applicationRouter.patch(
+applicationRouter.put(
   "/:id",
   requireFirebaseAuth(),
   async (req: Request<{ id: string }>, res: Response) => {
@@ -244,7 +314,19 @@ applicationRouter.patch(
   },
 );
 
-// Delete job application
+/**
+ * @route DELETE /applications/:id
+ * @desc Delete application
+ * @access Private
+ *
+ * @param {string} id - Application ID
+ *
+ * @returns {204} Application deleted
+ * @returns {401} Unauthorized
+ * @returns {403} Forbidden
+ * @returns {404} Application not found
+ * @returns {500} Internal server error
+ */
 applicationRouter.delete(
   "/:id",
   requireFirebaseAuth(),
