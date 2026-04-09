@@ -13,11 +13,12 @@ export default function useApiClient() {
       options: RequestInit = {},
     ): Promise<T> => {
       const token = await getToken();
+      const isFormData = options.body instanceof FormData;
 
       const response = await fetch(`${appUrl}${endpoint}`, {
         ...options,
         headers: {
-          "Content-Type": "application/json",
+          ...(!isFormData && { "Content-Type": "application/json" }),
           Authorization: `Bearer ${token}`,
           ...options.headers,
         },
@@ -35,13 +36,21 @@ export default function useApiClient() {
     return {
       get: <T>(path: string) => request<T>(path),
       post: <T>(path: string, body: unknown) =>
-        request<T>(path, { method: "POST", body: JSON.stringify(body) }),
+        request<T>(path, {
+          method: "POST",
+          body: body instanceof FormData ? body : JSON.stringify(body),
+        }),
       put: <T>(path: string, body: unknown) =>
-        request<T>(path, { method: "PUT", body: JSON.stringify(body) }),
+        request<T>(path, {
+          method: "PUT",
+          body: body instanceof FormData ? body : JSON.stringify(body),
+        }),
       patch: <T>(path: string, body?: unknown) =>
         request<T>(path, {
           method: "PATCH",
-          ...(body ? { body: JSON.stringify(body) } : {}),
+          ...(body
+            ? { body: body instanceof FormData ? body : JSON.stringify(body) }
+            : {}),
         }),
       delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
     };
