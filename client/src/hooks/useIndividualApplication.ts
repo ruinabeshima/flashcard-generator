@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ApplicationResponse } from "@apply-wise/shared";
-import useApiClient from "src/lib/useApiClient";
+import useApiClient from "../lib/useApiClient";
 
 // Fetches individual user application
 export default function useIndividualApplication(id: string) {

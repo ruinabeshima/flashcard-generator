@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../lib/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import reference from "../assets/reference.png";

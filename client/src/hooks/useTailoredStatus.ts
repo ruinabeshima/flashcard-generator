@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import useApiClient from "src/lib/useApiClient";
+import useApiClient from "../lib/useApiClient";
 import type { ResumeSuggestions } from "@apply-wise/shared";
 import type { TailoringStatusResponse } from "@apply-wise/shared";
 

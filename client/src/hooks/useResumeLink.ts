@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { ResumeUrlResponse } from "@apply-wise/shared";
-import useApiClient from "src/lib/useApiClient";
+import useApiClient from "../lib/useApiClient";
 
 // Fetches user's resume link
 export default function useResumeLink() {

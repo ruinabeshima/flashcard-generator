@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../lib/useAuth";
 import { useNavigate } from "react-router-dom";
 import ResumeUpload from "../../components/resumes/ResumeUpload";
 import Navbar from "../../components/navbar/Navbar";

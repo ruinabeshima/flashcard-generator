@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "./useAuth";
 
 export default function useApiClient() {
   const { getToken } = useAuth();

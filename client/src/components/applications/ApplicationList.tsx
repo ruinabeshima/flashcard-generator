@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../lib/useAuth";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import type { ApplicationResponse } from "@apply-wise/shared";

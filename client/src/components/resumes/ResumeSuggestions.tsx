@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../lib/useAuth";
 import { useNavigate } from "react-router-dom";
 import type { ResumeSuggestions } from "@apply-wise/shared";
 

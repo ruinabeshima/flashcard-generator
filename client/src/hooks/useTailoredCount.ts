@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { TailoringCountResponse } from "@apply-wise/shared";
-import useApiClient from "src/lib/useApiClient";
+import useApiClient from "../lib/useApiClient";
 
 // Fetches number of user's tailoring sessions
 export default function useTailoredCount() {

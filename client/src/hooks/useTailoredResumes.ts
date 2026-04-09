@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import type { TailoredResumesResponse } from "@apply-wise/shared";
 import type { TailoredResumeItem } from "@apply-wise/shared";
-import useApiClient from "src/lib/useApiClient";
+import useApiClient from "../lib/useApiClient";
 
 // Fetches user's tailored resumes list
 export default function useTailoredResumes() {

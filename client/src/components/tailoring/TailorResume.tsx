@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../lib/useAuth";
 import { TrackResumeSuggestions } from "../resumes/ResumeSuggestions";
 import useTailoredStatus from "../../hooks/useTailoredStatus";
 import { Link } from "react-router-dom";

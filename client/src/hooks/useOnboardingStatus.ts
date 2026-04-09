@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { OnboardingStatusResponse } from "@apply-wise/shared";
-import useApiClient from "src/lib/useApiClient";
+import useApiClient from "../lib/useApiClient";
 
 // Fetches user's onboarding status
 export default function useOnboardingStatus() {
