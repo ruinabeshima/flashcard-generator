@@ -1,42 +1,36 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "./useAuth";
 import type { TailoredResumesResponse } from "@apply-wise/shared";
 import type { TailoredResumeItem } from "@apply-wise/shared";
+import useApiClient from "src/lib/useApiClient";
 
+// Fetches user's tailored resumes list
 export default function useTailoredResumes() {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<null | string>(null);
   const [data, setData] = useState<TailoredResumeItem[] | undefined>();
-  const { getToken } = useAuth();
-  const appUrl = import.meta.env.VITE_SERVER_URL;
+  const api = useApiClient();
 
   useEffect(() => {
     const getTailoredResumes = async () => {
+      setLoading(true);
+
       try {
-        const token = await getToken();
-        const response = await fetch(`${appUrl}/resumes/tailored`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          setError(true);
-          return;
-        }
-
-        const data: TailoredResumesResponse = await response.json();
+        const data: TailoredResumesResponse =
+          await api.get("/resumes/tailored");
         setData(data.resumes);
-      } catch {
-        setError(true);
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Failed to retrieve tailored resumes",
+        );
       } finally {
         setLoading(false);
       }
     };
 
     getTailoredResumes();
-  }, [getToken, appUrl]);
+  }, [api]);
 
   return { data, loading, error };
 }

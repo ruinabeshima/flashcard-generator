@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "./useAuth";
+import useApiClient from "src/lib/useApiClient";
+import type { ResumeUrlResponse } from "@apply-wise/shared";
 
+// Fetches tailored resume link
 export default function useTailoredResumeURL(tailoredResumeId: string) {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<null | string>(null);
   const [url, setUrl] = useState<null | string>(null);
-  const { getToken } = useAuth();
-  const appUrl = import.meta.env.VITE_SERVER_URL;
+  const api = useApiClient();
 
   useEffect(() => {
     const getTailoredResumeURL = async () => {
@@ -14,37 +15,27 @@ export default function useTailoredResumeURL(tailoredResumeId: string) {
 
       try {
         if (!tailoredResumeId) {
-          setError(true);
+          setError("Missing tailored resume ID");
           return;
         }
 
-        const token = await getToken();
-        const response = await fetch(
-          `${appUrl}/resumes/tailored/${tailoredResumeId}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
+        const data: ResumeUrlResponse = await api.get(
+          `/resumes/tailored/${tailoredResumeId}`,
         );
-
-        if (!response.ok) {
-          setError(true);
-          return;
-        }
-
-        const data = await response.json();
         setUrl(data.url);
-      } catch {
-        setError(true);
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Failed to retrieve tailored resume",
+        );
       } finally {
         setLoading(false);
       }
     };
 
     getTailoredResumeURL();
-  }, [tailoredResumeId, getToken, appUrl]);
+  }, [tailoredResumeId, api]);
 
   return { url, loading, error };
 }

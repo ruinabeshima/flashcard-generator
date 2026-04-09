@@ -1,44 +1,34 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "./useAuth";
 import type { TailoringCountResponse } from "@apply-wise/shared";
+import useApiClient from "src/lib/useApiClient";
 
+// Fetches number of user's tailoring sessions
 export default function useTailoredCount() {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<null | string>(null);
   const [count, setCount] = useState<number>();
-  const { getToken } = useAuth();
-  const appUrl = import.meta.env.VITE_SERVER_URL;
+  const api = useApiClient();
 
   useEffect(() => {
     const getTailoredCount = async () => {
-      setError(false);
       setLoading(true);
 
       try {
-        const token = await getToken();
-        const response = await fetch(`${appUrl}/tailoring/count`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          setError(true);
-          return;
-        }
-
-        const data: TailoringCountResponse = await response.json();
+        const data: TailoringCountResponse = await api.get("/tailoring/count");
         setCount(data.count);
-      } catch {
-        setError(true);
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Failed to retrieve number of tailoring sessions",
+        );
       } finally {
         setLoading(false);
       }
     };
 
     getTailoredCount();
-  }, [getToken, appUrl]);
+  }, [api]);
 
   return { count, loading, error };
 }
