@@ -1,42 +1,11 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "../../lib/useAuth";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import type { ApplicationResponse } from "@apply-wise/shared";
+import useApplicationsList from "src/hooks/useApplicationsList";
 
 export default function ApplicationList() {
   const navigate = useNavigate();
-  const [applications, setApplications] = useState<ApplicationResponse[]>([]);
-  const [error, setError] = useState("");
-  const { getToken } = useAuth();
 
-  useEffect(() => {
-    const appUrl = import.meta.env.VITE_SERVER_URL;
-
-    const getApplications = async () => {
-      try {
-        const token = await getToken();
-        const response = await fetch(`${appUrl}/applications`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          setError("Failed to retrieve applications");
-          return;
-        }
-
-        const data: ApplicationResponse[] = await response.json();
-        setApplications(data);
-      } catch {
-        setError("Failed to retrieve applications");
-      }
-    };
-
-    getApplications();
-  }, [getToken]);
+  const { applications, error } = useApplicationsList();
 
   const statusCounts = applications.reduce(
     (acc, application) => {
@@ -45,7 +14,7 @@ export default function ApplicationList() {
     },
     {} as Record<string, number>,
   );
-  const totalApplications = applications.length;
+  const totalApplications = applications!.length;
   const appliedCount = statusCounts.APPLIED ?? 0;
   const interviewCount = statusCounts.INTERVIEW ?? 0;
   const offerCount = statusCounts.OFFER ?? 0;
