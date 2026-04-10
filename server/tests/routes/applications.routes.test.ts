@@ -2,7 +2,7 @@ import request from "supertest";
 import createApp from "../../app";
 import { prisma } from "../../lib/prisma";
 
-// Mock prisma client and auditing
+// Mocks
 jest.mock("../../lib/prisma");
 const mockPrisma = jest.mocked(prisma);
 jest.mock("../../lib/monitoring/audit");

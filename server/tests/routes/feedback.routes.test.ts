@@ -10,7 +10,7 @@ import convertTextToPDF from "../../lib/tailoring/convert";
 import { r2 } from "../../lib/storage/r2";
 import logAudit from "../../lib/monitoring/audit";
 
-// Mock
+// Mocks
 jest.mock("../../lib/prisma");
 const mockPrisma = jest.mocked(prisma);
 jest.mock("../../lib/monitoring/audit");
