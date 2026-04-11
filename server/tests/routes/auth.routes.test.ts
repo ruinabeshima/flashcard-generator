@@ -26,7 +26,7 @@ describe("GET /auth/status", () => {
     expect(res.status).toBe(404);
   });
 
-  it("returns 300 onboarding complete", async () => {
+  it("returns 200 onboarding complete", async () => {
     mockPrisma.user.findUnique.mockResolvedValue({
       id: "user-1",
       email: "user1@email.com",
