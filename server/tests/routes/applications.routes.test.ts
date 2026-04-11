@@ -1,11 +1,13 @@
 import request from "supertest";
 import createApp from "../../app";
 import { prisma } from "../../lib/prisma";
+import logAudit from "../../lib/monitoring/audit";
 
 // Mocks
 jest.mock("../../lib/prisma");
 const mockPrisma = jest.mocked(prisma);
 jest.mock("../../lib/monitoring/audit");
+const mockLogAudit = jest.mocked(logAudit);
 
 const app = createApp();
 
@@ -149,23 +151,39 @@ describe("POST /applications/add", () => {
         jobUrl: null,
       });
     expect(res.status).toBe(201);
+    expect(mockLogAudit).toHaveBeenCalledWith(
+      "user-1",
+      "APPLICATION_CREATED",
+      undefined,
+      "Application",
+      "application-1",
+    );
   });
 
   it("returns 500 when database fails", async () => {
-    mockPrisma.application.findUnique.mockRejectedValue(new Error("DB down"));
+    mockPrisma.application.create.mockRejectedValue(new Error("DB down"));
 
     const res = await request(app)
-      .post("/applications/application-1")
-      .set("x-test-user-id", "user-1");
+      .post("/applications/add")
+      .set("x-test-user-id", "user-1")
+      .set("Content-Type", "application/json")
+      .send({
+        role: "software engineer",
+        company: "Google",
+        status: "APPLIED",
+        appliedDate: "2026-03-18T23:31:21.834Z",
+        notes: null,
+        jobUrl: null,
+      });
 
     expect(res.status).toBe(500);
   });
 });
 
-describe("POST /applications/:id", () => {
+describe("PUT /applications/:id", () => {
   it("returns 400 invalid body", async () => {
     const res = await request(app)
-      .patch("/applications/application-1")
+      .put("/applications/application-1")
       .set("x-test-user-id", "user-1")
       .set("Content-Type", "application/json")
       .send({
@@ -183,7 +201,7 @@ describe("POST /applications/:id", () => {
     mockPrisma.application.findUnique.mockResolvedValue(null);
 
     const res = await request(app)
-      .patch("/applications/:application-1")
+      .put("/applications/application-1")
       .set("x-test-user-id", "user-1")
       .set("Content-Type", "application/json")
       .send({
@@ -212,7 +230,7 @@ describe("POST /applications/:id", () => {
     });
 
     const res = await request(app)
-      .patch("/applications/:application-1")
+      .put("/applications/application-1")
       .set("x-test-user-id", "user-1")
       .set("Content-Type", "application/json")
       .send({
@@ -239,9 +257,21 @@ describe("POST /applications/:id", () => {
       createdAt: new Date("2026-03-18T23:31:21.834Z"),
       updatedAt: new Date("2026-03-18T23:31:21.834Z"),
     });
+    mockPrisma.application.update.mockResolvedValue({
+      id: "application-1",
+      role: "software engineer",
+      company: "Google",
+      status: "APPLIED",
+      appliedDate: new Date("2026-03-18T23:31:21.834Z"),
+      notes: null,
+      jobUrl: null,
+      userId: "user-1",
+      createdAt: new Date("2026-03-18T23:31:21.834Z"),
+      updatedAt: new Date("2026-03-18T23:31:21.834Z"),
+    });
 
     const res = await request(app)
-      .patch("/applications/:application-1")
+      .put("/applications/application-1")
       .set("x-test-user-id", "user-1")
       .set("Content-Type", "application/json")
       .send({
@@ -253,6 +283,13 @@ describe("POST /applications/:id", () => {
         jobUrl: null,
       });
     expect(res.status).toBe(200);
+    expect(mockLogAudit).toHaveBeenCalledWith(
+      "user-1",
+      "APPLICATION_UPDATED",
+      undefined,
+      "Application",
+      "application-1",
+    );
   });
 });
 
@@ -299,11 +336,21 @@ describe("DELETE /applications/:id", () => {
       createdAt: new Date("2026-03-18T23:31:21.834Z"),
       updatedAt: new Date("2026-03-18T23:31:21.834Z"),
     });
+    mockPrisma.application.delete.mockResolvedValue({
+      id: "application-1",
+    } as any);
 
     const res = await request(app)
       .delete("/applications/application-1")
       .set("x-test-user-id", "user-1");
 
     expect(res.status).toBe(204);
+    expect(mockLogAudit).toHaveBeenCalledWith(
+      "user-1",
+      "APPLICATION_DELETED",
+      undefined,
+      "Application",
+      "application-1",
+    );
   });
 });

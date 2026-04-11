@@ -1,11 +1,13 @@
 import request from "supertest";
 import createApp from "../../app";
 import { prisma } from "../../lib/prisma";
+import logAudit from "../../lib/monitoring/audit";
 
 // Mocks
 jest.mock("../../lib/prisma");
 const mockPrisma = jest.mocked(prisma);
 jest.mock("../../lib/monitoring/audit");
+const mockLogAudit = jest.mocked(logAudit);
 
 const app = createApp();
 
@@ -65,6 +67,13 @@ describe("PATCH /auth/status", () => {
         onboarding_complete: true,
       });
     expect(res.status).toBe(200);
+    expect(mockLogAudit).toHaveBeenCalledWith(
+      "user-1",
+      "ONBOARDING_COMPLETED",
+      undefined,
+      "User",
+      "user-1",
+    );
   });
 
   it("returns 500 update error", async () => {

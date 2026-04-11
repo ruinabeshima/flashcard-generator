@@ -21,6 +21,7 @@ export const prisma = {
   tailoredResume: {
     findMany: jest.fn(),
     findFirst: jest.fn(),
+    findUnique: jest.fn(),
   },
   tailoringSession: {
     create: jest.fn(),

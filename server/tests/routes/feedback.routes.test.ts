@@ -84,6 +84,18 @@ describe("POST /feedback/:applicationId", () => {
   });
 
   it("returns 404 missing application", async () => {
+    mockPrisma.application.findUnique.mockResolvedValue(null);
+    mockPrisma.tailoringSession.count.mockResolvedValue(1);
+
+    const res = await request(app)
+      .post("/feedback/application-1")
+      .set("x-test-user-id", "user-1");
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ message: "Application not found" });
+  });
+
+  it("returns 500 failed to retrieve application info", async () => {
     mockPrisma.application.findUnique.mockResolvedValue({
       id: "application-1",
       userId: "user-1",
@@ -95,8 +107,10 @@ describe("POST /feedback/:applicationId", () => {
       .post("/feedback/application-1")
       .set("x-test-user-id", "user-1");
 
-    expect(res.status).toBe(404);
-    expect(res.body).toEqual({ message: "Application not found" });
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({
+      message: "Failed to retrieve application info",
+    });
   });
 
   it("returns 404 missing resume", async () => {
@@ -148,6 +162,8 @@ describe("POST /feedback/:applicationId", () => {
     mockPrisma.application.findUnique.mockResolvedValue({
       id: "application-1",
       userId: "user-1",
+      company: "Company A",
+      role: "Teacher",
     } as any);
     mockPrisma.tailoringSession.count.mockResolvedValue(1);
     mockApplicationInfo.mockResolvedValue([
@@ -164,6 +180,7 @@ describe("POST /feedback/:applicationId", () => {
       weak: ["weak point Z"],
     });
     mockPrisma.tailoringSession.create.mockResolvedValue({
+      id: "session-1",
       applicationId: "application-1",
       userId: "user-1",
       suggestions: "suggestions",
@@ -174,6 +191,13 @@ describe("POST /feedback/:applicationId", () => {
       .post("/feedback/application-1")
       .set("x-test-user-id", "user-1");
     expect(res.status).toBe(201);
+    expect(mockLogAudit).toHaveBeenCalledWith(
+      "user-1",
+      "TAILORING_SESSION_CREATED",
+      "Tailoring started for Company A - Teacher",
+      "TailoringSession",
+      "session-1",
+    );
   });
 });
 
@@ -215,9 +239,11 @@ describe("POST /feedback/update/:sessionId", () => {
 
   it("returns 200 success", async () => {
     mockPrisma.tailoringSession.findUnique.mockResolvedValue({
+      id: "session-1",
       userId: "user-1",
     } as any);
     mockPrisma.tailoringSession.update.mockResolvedValue({
+      id: "session-1",
       status: "REVIEWED",
     } as any);
 
@@ -234,6 +260,13 @@ describe("POST /feedback/update/:sessionId", () => {
       message: "Suggestions updated",
       status: "REVIEWED",
     });
+    expect(mockLogAudit).toHaveBeenCalledWith(
+      "user-1",
+      "TAILORING_SUGGESTIONS_REVIEWED",
+      "Accepted: 2, Dismissed: 1",
+      "TailoringSession",
+      "session-1",
+    );
   });
 
   it("returns 500 failure", async () => {
@@ -437,6 +470,7 @@ describe("POST /feedback/generate/:sessionId", () => {
     const createdResume = {
       id: "tailored-resume-1",
       applicationId: "application-1",
+      name: "A new resume",
     };
     const updatedSession = {
       status: "TAILORED",
@@ -489,6 +523,13 @@ describe("POST /feedback/generate/:sessionId", () => {
       tailoredResumeId: "tailored-resume-1",
       status: "TAILORED",
     });
+    expect(mockLogAudit).toHaveBeenCalledWith(
+      "user-1",
+      "RESUME_TAILORED",
+      "A new resume",
+      "TailoredResume",
+      "tailored-resume-1",
+    );
   });
 
   it("returns 500 on session lookup error", async () => {
