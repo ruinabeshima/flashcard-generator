@@ -135,7 +135,7 @@ describe("POST /feedback/:applicationId", () => {
     expect(res.body).toEqual({ message: "Resume not found" });
   });
 
-  it("returns 500 no suggesstions", async () => {
+  it("returns 500 no suggestions", async () => {
     mockPrisma.application.findUnique.mockResolvedValue({
       id: "application-1",
       userId: "user-1",
@@ -201,7 +201,7 @@ describe("POST /feedback/:applicationId", () => {
   });
 });
 
-describe("POST /feedback/update/:sessionId", () => {
+describe("PATCH /feedback/update/:sessionId", () => {
   it("returns 401 no userId", async () => {
     const res = await request(app).patch("/feedback/update/session-1");
     expect(res.status).toBe(401);
@@ -464,6 +464,51 @@ describe("POST /feedback/generate/:sessionId", () => {
       .send({ resumeName: "A new resume" });
 
     expect(res.status).toBe(500);
+  });
+
+  it("returns 500 on transaction failure and cleans up R2 object", async () => {
+    mockPrisma.tailoringSession.findUnique.mockResolvedValue({
+      id: "session-1",
+      userId: "user-1",
+      applicationId: "application-1",
+      acceptedSuggestions: ["miss-0"],
+      suggestions: {
+        miss: ["missing skill A"],
+        improve: ["improve X"],
+        add: ["add certification Y"],
+        weak: ["weak point Z"],
+      },
+    } as any);
+
+    mockPrisma.tailoredResume.findFirst.mockResolvedValue(null);
+    mockResumeText.mockResolvedValue("Resume text");
+    mockParseAcceptedSuggestions.mockReturnValue({
+      miss: ["missing skill A", "missing skill B"],
+      improve: ["improve X"],
+      add: ["add certification Y"],
+      weak: ["weak point Z"],
+    });
+    mockGenerateTailoredResume.mockResolvedValue("Tailored resume text");
+    mockConvertTextToPDF.mockResolvedValue(Buffer.from("pdf-buffer"));
+    // First call: R2 upload succeeds, second call: R2 delete for cleanup
+    mockR2Send.mockResolvedValueOnce({} as any);
+    mockR2Send.mockResolvedValueOnce({} as any);
+    // Transaction fails
+    mockPrisma.$transaction.mockRejectedValue(new Error("Transaction failed"));
+
+    const res = await request(app)
+      .post("/feedback/generate/session-1")
+      .set("x-test-user-id", "user-1")
+      .send({ resumeName: "A new resume" });
+
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({
+      message: "Unable to generate tailored resume",
+    });
+    // Assert R2 delete was called for cleanup
+    expect(mockR2Send).toHaveBeenCalledTimes(2);
+    const deleteCall = mockR2Send.mock.calls[1][0];
+    expect(deleteCall.input).toHaveProperty("Key");
   });
 
   it("returns 201 resume generation success", async () => {
