@@ -9,6 +9,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    const mockAuthState = (
+      window as {
+        __FIREBASE_AUTH_STATE__?: {
+          uid: string;
+          email?: string;
+          emailVerified?: boolean;
+          displayName?: string;
+        } | null;
+      }
+    ).__FIREBASE_AUTH_STATE__;
+
+    if (mockAuthState !== undefined) {
+      if (mockAuthState === null) {
+        setUser(null);
+      } else {
+        // Minimal shape needed for route-gating tests.
+        setUser({
+          ...mockAuthState,
+          getIdToken: async () => "e2e-token",
+        } as unknown as User);
+      }
+      setIsLoaded(true);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (next) => {
       setUser(next);
       setIsLoaded(true);
