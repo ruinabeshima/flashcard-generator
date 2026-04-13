@@ -179,16 +179,6 @@ Designed to simulate a production-grade job tracking system with AI-assisted res
 - **Type Reusability**: Single source of truth across frontend and backend
 - **Type Safety**: Reduces bugs and improves developer experience
 
-### Request Lifecycle
-
-1. Request arrives with unique request ID (x-request-id header)
-2. Authentication middleware validates Firebase JWT
-3. Zod schema validates request body
-4. Business logic executes with database operations
-5. Audit logging captures events for compliance
-6. Response returned with status code and structured data
-7. Request metrics logged (duration, status, method)
-
 ## API Routes
 
 | Method | Endpoint                              | Description                                                                           |
@@ -238,7 +228,7 @@ The project implements comprehensive test coverage across frontend and backend:
 
 ```bash
 # Run E2E tests
-cd client && pnpm test
+cd client && pnpm test:e2e
 
 # Run with UI
 pnpm test:ui
@@ -261,21 +251,6 @@ cd server && pnpm test
 # Run with coverage
 pnpm test:coverage
 ```
-
-**Test Coverage Includes**:
-
-- Authorization and authentication (401/403 responses)
-- Success paths with mocked external services (OpenAI, Cloudflare R2)
-- Database failures and error handling
-- Input validation and constraints
-- Mock implementations for Prisma, audit logging, and file conversion
-
-### Code Standards
-
-- **ESLint** - Consistent code style
-- **TypeScript Strict Mode** - Maximum type safety
-- **Prettier** - Automatic code formatting
-- **JSDoc Comments** - Comprehensive documentation on all endpoints
 
 ## Getting Started
 
@@ -351,15 +326,3 @@ The client will be available at `http://localhost:5173` and the server at `http:
 - `R2_BUCKET_NAME`: Cloudflare R2 bucket name
 - `OPENAI_API_KEY`: OpenAI API key for resume tailoring
 - `FIREBASE_SERVICE_ACCOUNT`: Firebase service account JSON (for admin SDK)
-
-## Testing
-
-Run both frontend and backend tests to validate the application:
-
-```bash
-# Frontend E2E tests
-cd client && pnpm test
-
-# Backend integration tests
-cd server && pnpm test && pnpm test:coverage
-```
