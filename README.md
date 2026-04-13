@@ -1,103 +1,195 @@
 # ApplyWise
 
-- Try it out: https://apply-wise-6gx6cmwdmq-an.a.run.app/
-- Signed-in users can create and track their job applications.
-- They can view their uploaded resume and update them.
-- Users can tailor their resumes using AI for a specific job application, and receive various suggestions which they can accept or decline.
+## Overview
+
+Full-stack application with a React frontend and Node.js backend, deployed as separate services.  
+Supports secure resume storage, job tracking, and AI-powered resume tailoring with audit logging, rate limiting, and CI/CD pipelines.
+Designed to simulate a production-grade job tracking system with AI-assisted resume optimization.
 
 ## Table of Contents
 
-- [Tech Stack](#tech-stack)
 - [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture & Best Practices](#architecture--best-practices)
+- [Code Quality](#code-quality)
 - [Getting Started](#getting-started)
-- [API Routes](#server-api-routes)
+- [API Routes](#api-routes)
 - [Database Models](#database-models)
 - [Environment Variables](#environment-variables)
 - [Testing](#testing)
 
 ## Tech Stack
 
-**Frontend**
+### Frontend
 
-- React + Vite
+- React (Vite)
 - TypeScript
-- Tailwind CSS + DaisyUI
+- Tailwind CSS, DaisyUI
 - React Router
-- Firebase Auth
+- Firebase Authentication
+- Playwright (E2E testing)
 
-**Backend**
+### Backend
 
-- Node.js + Express
+- Node.js, Express
 - TypeScript
 - Prisma ORM
-- Zod
-- Winston
-- Multer
-- OpenAI SDK
-- Firebase Admin SDK
-
-**Infrastructure**
-
 - PostgreSQL (Neon)
-- Cloudflare R2
+
+### Infrastructure & DevOps
+
 - Docker
-- GitHub Actions
-- Google Cloud Run (frontend) + Render (backend)
+- GitHub Actions (CI/CD)
+- Google Cloud Run (frontend)
+- Render (backend)
+- Cloudflare R2 (file storage)
+
+### Backend Infrastructure
+
+- Zod (validation)
+- Helmet, CORS (security)
+- Express Rate Limit (rate limiting)
+- Winston (logging)
+
+### External Services
+
+- OpenAI API
+- Firebase Admin SDK
+- Cloudflare R2
+
+### File Handling
+
+- Multer (file uploads)
+- pdf-parse (resume parsing)
 
 ## Features
 
-### Onboarding
+### Product Features
 
-- Once a user creates an account, they are taken to an onboarding page where they are required to upload their resume, and optionally enter a job application.
-- The user cannot navigate to any other page unless they have completed onboarding.
+#### Job Application Tracking
 
-### Job Application Tracking
+- **Centralized Dashboard**: View all job applications in an organized grid layout
+- **Complete Application Details**: Track role, company, status, application date, notes, and job links
+- **Full CRUD operations**
+- **Status Management**: Track applications across different statuses (Applied, Interviewing, Rejected, Offer, Negotiating)
 
-- Users can see the resume they have uploaded and optionally update it in the `/your-resume` page.
-- The `/dashboard` page allows users to see their job applications in a grid layout.
-- They can add new applications with required fields `role`, `company`, select `application status`, and optionally enter the application date, add extra notes and add the job link.
-- The application date is set to the time the application is created if nothing is entered.
-- Users can see the detailed view of a single application, where they have the option to edit, delete or tailor their resume to that application.
+#### Resume Management
 
-### Resume Suggestions and OpenAI Integration
+- **Secure Upload**: Upload resumes (PDF, max 10MB) with server-side validation
+- **Pre-signed URLs**: Generate expiring download links (1-hour validity) for secure resume access
+- **Version Control**: Maintain and manage multiple resume versions
+- **Smart Extraction**: Automated text extraction from PDFs for AI analysis
 
-- Users can use AI to review their resume and tailor it to fit specific job applications.
-- **Resume Tailoring Limit**: Users can tailor up to 3 resumes with AI. The count is tracked via `TailoringSession` records and persists even after application deletion to prevent users from circumventing the limit.
-- OpenAI's API analyzes the resume against job requirements and provides specific, actionable suggestions.
-- Suggestions are grouped into four categories:
-  - `miss:` Skills or requirements from the job description that are absent from the resume
-  - `improve:` Existing resume content that could be strengthened with metrics, stronger action verbs, or better framing
-  - `add:` Relevant experience or projects worth mentioning that aren't currently highlighted
-  - `weak:` Content that doesn't align with the role and should be removed or reframed
-- The user can view all of these suggestions, and have the option to accept or ignore them.
-- Once all the suggestions have been reviewed, the AI generates a new resume based on the suggestions that have been accepted.
-- Users can view all of their tailored resumes in the `/tailored` page.
+#### AI-Powered Resume Tailoring
 
-### Tests
+- **Smart Analysis**: OpenAI integration analyzes resume against job requirements
+- **Tailoring Limits**: Rate-limited to 3 tailored resumes per user (persists across deletions to prevent abuse)
+- **Categorized Suggestions**: Four categories of feedback:
+  - `miss:` - Missing skills/requirements from the job description
+  - `improve:` - Existing content that could be strengthened
+  - `add:` - Relevant experience worth highlighting
+  - `weak:` - Content that doesn't align and should be removed
+- **User-Controlled**: Accept or dismiss individual suggestions before generating tailored resume
+- **Version Tracking**: Access all tailored resumes in `/tailored` page with cloud storage backup
 
-### Audit Logging
+#### User Onboarding
 
-- All user-triggered events are logged to the database for compliance and debugging.
-- Events consist of:
-  - User account creation, updates, and deletion
+- **Mandatory Setup**: Users must upload resume during onboarding
+- **Protected Routes**: Navigation restricted until onboarding completion
+- **Efficient Flow**: Get started quickly with initial application entry during onboarding
+
+### Engineering & Architecture
+
+#### Security & Best Practices
+
+- **Centralized Error Handling**: Custom `AppError` class with comprehensive error middleware
+  - Handles AppError, Zod validation, Prisma errors, and unexpected errors
+  - Consistent JSON error responses with appropriate HTTP status codes
+- **Request Authentication**: Firebase JWT verification on all protected routes
+- **Authorization Checks**: User ownership verification for all operations (401/403 responses)
+- **Security Headers**: Helmet middleware for HTTP security
+- **CORS Protection**: Configurable origin validation
+- **Input Validation**: Zod schemas for all API inputs with type inference to frontend
+
+#### API Design & Performance
+
+- **Rate Limiting**: Multi-tier rate limiting by operation type:
+  - Feedback/Tailoring: 10 requests per hour
+  - Resume Upload: 20 requests per hour
+  - General Mutations: 50 requests per 15 minutes
+- **Pagination Support**: Efficient data loading for large datasets
+- **Pre-signed URLs**: One-hour expiring URL generation for file downloads
+- **Request Tracking**: Unique request IDs for all API calls (x-request-id header)
+- **Health Endpoint**: `/health` for deployment monitoring
+
+#### Code Quality & Maintainability
+
+- **TypeScript Throughout**: End-to-end type safety with strict configurations
+- **Shared Types Package**: Centralized global type definitions (`shared/src/types/`)
+  - Single source of truth for API contracts across frontend and backend
+  - Automatic type inference in API calls
+- **JSDoc Comments**: Comprehensive documentation on all route handlers
+- **Monorepo Structure**: Organized separation of concerns (client, server, shared)
+- **Environment Validation**: Automatic environment variable checking at startup
+
+#### Monitoring & Observability
+
+- **Structured Logging** (Winston):
+  - JSON output for production log aggregation
+  - Error logs for database failures and file upload failures
+  - Warning logs for unauthorized access and validation errors
+  - Request logging with timing information
+- **Audit Logging**: Complete event tracking to database:
+  - User account lifecycle (creation, updates, deletion)
   - Onboarding completion
-  - Job application CREATE, UPDATE and DELETE operations
+  - Application CRUD operations
   - Resume uploads and replacements
-  - Resume tailoring session creation
-  - Resume suggestion review
-  - Tailored resume generation
-- Each audit entry consists of the userId, event name (enumerated values), optional description, entity type (User, Application, Resume, TailoringSession, TailoredResume) and timestamp.
-- Audit logs can be queried to track user actions or to investigate issues.
+  - Tailoring sessions and generated resumes
+  - Each audit entry includes userId, event type, description, and timestamp
 
-### Structured Logging
+#### Database & Data Integrity
 
-- All server errors and warnings are logged using Winston for easy debugging during production.
-- Implementation of:
-  - **Errors**: Database failures, file upload errors, webhook verification failures
-  - **Warnings**: Unauthorised access attempts, missing resources, validation errors
-- Logs are output to stdout in JSON format, making them queryable in production environments (Google Cloud Run Logs, Render Logs, etc.)
+- **Prisma ORM**: Type-safe database queries with auto-generated types
+- **Schema Migrations**: Git-tracked database changes with rollback capability
+- **Relationships**: Proper constraints and cascading deletes
+- **Audit Trail**: TailoringSession records persist after application deletion for tracking
+- **Data Consistency**: Transaction support for complex operations
 
-## Server API Routes
+## Architecture & Best Practices
+
+### Centralized API Layer
+
+- **useApiClient Hook**: Single-point-of-entry for all API requests with automatic:
+  - Token injection for authorization
+  - Consistent error handling
+  - Form data detection and header management
+  - Type-safe generic requests
+  - Support for empty response handling (204 No Content)
+
+### Error Handling Strategy
+
+- **AppError Classes**: Custom error hierarchy for different error types
+- **Middleware Pattern**: Express error middleware catches and normalizes all errors
+- **Type-Safe Validation**: Zod schemas ensure data integrity at boundaries
+- **User-Friendly Messages**: Consistent error response format with actionable messages
+
+### State of Shared Types
+
+- **API Contracts**: Defined in `shared/src/types/api.ts`
+- **Type Reusability**: Single source of truth across frontend and backend
+- **Type Safety**: Reduces bugs and improves developer experience
+
+### Request Lifecycle
+
+1. Request arrives with unique request ID (x-request-id header)
+2. Authentication middleware validates Firebase JWT
+3. Zod schema validates request body
+4. Business logic executes with database operations
+5. Audit logging captures events for compliance
+6. Response returned with status code and structured data
+7. Request metrics logged (duration, status, method)
+
+## API Routes
 
 | Method | Endpoint                              | Description                                                                           |
 | ------ | ------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -115,7 +207,7 @@
 | POST   | `/resumes/upload`                     | Upload or replace user's resume (PDF only, max 10MB)                                  |
 | POST   | `/feedback/:applicationId`            | Start tailoring session and get AI suggestions for an application                     |
 | POST   | `/feedback/update/:sessionId`         | Accept or dismiss individual suggestions                                              |
-| POST   | `/feedback/generate/:sessionId`       | Generate final tailored resume from accepted suggestions                              |
+| POST   | `/tailoring/generate/:sessionId`      | Generate final tailored resume from accepted suggestions                              |
 | GET    | `/tailoring/status/:applicationId`    | Check if tailoring status exists and returns suggestions or tailored resume key if so |
 | GET    | `/tailoring/count`                    | Get count of all user's tailoring sessions                                            |
 
@@ -130,31 +222,62 @@
 - `TailoringSession`: id, applicationId, userId, suggestions, acceptedSuggestions, dismissedSuggestions, status, createdAt, updatedAt
 - `TailoredResume`: id, key, tailoringSessionId, applicationId, userId, name, content, createdAt
 
-## Environment Variables
+## Code Quality
 
-### Client
+### Testing Strategy
 
-- `VITE_SERVER_URL`: Backend server URL (e.g., `http://localhost:3000`)
-- `VITE_FIREBASE_API_KEY`: Firebase API key
-- `VITE_FIREBASE_AUTH_DOMAIN`: Firebase auth domain
-- `VITE_FIREBASE_PROJECT_ID`: Firebase project ID
-- `VITE_FIREBASE_APP_ID`: Firebase app ID
+The project implements comprehensive test coverage across frontend and backend:
 
-### Server
+#### Frontend E2E Tests (Playwright)
 
-- `PORT`: Server port (default: 3000)
-- `CLIENT_URL`: Frontend URL for CORS (e.g., `http://localhost:5173`)
-- `POSTGRES_USER`: PostgreSQL username
-- `POSTGRES_PASSWORD`: PostgreSQL password
-- `DATABASE_URL`: PostgreSQL connection string
-- `R2_ACCOUNT_ID`: Cloudflare R2 account ID
-- `R2_ACCESS_KEY_ID`: Cloudflare R2 access key
-- `R2_SECRET_ACCESS_KEY`: Cloudflare R2 secret key
-- `R2_BUCKET_NAME`: Cloudflare R2 bucket name
-- `OPENAI_API_KEY`: OpenAI API key for resume tailoring
-- `FIREBASE_SERVICE_ACCOUNT`: Firebase service account JSON (for admin SDK)
+- **Authentication** - User login/logout flows with Firebase
+- **Onboarding** - Resume upload and first application workflow
+- **Applications** - CRUD operations, pagination, sorting, status updates
+- **Resume** - Upload, view, and management operations
+- **Tailoring** - Full AI suggestion workflow from start to finish
 
-## Getting started
+```bash
+# Run E2E tests
+cd client && pnpm test
+
+# Run with UI
+pnpm test:ui
+
+# Run specific test file
+pnpm test auth.spec.ts
+```
+
+#### Backend Integration Tests (Jest + Supertest)
+
+- **Applications** - CRUD operations, authorization checks, pagination, error handling
+- **Authentication** - Onboarding status management, user auth flow
+- **Resumes** - Upload/retrieval, pre-signed URLs, error cases
+- **Feedback/Tailoring** - AI suggestion generation, user feedback handling, file conversion
+
+```bash
+# Run server tests
+cd server && pnpm test
+
+# Run with coverage
+pnpm test:coverage
+```
+
+**Test Coverage Includes**:
+
+- Authorization and authentication (401/403 responses)
+- Success paths with mocked external services (OpenAI, Cloudflare R2)
+- Database failures and error handling
+- Input validation and constraints
+- Mock implementations for Prisma, audit logging, and file conversion
+
+### Code Standards
+
+- **ESLint** - Consistent code style
+- **TypeScript Strict Mode** - Maximum type safety
+- **Prettier** - Automatic code formatting
+- **JSDoc Comments** - Comprehensive documentation on all endpoints
+
+## Getting Started
 
 ### Prerequisites
 
@@ -205,29 +328,38 @@
 
 The client will be available at `http://localhost:5173` and the server at `http://localhost:3000`
 
-### Testing
+## Environment Variables
 
-The project includes comprehensive integration tests for all API routes using Jest and Supertest:
+### Client
 
-**Tested Routes:**
+- `VITE_SERVER_URL`: Backend server URL (e.g., `http://localhost:3000`)
+- `VITE_FIREBASE_API_KEY`: Firebase API key
+- `VITE_FIREBASE_AUTH_DOMAIN`: Firebase auth domain
+- `VITE_FIREBASE_PROJECT_ID`: Firebase project ID
+- `VITE_FIREBASE_APP_ID`: Firebase app ID
 
-- **Applications** - CRUD operations for job applications, including authorization checks, pagination and error handling
-- **Authentication** - Onboarding status retrieval and completion, user authentication flow
-- **Resumes** - Resume upload/retrieval, pre-signed URL generation, and error cases
-- **Feedback/Tailoring** - Resume tailoring workflow including AI suggestion generation, user feedback acceptance, and tailored resume generation with file conversion and cloud storage
+### Server
 
-**Test Coverage:**
+- `PORT`: Server port (default: 3000)
+- `CLIENT_URL`: Frontend URL for CORS (e.g., `http://localhost:5173`)
+- `POSTGRES_USER`: PostgreSQL username
+- `POSTGRES_PASSWORD`: PostgreSQL password
+- `DATABASE_URL`: PostgreSQL connection string
+- `R2_ACCOUNT_ID`: Cloudflare R2 account ID
+- `R2_ACCESS_KEY_ID`: Cloudflare R2 access key
+- `R2_SECRET_ACCESS_KEY`: Cloudflare R2 secret key
+- `R2_BUCKET_NAME`: Cloudflare R2 bucket name
+- `OPENAI_API_KEY`: OpenAI API key for resume tailoring
+- `FIREBASE_SERVICE_ACCOUNT`: Firebase service account JSON (for admin SDK)
 
-- Authorization and authentication (401/403 responses)
-- Success paths with mocked external services (OpenAI, Cloudflare R2)
-- Database failures and error handling (500 responses)
-- Input validation and constraints
-- Mock implementations for prisma, audit logging, and file conversion
+## Testing
+
+Run both frontend and backend tests to validate the application:
 
 ```bash
-# Run tests
-cd server && pnpm test
+# Frontend E2E tests
+cd client && pnpm test
 
-# Run tests with coverage
-pnpm test:coverage
+# Backend integration tests
+cd server && pnpm test && pnpm test:coverage
 ```
