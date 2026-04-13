@@ -1,6 +1,6 @@
 import type { ResumeSuggestions } from "@apply-wise/shared";
 import { SuggestionEmptyState, SuggestionError } from "./SuggestionFeedback";
-import useResumeSuggestionFlow from "../../hooks/useResumeSuggestionFlow"
+import useResumeSuggestionFlow from "../../hooks/useResumeSuggestionFlow";
 import SuggestionHeaderStats from "./SuggestionsHeaderStats";
 import SuggestionSectionList from "./SuggestionSectionList";
 

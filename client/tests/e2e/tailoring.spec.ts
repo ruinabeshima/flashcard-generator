@@ -16,43 +16,6 @@ test.describe("Tailored Resumes", () => {
     });
   }
 
-  // Mock GET /resumes/tailored (empty initially)
-  async function mockTailoredResumesEmpty(context: BrowserContext) {
-    await context.route("**/resumes/tailored", (route: Route) => {
-      route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ resumes: [] }),
-      });
-    });
-  }
-
-  // Mock GET /resumes/tailored with sample data
-  async function mockTailoredResumesWithData(context: BrowserContext) {
-    const mockResumes = [
-      {
-        id: "tailored-1",
-        applicationId: "app-1",
-        name: "Tailored Resume - Tech Corp",
-        createdAt: "2025-01-16T10:00:00Z",
-      },
-      {
-        id: "tailored-2",
-        applicationId: "app-2",
-        name: "Tailored Resume - StartupXYZ",
-        createdAt: "2025-01-15T14:00:00Z",
-      },
-    ];
-
-    await context.route("**/resumes/tailored", (route: Route) => {
-      route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ resumes: mockResumes }),
-      });
-    });
-  }
-
   // Mock GET /resumes/tailored/:id (specific tailored resume)
   async function mockTailoredResumeDetail(context: BrowserContext) {
     await context.route("**/resumes/tailored/tailored-1", (route: Route) => {

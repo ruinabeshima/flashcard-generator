@@ -1,4 +1,4 @@
-import test, { BrowserContext, expect, Page, Route } from "@playwright/test";
+import test, { BrowserContext, expect, Route } from "@playwright/test";
 import { mockAuthSignedIn } from "./helpers/auth";
 
 test.describe("Onboarding flow", () => {
@@ -143,11 +143,10 @@ test.describe("Onboarding flow", () => {
       await page.goto("/onboarding");
 
       const fileInput = page.locator('input[type="file"]');
-      const fileBytes = new TextEncoder().encode("This is a test file");
       await fileInput.setInputFiles({
         name: "test.txt",
         mimeType: "text/plain",
-        // @ts-ignore
+        // @ts-expect-error Node Buffer is supported in Playwright test runtime
         buffer: Buffer.from("this is not a pdf"),
       });
 
@@ -181,7 +180,7 @@ test.describe("Onboarding flow", () => {
       await fileInput.setInputFiles({
         name: "resume.pdf",
         mimeType: "application/pdf",
-        // @ts-ignore
+        // @ts-expect-error Node Buffer is supported in Playwright test runtime
         buffer: Buffer.from("%PDF-1.4\n%Mock PDF content\n"),
       });
       await page.getByRole("button", { name: /Upload Resume/i }).click();

@@ -5,32 +5,29 @@ import { auth } from "../lib/firebase";
 import { AuthContext } from "./AuthContext";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const mockAuthState = (
+    window as {
+      __FIREBASE_AUTH_STATE__?: {
+        uid: string;
+        email?: string;
+        emailVerified?: boolean;
+        displayName?: string;
+      } | null;
+    }
+  ).__FIREBASE_AUTH_STATE__;
+
+  const initialMockUser =
+    mockAuthState &&
+    ({
+      ...mockAuthState,
+      getIdToken: async () => "e2e-token",
+    } as unknown as User);
+
+  const [user, setUser] = useState<User | null>(initialMockUser ?? null);
+  const [isLoaded, setIsLoaded] = useState(mockAuthState !== undefined);
 
   useEffect(() => {
-    const mockAuthState = (
-      window as {
-        __FIREBASE_AUTH_STATE__?: {
-          uid: string;
-          email?: string;
-          emailVerified?: boolean;
-          displayName?: string;
-        } | null;
-      }
-    ).__FIREBASE_AUTH_STATE__;
-
     if (mockAuthState !== undefined) {
-      if (mockAuthState === null) {
-        setUser(null);
-      } else {
-        // Minimal shape needed for route-gating tests.
-        setUser({
-          ...mockAuthState,
-          getIdToken: async () => "e2e-token",
-        } as unknown as User);
-      }
-      setIsLoaded(true);
       return;
     }
 
@@ -39,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoaded(true);
     });
     return unsubscribe;
-  }, []);
+  }, [mockAuthState]);
 
   const getToken = async () => {
     if (auth.currentUser) {

@@ -1,5 +1,16 @@
 import { Page, BrowserContext } from "@playwright/test";
 
+declare global {
+  interface Window {
+    __FIREBASE_AUTH_STATE__?: {
+      uid: string;
+      email: string;
+      emailVerified: boolean;
+      displayName: string;
+    } | null;
+  }
+}
+
 /**
  * Mock Firebase Auth by intercepting network requests
  */
@@ -20,7 +31,7 @@ export async function mockAuthSignedOut(context: BrowserContext) {
 
   // Also inject a script to handle auth state as signed out
   await context.addInitScript(() => {
-    (window as any).__FIREBASE_AUTH_STATE__ = null;
+    window.__FIREBASE_AUTH_STATE__ = null;
   });
 }
 
@@ -42,7 +53,7 @@ export async function mockAuthSignedIn(
 
   // Inject mock auth state before page loads
   await context.addInitScript((userData) => {
-    (window as any).__FIREBASE_AUTH_STATE__ = {
+    window.__FIREBASE_AUTH_STATE__ = {
       uid: userData.uid,
       email: userData.email,
       emailVerified: true,

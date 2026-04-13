@@ -27,87 +27,6 @@ test.describe("Applications Management", () => {
     });
   }
 
-  // Mock GET /applications with sample data
-  async function mockApplicationsWithData(context: BrowserContext) {
-    const mockApps = [
-      {
-        id: "app-1",
-        role: "Software Engineer",
-        company: "Tech Corp",
-        status: "APPLIED",
-        appliedDate: "2025-01-15T10:00:00Z",
-        notes: "Great team, promising project",
-        jobUrl: "https://example.com/job1",
-        createdAt: "2025-01-15T10:00:00Z",
-        updatedAt: "2025-01-15T10:00:00Z",
-      },
-      {
-        id: "app-2",
-        role: "Product Manager",
-        company: "StartupXYZ",
-        status: "INTERVIEW",
-        appliedDate: "2025-01-10T14:00:00Z",
-        notes: null,
-        jobUrl: null,
-        createdAt: "2025-01-10T14:00:00Z",
-        updatedAt: "2025-01-10T14:00:00Z",
-      },
-    ];
-
-    await context.route("**/applications", (route: Route) => {
-      route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(mockApps),
-      });
-    });
-  }
-
-  // Mock POST /applications/add
-  async function mockApplicationAddSuccess(context: BrowserContext) {
-    await context.route("**/applications/add", (route: Route) => {
-      const request = route.request();
-      if (request.method() === "POST") {
-        route.fulfill({
-          status: 201,
-          contentType: "application/json",
-          body: JSON.stringify({
-            id: "app-new-123",
-            role: "Senior Developer",
-            company: "Acme Inc",
-            status: "APPLIED",
-            appliedDate: new Date().toISOString(),
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          }),
-        });
-      } else {
-        route.continue();
-      }
-    });
-  }
-
-  // Mock GET /applications/:id
-  async function mockApplicationDetail(context: BrowserContext) {
-    await context.route("**/applications/app-1", (route: Route) => {
-      route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          id: "app-1",
-          role: "Software Engineer",
-          company: "Tech Corp",
-          status: "APPLIED",
-          appliedDate: "2025-01-15T10:00:00Z",
-          notes: "Great team, promising project",
-          jobUrl: "https://example.com/job1",
-          createdAt: "2025-01-15T10:00:00Z",
-          updatedAt: "2025-01-15T10:00:00Z",
-        }),
-      });
-    });
-  }
-
   test.describe("Dashboard - Applications List", () => {
     test.describe.configure({ mode: "serial" });
     let context: BrowserContext;
@@ -132,7 +51,6 @@ test.describe("Applications Management", () => {
       await page.goto("/dashboard");
       await waitForAuthToLoad(page);
 
-      // Wait for empty state message to be visible
       await expect(page.getByText(/no applications yet/i)).toBeVisible();
       await expect(
         page.getByRole("link", { name: /add your first application/i }),
@@ -183,11 +101,8 @@ test.describe("Applications Management", () => {
       await waitForAuthToLoad(page);
 
       const addBtn = page.getByRole("link", { name: /add application/i });
-
-      // Wait for button to be visible and enabled
       await expect(addBtn).toBeVisible();
 
-      // Click and wait for navigation
       await Promise.all([
         page.waitForURL("**/applications/add"),
         addBtn.first().click(),

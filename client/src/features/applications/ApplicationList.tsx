@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import ApplicationCard from "./ApplicationCard";
-import useApplicationsList from "../../hooks/useApplicationsList"
+import useApplicationsList from "../../hooks/useApplicationsList";
 
 export default function ApplicationList() {
   const { applications, error } = useApplicationsList();

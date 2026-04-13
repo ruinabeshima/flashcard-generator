@@ -1,4 +1,4 @@
-import test, { BrowserContext, expect, Page, Route } from "@playwright/test";
+import test, { BrowserContext, expect, Route } from "@playwright/test";
 import { mockAuthSignedIn, waitForAuthToLoad } from "./helpers/auth";
 
 test.describe("Resume Upload & Preview", () => {
@@ -12,37 +12,6 @@ test.describe("Resume Upload & Preview", () => {
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({ onboardingComplete: true }),
-      });
-    });
-  }
-
-  // Mock GET /resumes to return a resume URL
-  async function mockResumeLink(context: BrowserContext) {
-    await context.route("**/resumes", (route: Route) => {
-      if (!route.request().url().includes("/upload")) {
-        route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            url: "https://example.com/mock-resume.pdf",
-          }),
-        });
-      } else {
-        route.continue();
-      }
-    });
-  }
-
-  // Mock POST /resumes/upload
-  async function mockResumeUploadSuccess(context: BrowserContext) {
-    await context.route("**/resumes/upload", (route: Route) => {
-      route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          id: "resume-1",
-          message: "File sent successfully",
-        }),
       });
     });
   }

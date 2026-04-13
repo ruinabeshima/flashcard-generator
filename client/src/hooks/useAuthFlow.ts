@@ -105,7 +105,7 @@ export default function useAuthFlow() {
   };
 
   return {
-    error, 
+    error,
     loading,
     handleEmailRegister,
     handleGoogleRegister,
