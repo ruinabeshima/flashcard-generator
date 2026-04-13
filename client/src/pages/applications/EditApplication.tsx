@@ -17,6 +17,9 @@ export default function EditApplication() {
 
   const loading = appLoading || onboardingLoading;
   const error = appError || onboardingError;
+  const normalizedAppliedDate = application?.appliedDate
+    ? new Date(application.appliedDate).toISOString()
+    : undefined;
 
   return (
     <div className="flex flex-col gap-5 min-h-screen w-full items-center">
@@ -71,7 +74,7 @@ export default function EditApplication() {
             role={application.role}
             company={application.company}
             status={application.status}
-            appliedDate={application.appliedDate?.toISOString()}
+            appliedDate={normalizedAppliedDate}
             notes={application.notes}
             jobUrl={application.jobUrl}
           />
